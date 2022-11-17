@@ -1,0 +1,33 @@
+{
+  "name": "recca0120/laravel-erd-go",
+  "authors": [
+    {
+      "name": "recca0120",
+      "email": "recca0120@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Recca0120\\LaravelErdGo\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Recca0120\\LaravelErdGo\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "mockery/mockery": "^1.5",
+    "orchestra/testbench": "^7.13"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php vendor/bin/testbench package:discover --ansi"
+    ]
+  },
+  "require": {
+    "doctrine/dbal": "^3.5",
+    "illuminate/support": "^9.40"
+  }
+}
