@@ -6,7 +6,9 @@ use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\TypeRegistry;
+use Mockery as m;
 use Recca0120\LaravelErdGo\Column;
+use Recca0120\LaravelErdGo\Table;
 
 class ColumnTest extends TestCase
 {
@@ -85,6 +87,9 @@ class ColumnTest extends TestCase
      */
     private function givenColumn(string $name, string $type, array $options = []): Column
     {
-        return new Column(new DBALColumn($name, $this->getType($type), $options));
+        return new Column(
+            new DBALColumn($name, $this->getType($type), $options),
+            m::mock(Table::class)
+        );
     }
 }

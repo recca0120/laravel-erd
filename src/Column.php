@@ -9,10 +9,17 @@ use Doctrine\DBAL\Types\TypeRegistry;
 class Column
 {
     private DBALColumn $column;
+    private Table $table;
 
-    public function __construct(DBALColumn $column)
+    public function __construct(DBALColumn $column, Table $table)
     {
         $this->column = $column;
+        $this->table = $table;
+    }
+
+    public function table(): Table
+    {
+        return $this->table;
     }
 
     public function name(): string

@@ -1,5 +1,7 @@
 .idea/
+compiles/
 vendor/
 .phpunit.cache/
+
 .phpunit.result.cache
 composer.lock

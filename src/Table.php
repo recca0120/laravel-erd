@@ -2,6 +2,7 @@
 
 namespace Recca0120\LaravelErdGo;
 
+use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Schema\Table as DBALTable;
 use Illuminate\Support\Collection;
 
@@ -21,7 +22,7 @@ class Table
 
     public function columns(): Collection
     {
-        return Collection::make($this->table->getColumns())->mapInto(Column::class);
+        return collect($this->table->getColumns())->map(fn (DBALColumn $column) => new Column($column, $this));
     }
 
     public function render(): string

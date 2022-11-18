@@ -10,10 +10,13 @@ class ErdGoTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function test_erd_go(): void
     {
         $schemaManager = DB::connection()->getDoctrineSchemaManager();
         $erd = new ErdGo($schemaManager);
-        $erd->generate(['users', 'phones']);
+        echo $erd->generate(['users', 'phones']);
     }
 }
