@@ -2,7 +2,9 @@
 
 namespace Recca0120\LaravelErdGo\Tests\fixtures\Models;
 
-class Owner
+use Illuminate\Database\Eloquent\Model;
+
+class Owner extends Model
 {
 
 }

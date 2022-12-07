@@ -27,24 +27,22 @@ class RelationFinder
     public function generate(string $model)
     {
         $class = new ReflectionClass($model);
+
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
             ->merge($this->getTraitMethods($class))
             ->reject(fn(ReflectionMethod $method) => $method->class !== $model)
-            ->flatMap(fn(ReflectionMethod $method) => $this->makeModel($method, $model))
+            ->flatMap(fn(ReflectionMethod $method) => $this->findRelations($method, $model))
             ->filter();
     }
 
-    private function makeModel(ReflectionMethod $method, string $model)
+    private function findRelations(ReflectionMethod $method, string $model)
     {
         try {
             $return = $method->invoke($this->container->make($model));
 
             if (!$return instanceof Relation) {
-                return;
+                return null;
             }
-
-            $localKey = null;
-            $foreignKey = null;
 
             if ($return instanceof HasOneOrMany) {
                 $localKey = $this->getParentKey($return->getQualifiedParentKeyName());
@@ -62,8 +60,9 @@ class RelationFinder
                 return $this->getRelation($method, $return, $localKey, $foreignKey);
             }
         } catch (Throwable $e) {
-            return null;
         }
+
+        return null;
     }
 
     private function getRelation(ReflectionMethod $method, Relation $return, string $localKey, string $foreignKey): array
