@@ -30,7 +30,7 @@ class RelationFinder
 
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
             ->merge($this->getTraitMethods($class))
-            ->reject(fn(ReflectionMethod $method) => $method->class !== $model)
+            ->reject(fn(ReflectionMethod $method) => $method->class !== $model || $method->getNumberOfParameters() > 0)
             ->flatMap(fn(ReflectionMethod $method) => $this->findRelations($method, $model))
             ->filter();
     }
@@ -85,6 +85,9 @@ class RelationFinder
 
     private function getTraitMethods(ReflectionClass $class): Collection
     {
+//        dump(collect($class->getTraits())->flatMap(
+//            static fn(ReflectionClass $trait) => $trait->getMethods(ReflectionMethod::IS_PUBLIC)
+//        ));
         return collect($class->getTraits())->flatMap(
             static fn(ReflectionClass $trait) => $trait->getMethods(ReflectionMethod::IS_PUBLIC)
         );
