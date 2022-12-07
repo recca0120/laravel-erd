@@ -2,9 +2,7 @@
 
 namespace Recca0120\LaravelErdGo;
 
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use ReflectionClass;
@@ -14,80 +12,52 @@ use Throwable;
 
 class RelationFinder
 {
-    private Container $container;
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
-
     /**
      * @throws ReflectionException
      */
-    public function generate(string $model)
+    public function generate(string $className)
     {
-        $class = new ReflectionClass($model);
+        $class = new ReflectionClass($className);
+        $model = new $className;
 
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
             ->merge($this->getTraitMethods($class))
-            ->reject(fn(ReflectionMethod $method) => $method->class !== $model || $method->getNumberOfParameters() > 0)
+            ->reject(fn(ReflectionMethod $method) => $method->class !== $className || $method->getNumberOfParameters() > 0)
             ->flatMap(fn(ReflectionMethod $method) => $this->findRelations($method, $model))
             ->filter();
     }
 
-    private function findRelations(ReflectionMethod $method, string $model)
+    private function findRelations(ReflectionMethod $method, Model $model)
     {
         try {
-            $return = $method->invoke($this->container->make($model));
+            $return = $method->invoke($model);
 
             if (!$return instanceof Relation) {
                 return null;
             }
 
-            if ($return instanceof HasOneOrMany) {
-                $localKey = $this->getParentKey($return->getQualifiedParentKeyName());
-                $foreignKey = $return->getForeignKeyName();
+            $relationType = (new ReflectionClass($return))->getShortName();
+            $modelName = (new ReflectionClass($return->getRelated()))->getName();
 
-                return $this->getRelation($method, $return, $localKey, $foreignKey);
-            }
+            $foreignKey = $return->getQualifiedForeignKeyName();
+            $parentKey = $return->getQualifiedParentKeyName();
 
-            if ($return instanceof BelongsTo) {
-                $foreignKey = $this->getParentKey($return->getQualifiedOwnerKeyName());
-                $localKey = method_exists($return, 'getForeignKeyName')
-                    ? $return->getForeignKeyName()
-                    : $return->getForeignKey();
-
-                return $this->getRelation($method, $return, $localKey, $foreignKey);
-            }
+            return [
+                $method->getName() => [
+                    'type' => $relationType,
+                    'model' => $modelName,
+                    'foreign_key' => $foreignKey,
+                    'parent_key' => $parentKey,
+                ]
+            ];
         } catch (Throwable $e) {
         }
 
         return null;
     }
 
-    private function getRelation(ReflectionMethod $method, Relation $return, string $localKey, string $foreignKey): array
-    {
-        return [
-            $method->getName() => [
-                $method->getShortName(),
-                (new ReflectionClass($return))->getShortName(),
-                (new ReflectionClass($return->getRelated()))->getName(),
-                $localKey,
-                $foreignKey
-            ]
-        ];
-    }
-
-    private function getParentKey(string $qualifiedKeyName): string
-    {
-        return collect(explode('.', $qualifiedKeyName))->last();
-    }
-
     private function getTraitMethods(ReflectionClass $class): Collection
     {
-//        dump(collect($class->getTraits())->flatMap(
-//            static fn(ReflectionClass $trait) => $trait->getMethods(ReflectionMethod::IS_PUBLIC)
-//        ));
         return collect($class->getTraits())->flatMap(
             static fn(ReflectionClass $trait) => $trait->getMethods(ReflectionMethod::IS_PUBLIC)
         );

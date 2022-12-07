@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErdGo\Tests;
 
-use Illuminate\Container\Container;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Recca0120\LaravelErdGo\RelationFinder;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
@@ -19,7 +18,7 @@ class RelationFinderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->finder = new RelationFinder(new Container());
+        $this->finder = new RelationFinder();
     }
 
     /**
@@ -30,11 +29,10 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(User::class);
 
         self::assertEquals([
-            "phone",
-            "HasOne",
-            Phone::class,
-            "id",
-            "user_id",
+            'type' => 'HasOne',
+            'model' => Phone::class,
+            'foreign_key' => 'phones.user_id',
+            'parent_key' => 'users.id',
         ], $relations->get('phone'));
     }
 
@@ -46,11 +44,10 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(Phone::class);
 
         self::assertEquals([
-            "user",
-            "BelongsTo",
-            User::class,
-            "user_id",
-            "id",
+            'type' => 'BelongsTo',
+            'model' => User::class,
+            'foreign_key' => 'phones.user_id',
+            'parent_key' => 'phones.id',
         ], $relations->get('user'));
     }
 
