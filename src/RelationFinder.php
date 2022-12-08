@@ -3,13 +3,14 @@
 namespace Recca0120\LaravelErdGo;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Support\Collection;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use Throwable;
+use RuntimeException;
 
 class RelationFinder
 {
@@ -74,6 +75,30 @@ class RelationFinder
 //                    'parent_key' => $parentKey,
 //                ]
 //            ];
+
+            $type = (new ReflectionClass($return))->getShortName();
+            $related = (new ReflectionClass($return->getRelated()))->getName();
+
+            if ($return instanceof BelongsTo) {
+//                dump($return->getForeignKeyName());
+//                dump($return->getQualifiedForeignKeyName());
+//                dump($return->getParentKey());
+//                dump($return->getOwnerKeyName());
+//                dump($return->getQualifiedOwnerKeyName());
+//                dump($return->getRelationName());
+
+                return [
+                    $method->getName() => new Relation([
+                        'type' => $type,
+                        'related' => $related,
+                        'local_key' => $return->getQualifiedForeignKeyName(),
+                        'foreign_key' => $return->getQualifiedOwnerKeyName(),
+                    ])
+                ];
+
+            }
+
+
             if ($return instanceof HasOne) {
 //                dump($return->getQualifiedParentKeyName());
 //                dump($return->getQualifiedForeignKeyName());
@@ -83,16 +108,17 @@ class RelationFinder
 
                 return [
                     $method->getName() => new Relation([
-                        'type' => (new ReflectionClass($return))->getShortName(),
-                        'related' => (new ReflectionClass($return->getRelated()))->getName(),
+                        'type' => $type,
+                        'related' => $related,
                         'local_key' => $return->getQualifiedParentKeyName(),
                         'foreign_key' => $return->getQualifiedForeignKeyName(),
                     ])
                 ];
             }
-        } catch (Throwable $e) {
+        } catch (RuntimeException $e) {
 //            dump($method->getName());
 //            dump($e->getMessage());
+        } catch (ReflectionException $e) {
         }
 
         return null;

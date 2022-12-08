@@ -8,8 +8,7 @@ use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\RelationFinder;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Mechanic;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Phone;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\User;
+use Recca0120\LaravelErdGo\Tests\fixtures\Models\Owner;
 use ReflectionException;
 
 class RelationFinderTest extends TestCase
@@ -27,36 +26,6 @@ class RelationFinderTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function test_find_has_one_relation(): void
-    {
-        $relations = $this->givenRelations(User::class);
-
-        self::assertEquals([
-            'type' => 'HasOne',
-            'model' => Phone::class,
-            'foreign_key' => 'phones.user_id',
-            'parent_key' => 'users.id',
-        ], $relations->get('phone'));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function test_find_belongs_to_relation(): void
-    {
-        $relations = $this->givenRelations(Phone::class);
-
-        self::assertEquals([
-            'type' => 'BelongsTo',
-            'model' => User::class,
-            'foreign_key' => 'phones.user_id',
-            'parent_key' => 'phones.id',
-        ], $relations->get('user'));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
     public function test_find_mechanic_relations(): void
     {
         $relations = $this->givenRelations(Mechanic::class);
@@ -67,6 +36,43 @@ class RelationFinderTest extends TestCase
         self::assertEquals(Car::class, $car->related());
         self::assertEquals('id', $car->localKey());
         self::assertEquals('mechanic_id', $car->foreignKey());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_find_car_relations(): void
+    {
+        $relations = $this->givenRelations(Car::class);
+
+        /** @var Relation $mechanic */
+        $mechanic = $relations->get('mechanic');
+        self::assertEquals('BelongsTo', $mechanic->type());
+        self::assertEquals(Mechanic::class, $mechanic->related());
+        self::assertEquals('mechanic_id', $mechanic->localKey());
+        self::assertEquals('id', $mechanic->foreignKey());
+
+        /** @var Relation $owner */
+        $owner = $relations->get('owner');
+        self::assertEquals('HasOne', $owner->type());
+        self::assertEquals(Owner::class, $owner->related());
+        self::assertEquals('id', $owner->localKey());
+        self::assertEquals('car_id', $owner->foreignKey());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_find_owner_relations(): void
+    {
+        $relations = $this->givenRelations(Owner::class);
+
+        /** @var Relation $car */
+        $car = $relations->get('car');
+        self::assertEquals('BelongsTo', $car->type());
+        self::assertEquals(Car::class, $car->related());
+        self::assertEquals('car_id', $car->localKey());
+        self::assertEquals('id', $car->foreignKey());
     }
 
     /**
