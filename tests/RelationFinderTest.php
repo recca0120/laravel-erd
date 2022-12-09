@@ -239,11 +239,11 @@ class RelationFinderTest extends TestCase
         self::assertEquals(['mechanics 1--1 cars'], $this->draw($mechanic, 'car'));
 
         $cars = $this->givenRelations(Car::class);
-        self::assertEquals(['cars *--1 mechanics'], $this->draw($cars, 'mechanic'));
+        self::assertEquals(['cars 1--1 mechanics'], $this->draw($cars, 'mechanic'));
         self::assertEquals(['cars 1--1 owners'], $this->draw($cars, 'owner'));
 
         $owner = $this->givenRelations(Owner::class);
-        self::assertEquals(['owners *--1 cars'], $this->draw($owner, 'car'));
+        self::assertEquals(['owners 1--1 cars'], $this->draw($owner, 'car'));
     }
 
     /**
@@ -257,12 +257,12 @@ class RelationFinderTest extends TestCase
         self::assertEquals(['users 1--* images'], $this->draw($user, 'images'));
 
         $post = $this->givenRelations(Post::class);
-        self::assertEquals(['posts *--1 users'], $this->draw($post, 'user'));
+        self::assertEquals(['posts 1--1 users'], $this->draw($post, 'user'));
         self::assertEquals(['posts 1--* comments'], $this->draw($post, 'comments'));
         self::assertEquals(['posts 1--1 images'], $this->draw($post, 'image'));
 
         $comment = $this->givenRelations(Comment::class);
-        self::assertEquals(['comments *--1 posts'], $this->draw($comment, 'post'));
+        self::assertEquals(['comments 1--1 posts'], $this->draw($comment, 'post'));
     }
 
     /**

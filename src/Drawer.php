@@ -17,7 +17,7 @@ class Drawer
 
     /** @var string[] */
     private array $relations = [
-        BelongsTo::class => '*--1',
+        BelongsTo::class => '1--1',
         HasOne::class => '1--1',
         MorphOne::class => '1--1',
         HasMany::class => '1--*',

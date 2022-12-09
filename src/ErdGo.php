@@ -17,10 +17,20 @@ class ErdGo
     {
         $models = $this->modelFinder->find($directory);
 
-        $relations = $models->flatMap(function (string $model) {
-            return $this->relationFinder->generate($model)->flatMap(function (Relation $relation) {
-                return $relation->draw();
+        $missing = $models
+            ->flatMap(fn(string $model) => $this->relationFinder->generate($model))
+            ->map(fn(Relation $relation) => $relation->related())
+            ->diff($models);
+
+        $models
+            ->merge($missing)
+            ->flatMap(fn($model) => $this->relationFinder->generate($model)->values())
+            ->flatMap(fn(Relation $relation) => $relation->draw())
+            ->unique()
+            ->sort()
+            ->values()
+            ->each(function ($draw) {
+                echo $draw . "\n";
             });
-        });
     }
 }
