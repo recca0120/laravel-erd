@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Support\Collection;
@@ -100,6 +102,14 @@ class RelationFinder
 //                    'getRelationName' => $return->getRelationName(),
 //                ]);
 
+                if ($return instanceof MorphTo) {
+//                    dump([
+//                        'getMorphType' => $return->getMorphType(),
+//                        'getDictionary' => $return->getDictionary(),
+//                    ]);
+                    return null;
+                }
+
                 return [
                     $method->getName() => new Relation([
                         'type' => $type,
@@ -116,13 +126,26 @@ class RelationFinder
 //                    'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
 //                ]);
 
+                $attributes = [
+                    'type' => $type,
+                    'related' => $related,
+                    'local_key' => $return->getQualifiedParentKeyName(),
+                    'foreign_key' => $return->getQualifiedForeignKeyName(),
+                ];
+
+                if ($return instanceof MorphOneOrMany) {
+//                    dump([
+//                        'getQualifiedMorphType' => $return->getQualifiedMorphType(),
+//                        'getMorphClass' => $return->getMorphClass(),
+//                    ]);
+                    $attributes = array_merge($attributes, [
+                        'morph_type' => $return->getQualifiedMorphType(),
+                        'morph_class' => $return->getMorphClass(),
+                    ]);
+                }
+
                 return [
-                    $method->getName() => new Relation([
-                        'type' => $type,
-                        'related' => $related,
-                        'local_key' => $return->getQualifiedParentKeyName(),
-                        'foreign_key' => $return->getQualifiedForeignKeyName(),
-                    ])
+                    $method->getName() => new Relation($attributes)
                 ];
             }
         } catch (RuntimeException|ReflectionException $e) {

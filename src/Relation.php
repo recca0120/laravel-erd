@@ -31,6 +31,16 @@ class Relation
         return $this->attributes['foreign_key'];
     }
 
+    public function morphClass()
+    {
+        return $this->attributes['morph_class'] ?? '';
+    }
+
+    public function morphType()
+    {
+        return $this->attributes['morph_type'] ?? '';
+    }
+
     public function pivot(): ?Pivot
     {
         return $this->attributes['pivot'] ?? null;

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,6 +15,7 @@ use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\RelationFinder;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Comment;
+use Recca0120\LaravelErdGo\Tests\fixtures\Models\Image;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Mechanic;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Owner;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Post;
@@ -206,6 +208,33 @@ class RelationFinderTest extends TestCase
         self::assertEquals('role_has_permissions', $permissions->pivot()->table());
         self::assertEquals('role_has_permissions.permission_id', $permissions->pivot()->localKey());
         self::assertEquals('permissions.id', $permissions->pivot()->foreignKey());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_find_user_imageable_relations(): void
+    {
+        $relations = $this->givenRelations(User::class);
+
+        /** @var Relation $image */
+        $image = $relations->get('image');
+        self::assertEquals(MorphOne::class, $image->type());
+        self::assertEquals(Image::class, $image->related());
+        self::assertEquals('users.id', $image->localKey());
+        self::assertEquals('images.imageable_id', $image->foreignKey());
+        self::assertEquals('images.imageable_type', $image->morphType());
+        self::assertEquals(User::class, $image->morphClass());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_find_image_relations(): void
+    {
+        $relations = $this->givenRelations(Image::class);
+
+        self::assertCount(0, $relations);
     }
 
     /**
