@@ -23,18 +23,16 @@ class Relation
 
     public function localKey(): string
     {
-        return $this->getKeyName($this->attributes['local_key']);
+        return $this->attributes['local_key'];
     }
 
     public function foreignKey(): string
     {
-        return $this->getKeyName($this->attributes['foreign_key']);
+        return $this->attributes['foreign_key'];
     }
 
-    private function getKeyName(string $qualifiedKeyName)
+    public function pivot(): ?Pivot
     {
-        $segments = explode('.', $qualifiedKeyName);
-
-        return end($segments);
+        return $this->attributes['pivot'] ?? null;
     }
 }
