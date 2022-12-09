@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Recca0120\LaravelErdGo\Contracts\Drawable;
 
 class Drawer
 {
@@ -34,53 +35,41 @@ class Drawer
         $type = $this->relation->type();
 
         if ($type === HasOne::class || $type === MorphOne::class) {
-            $localKey = $this->relation->localKey();
-            $foreignKey = $this->relation->foreignKey();
-
-            return [$this->doDraw($localKey, $type, $foreignKey)];
+            return [$this->doDraw($type, $this->relation)];
         }
 
         if ($type === HasMany::class || $type === MorphMany::class) {
-            $localKey = $this->relation->localKey();
-            $foreignKey = $this->relation->foreignKey();
-
-            return [$this->doDraw($localKey, $type, $foreignKey)];
+            return [$this->doDraw($type, $this->relation)];
         }
 
         if ($type === BelongsTo::class) {
-            $localKey = $this->relation->localKey();
-            $foreignKey = $this->relation->foreignKey();
-
-            return [$this->doDraw($localKey, $type, $foreignKey)];
+            return [$this->doDraw($type, $this->relation)];
         }
 
-        if ($type === MorphToMany::class || $type === BelongsToMany::class) {
-            $localKey = $this->relation->localKey();
-            $foreignKey = $this->relation->foreignKey();
-
+        if ($type === BelongsToMany::class || $type === MorphToMany::class) {
             return [
-                $this->doDraw($localKey, BelongsToMany::class, $foreignKey),
-                $this->doDraw($this->relation->pivot()->localKey(), BelongsToMany::class, $this->relation->pivot()->foreignKey())
+                $this->doDraw(BelongsToMany::class, $this->relation),
+                $this->doDraw(BelongsToMany::class, $this->relation->pivot())
             ];
         }
 
         return [];
     }
 
-    private function getTableName(string $relation)
-    {
-        return substr($relation, 0, strpos($relation, '.'));
-    }
-
-    private function doDraw(string $localKey, string $type, string $foreignKey): string
+    private function doDraw(string $type, Drawable $drawable): string
     {
         return vsprintf(
             '%s %s %s',
             [
-                $this->getTableName($localKey),
+                $this->getTableName($drawable->localKey()),
                 $this->relations[$type],
-                $this->getTableName($foreignKey),
+                $this->getTableName($drawable->foreignKey()),
             ]
         );
+    }
+
+    private function getTableName(string $qualifiedKeyName)
+    {
+        return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));
     }
 }

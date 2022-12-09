@@ -2,7 +2,9 @@
 
 namespace Recca0120\LaravelErdGo;
 
-class Relation
+use Recca0120\LaravelErdGo\Contracts\Drawable;
+
+class Relation implements Drawable
 {
     private array $attributes;
 
@@ -50,5 +52,4 @@ class Relation
     {
         return (new Drawer($this))->draw();
     }
-
 }
