@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelErdGo\Tests\fixtures\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Spatie\Permission\Traits\HasRoles;
@@ -27,6 +28,11 @@ class User extends Model
     public function oldestPost(): HasOne
     {
         return $this->hasOne(Post::class)->oldestOfMany();
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
     }
 
     /**

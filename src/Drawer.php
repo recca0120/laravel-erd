@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelErdGo;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Drawer
@@ -10,8 +11,9 @@ class Drawer
     private Relation $relation;
 
     private array $relations = [
+        BelongsTo::class => '*--1',
         HasOne::class => '1--1',
-        BelongsTo::class => '1--1'
+        HasMany::class => '1--*',
     ];
 
     public function __construct(Relation $relation)
@@ -19,7 +21,7 @@ class Drawer
         $this->relation = $relation;
     }
 
-    public function draw()
+    public function draw(): array
     {
         $type = $this->relation->type();
 
@@ -39,6 +41,24 @@ class Drawer
                 )
             ];
         }
+
+        if ($type === HasMany::class) {
+            $localKey = $this->relation->localKey();
+            $foreignKey = $this->relation->foreignKey();
+            $relation = $this->relations[$type];
+
+            return [
+                vsprintf(
+                    '%s %s %s',
+                    [
+                        $this->getTableName($localKey),
+                        $relation,
+                        $this->getTableName($foreignKey),
+                    ]
+                )
+            ];
+        }
+
         if ($type === BelongsTo::class) {
             $localKey = $this->relation->localKey();
             $foreignKey = $this->relation->foreignKey();
@@ -55,6 +75,9 @@ class Drawer
                 )
             ];
         }
+
+
+        return [];
     }
 
     private function getTableName(string $relation)

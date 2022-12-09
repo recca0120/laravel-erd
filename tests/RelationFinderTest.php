@@ -39,7 +39,7 @@ class RelationFinderTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function test_find_mechanic_relations(): Collection
+    public function test_find_mechanic_relations(): void
     {
         $relations = $this->givenRelations(Mechanic::class);
 
@@ -49,24 +49,13 @@ class RelationFinderTest extends TestCase
         self::assertEquals(Car::class, $car->related());
         self::assertEquals('mechanics.id', $car->localKey());
         self::assertEquals('cars.mechanic_id', $car->foreignKey());
-
-        return $relations;
     }
 
-    /**
-     * @depends test_find_mechanic_relations
-     */
-    public function test_draw_mechanic_relations(Collection $relations): void
-    {
-        /** @var Relation $car */
-        $car = $relations->get('car');
-        self::assertEquals(['mechanics 1--1 cars'], $car->draw());
-    }
 
     /**
      * @throws ReflectionException
      */
-    public function test_find_car_relations(): Collection
+    public function test_find_car_relations(): void
     {
         $relations = $this->givenRelations(Car::class);
 
@@ -83,28 +72,13 @@ class RelationFinderTest extends TestCase
         self::assertEquals(Owner::class, $owner->related());
         self::assertEquals('cars.id', $owner->localKey());
         self::assertEquals('owners.car_id', $owner->foreignKey());
-
-        return $relations;
     }
 
-    /**
-     * @depends test_find_car_relations
-     */
-    public function test_draw_car_relations(Collection $relations): void
-    {
-        /** @var Relation $mechanic */
-        $mechanic = $relations->get('mechanic');
-        self::assertEquals(['cars 1--1 mechanics'], $mechanic->draw());
-
-        /** @var Relation $owner */
-        $owner = $relations->get('owner');
-        self::assertEquals(['cars 1--1 owners'], $owner->draw());
-    }
 
     /**
      * @throws ReflectionException
      */
-    public function test_find_owner_relations(): Collection
+    public function test_find_owner_relations(): void
     {
         $relations = $this->givenRelations(Owner::class);
 
@@ -114,19 +88,8 @@ class RelationFinderTest extends TestCase
         self::assertEquals(Car::class, $car->related());
         self::assertEquals('owners.car_id', $car->localKey());
         self::assertEquals('cars.id', $car->foreignKey());
-
-        return $relations;
     }
 
-    /**
-     * @depends test_find_owner_relations
-     */
-    public function test_draw_owner_relations(Collection $relations): void
-    {
-        /** @var Relation $car */
-        $car = $relations->get('car');
-        self::assertEquals(['owners 1--1 cars'], $car->draw());
-    }
 
     /**
      * @throws ReflectionException
@@ -149,6 +112,7 @@ class RelationFinderTest extends TestCase
         self::assertEquals('posts.user_id', $user->localKey());
         self::assertEquals('users.id', $user->foreignKey());
     }
+
 
     /**
      * @throws ReflectionException
@@ -280,8 +244,48 @@ class RelationFinderTest extends TestCase
     /**
      * @throws ReflectionException
      */
+    public function test_draw_mechanic_car_owner_relations(): void
+    {
+        $mechanic = $this->givenRelations(Mechanic::class);
+        self::assertEquals(['mechanics 1--1 cars'], $this->draw($mechanic, 'car'));
+
+        $cars = $this->givenRelations(Car::class);
+        self::assertEquals(['cars *--1 mechanics'], $this->draw($cars, 'mechanic'));
+        self::assertEquals(['cars 1--1 owners'], $this->draw($cars, 'owner'));
+
+        $owner = $this->givenRelations(Owner::class);
+        self::assertEquals(['owners *--1 cars'], $this->draw($owner, 'car'));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_draw_user_post_comment_relations(): void
+    {
+        $user = $this->givenRelations(User::class);
+        self::assertEquals(['users 1--* posts'], $this->draw($user, 'posts'));
+
+        $post = $this->givenRelations(Post::class);
+        self::assertEquals(['posts 1--* comments'], $this->draw($post, 'comments'));
+        self::assertEquals(['posts *--1 users'], $this->draw($post, 'user'));
+
+        $comment = $this->givenRelations(Comment::class);
+        self::assertEquals(['comments *--1 posts'], $this->draw($comment, 'post'));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     private function givenRelations(string $model): Collection
     {
         return $this->finder->generate($model);
+    }
+
+    private function draw(Collection $relations, $method): array
+    {
+        /** @var Relation $relation */
+        $relation = $relations->get($method);
+
+        return $relation->draw();
     }
 }
