@@ -37,21 +37,42 @@ class Drawer
             $localKey = $this->relation->localKey();
             $foreignKey = $this->relation->foreignKey();
 
-            return [$this->doDraw($localKey, $type, $foreignKey)];
+            return [vsprintf(
+                '%s %s %s',
+                [
+                    $this->getTableName($localKey),
+                    $this->relations[$type],
+                    $this->getTableName($foreignKey),
+                ]
+            )];
         }
 
         if ($type === HasMany::class || $type === MorphMany::class) {
             $localKey = $this->relation->localKey();
             $foreignKey = $this->relation->foreignKey();
 
-            return [$this->doDraw($localKey, $type, $foreignKey)];
+            return [vsprintf(
+                '%s %s %s',
+                [
+                    $this->getTableName($localKey),
+                    $this->relations[$type],
+                    $this->getTableName($foreignKey),
+                ]
+            )];
         }
 
         if ($type === BelongsTo::class) {
             $localKey = $this->relation->localKey();
             $foreignKey = $this->relation->foreignKey();
 
-            return [$this->doDraw($localKey, $type, $foreignKey)];
+            return [vsprintf(
+                '%s %s %s',
+                [
+                    $this->getTableName($localKey),
+                    $this->relations[$type],
+                    $this->getTableName($foreignKey),
+                ]
+            )];
         }
 
         if ($type === MorphToMany::class || $type === BelongsToMany::class) {
@@ -59,8 +80,22 @@ class Drawer
             $foreignKey = $this->relation->foreignKey();
 
             return [
-                $this->doDraw($localKey, BelongsToMany::class, $foreignKey),
-                $this->doDraw($this->relation->pivot()->localKey(), BelongsToMany::class, $this->relation->pivot()->foreignKey())
+                vsprintf(
+                    '%s %s %s',
+                    [
+                        $this->getTableName($localKey),
+                        $this->relations[BelongsToMany::class],
+                        $this->getTableName($foreignKey),
+                    ]
+                ),
+                vsprintf(
+                    '%s %s %s',
+                    [
+                        $this->getTableName($this->relation->pivot()->localKey()),
+                        $this->relations[BelongsToMany::class],
+                        $this->getTableName($this->relation->pivot()->foreignKey()),
+                    ]
+                )
             ];
         }
 
@@ -72,15 +107,4 @@ class Drawer
         return substr($relation, 0, strpos($relation, '.'));
     }
 
-    private function doDraw(string $localKey, string $type, string $foreignKey): string
-    {
-        return vsprintf(
-            '%s %s %s',
-            [
-                $this->getTableName($localKey),
-                $this->relations[$type],
-                $this->getTableName($foreignKey),
-            ]
-        );
-    }
 }
