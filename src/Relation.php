@@ -61,19 +61,19 @@ class Relation
 
         if ($type === HasOne::class || $type === MorphOne::class) {
             return collect([
-                new Drawer($type, $this->localKey(), $this->foreignKey())
+                new Relationship($type, $this->localKey(), $this->foreignKey())
             ]);
         }
 
         if ($type === HasMany::class || $type === MorphMany::class) {
             return collect([
-                new Drawer($type, $this->localKey(), $this->foreignKey())
+                new Relationship($type, $this->localKey(), $this->foreignKey())
             ]);
         }
 
         if ($type === BelongsTo::class) {
             return collect([
-                new Drawer($type, $this->localKey(), $this->foreignKey())
+                new Relationship($type, $this->localKey(), $this->foreignKey())
             ]);
         }
 
@@ -82,8 +82,8 @@ class Relation
             $pivot = $this->pivot();
 
             return collect([
-                new Drawer($type, $this->localKey(), $this->foreignKey()),
-                new Drawer($type, $pivot->localKey(), $pivot->foreignKey()),
+                new Relationship($type, $this->localKey(), $this->foreignKey()),
+                new Relationship($type, $pivot->localKey(), $pivot->foreignKey()),
             ]);
         }
 

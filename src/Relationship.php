@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
-class Drawer
+class Relationship
 {
     /** @var string[] */
     private static array $relations = [
@@ -33,7 +33,17 @@ class Drawer
         $this->foreignKey = $foreignKey;
     }
 
-    public function draw(): string
+    public function localKey(): string
+    {
+        return $this->localKey;
+    }
+
+    public function foreignKey(): string
+    {
+        return $this->foreignKey;
+    }
+
+    public function render(): string
     {
         return sprintf(
             '%s %s %s',
