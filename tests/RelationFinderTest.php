@@ -14,6 +14,7 @@ use Recca0120\LaravelErdGo\Tests\fixtures\Models\Comment;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Mechanic;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Owner;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Post;
+use Recca0120\LaravelErdGo\Tests\fixtures\Models\User;
 use ReflectionException;
 
 class RelationFinderTest extends TestCase
@@ -93,6 +94,13 @@ class RelationFinderTest extends TestCase
         self::assertEquals(Comment::class, $comments->related());
         self::assertEquals('id', $comments->localKey());
         self::assertEquals('post_id', $comments->foreignKey());
+
+        /** @var Relation $user */
+        $user = $relations->get('user');
+        self::assertEquals(BelongsTo::class, $user->type());
+        self::assertEquals(User::class, $user->related());
+        self::assertEquals('user_id', $user->localKey());
+        self::assertEquals('id', $user->foreignKey());
     }
 
     /**
