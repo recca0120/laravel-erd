@@ -104,7 +104,7 @@ class RelationFinderTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function test_find_owner_relations(): void
+    public function test_find_owner_relations(): Collection
     {
         $relations = $this->givenRelations(Owner::class);
 
@@ -114,6 +114,18 @@ class RelationFinderTest extends TestCase
         self::assertEquals(Car::class, $car->related());
         self::assertEquals('owners.car_id', $car->localKey());
         self::assertEquals('cars.id', $car->foreignKey());
+
+        return $relations;
+    }
+
+    /**
+     * @depends test_find_owner_relations
+     */
+    public function test_draw_owner_relations(Collection $relations): void
+    {
+        /** @var Relation $car */
+        $car = $relations->get('car');
+        self::assertEquals(['owners 1--1 cars'], $car->draw());
     }
 
     /**
