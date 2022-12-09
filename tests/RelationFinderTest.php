@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErdGo\Relation;
@@ -145,6 +146,26 @@ class RelationFinderTest extends TestCase
         self::assertEquals('roles.id', $roles->pivot()->foreignKey());
         self::assertEquals('model_type', $roles->pivot()->morphType());
         self::assertEquals(User::class, $roles->pivot()->morphClass());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_find_roles_relations(): void
+    {
+        $relations = $this->givenRelations(Role::class);
+
+        /** @var Relation $users */
+        $users = $relations->get('users');
+        self::assertEquals(MorphToMany::class, $users->type());
+        self::assertEquals(AuthUser::class, $users->related());
+        self::assertEquals('roles.id', $users->localKey());
+        self::assertEquals('model_has_roles.role_id', $users->foreignKey());
+        self::assertEquals('model_has_roles', $users->pivot()->table());
+        self::assertEquals('model_has_roles.model_id', $users->pivot()->localKey());
+        self::assertEquals('users.id', $users->pivot()->foreignKey());
+        self::assertEquals('model_type', $users->pivot()->morphType());
+        self::assertEquals(AuthUser::class, $users->pivot()->morphClass());
     }
 
     /**

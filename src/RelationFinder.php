@@ -126,8 +126,8 @@ class RelationFinder
                 ];
             }
         } catch (RuntimeException|ReflectionException $e) {
-            dump($method->getName());
-            dump($e->getMessage());
+//            dump($method->getName());
+//            dump($e->getMessage());
         }
 
         return null;
