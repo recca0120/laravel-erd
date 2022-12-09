@@ -43,6 +43,17 @@ class Drawer
         );
     }
 
+    public function hash(): string
+    {
+        $sortBy = [$this->localKey, $this->foreignKey];
+        sort($sortBy);
+        if ($sortBy !== [$this->localKey, $this->foreignKey]) {
+            return md5(implode('', [$this->foreignKey, self::$relations[$this->type], $this->localKey]));
+        }
+
+        return md5(implode('', [$this->localKey, self::$relations[$this->type], $this->foreignKey]));
+    }
+
     private function getTableName(string $qualifiedKeyName)
     {
         return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));

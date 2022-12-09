@@ -34,7 +34,8 @@ class ModelFinder
         return collect($files)
             ->map(fn(SplFileInfo $file) => $this->getFullyQualifiedClassName($file))
             ->filter(fn($className) => !empty($className))
-            ->filter(fn(string $className) => $this->isEloquentModel($className));
+            ->filter(fn(string $className) => $this->isEloquentModel($className))
+            ->values();
     }
 
     /**
