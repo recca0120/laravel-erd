@@ -16,6 +16,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
+use Throwable;
 
 class RelationFinder
 {
@@ -62,6 +63,8 @@ class RelationFinder
         } catch (RuntimeException|ReflectionException $e) {
 //            dump($method->getName());
 //            dump($e->getMessage());
+        } catch (Throwable $e) {
+
         }
 
         return null;

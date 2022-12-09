@@ -3,7 +3,6 @@
 namespace Recca0120\LaravelErdGo;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Illuminate\Support\Collection;
 
 class ErdGo
 {
@@ -20,7 +19,7 @@ class ErdGo
         $this->template = new Template();
     }
 
-    public function generate(string $directory): Collection
+    public function generate(string $directory): string
     {
         $models = $this->modelFinder->find($directory);
 
@@ -44,9 +43,11 @@ class ErdGo
 
         $relationships = $relations
             ->unique(fn(Relationship $relationship) => $relationship->hash())
-            ->map(fn(Relationship $relationship) => $this->template->renderRelationship($relationship));
+            ->map(fn(Relationship $relationship) => $this->template->renderRelationship($relationship))
+            ->sort()
+            ->unique();
 
-        return $tables->merge($relationships);
+        return $tables->merge($relationships)->implode("\n");
     }
 
     private function getTableName(string $qualifiedKeyName)

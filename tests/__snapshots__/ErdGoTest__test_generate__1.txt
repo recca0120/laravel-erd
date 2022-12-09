@@ -77,20 +77,20 @@ remember_token {label: "string, null"}
 created_at {label: "datetime, null"}
 updated_at {label: "datetime, null"}
 
-owners 1--1 cars
+comments 1--1 posts
 mechanics 1--1 cars
+model_has_permissions *--* permissions
+model_has_roles *--* roles
+owners 1--1 cars
+permissions *--* model_has_permissions
 posts 1--* comments
-posts 1--1 users
 posts 1--1 images
-users 1--1 phones
+posts 1--1 users
+role_has_permissions *--* permissions
+roles *--* role_has_permissions
+users *--* model_has_permissions
+users *--* model_has_roles
+users 1--* images
 users 1--* posts
 users 1--1 images
-users 1--* images
-users *--* model_has_roles
-model_has_roles *--* roles
-users *--* model_has_permissions
-model_has_permissions *--* permissions
-comments 1--1 posts
-roles *--* role_has_permissions
-role_has_permissions *--* permissions
-permissions *--* model_has_permissions
+users 1--1 phones

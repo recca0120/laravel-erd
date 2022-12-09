@@ -17,6 +17,6 @@ class ErdGoTest extends TestCase
         $schemaManager = DB::connection()->getDoctrineSchemaManager();
         $erdGo = new ErdGo($schemaManager, new ModelFinder(), new RelationFinder());
 
-        $this->assertMatchesSnapshot($erdGo->generate(__DIR__ . '/fixtures')->implode("\n"));
+        $this->assertMatchesSnapshot($erdGo->generate(__DIR__ . '/fixtures'));
     }
 }
