@@ -46,7 +46,7 @@ class Relation
         return $this->attributes['pivot'] ?? null;
     }
 
-    public function draw(): ?string
+    public function draw(): array
     {
         return (new Drawer($this))->draw();
     }
