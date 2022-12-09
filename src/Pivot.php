@@ -36,13 +36,6 @@ class Pivot
         return $this->attributes['morph_type'] ?? '';
     }
 
-    private function getKeyName(string $qualifiedKeyName)
-    {
-        $segments = explode('.', $qualifiedKeyName);
-
-        return end($segments);
-    }
-
     private function getTableName(string $qualifiedKeyName)
     {
         $segments = explode('.', $qualifiedKeyName);
