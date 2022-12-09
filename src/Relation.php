@@ -2,9 +2,16 @@
 
 namespace Recca0120\LaravelErdGo;
 
-use Recca0120\LaravelErdGo\Contracts\Drawable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Collection;
 
-class Relation implements Drawable
+class Relation
 {
     private array $attributes;
 
@@ -48,8 +55,38 @@ class Relation implements Drawable
         return $this->attributes['pivot'] ?? null;
     }
 
-    public function draw(): array
+    public function all(): Collection
     {
-        return (new Drawer($this))->draw();
+        $type = $this->type();
+
+        if ($type === HasOne::class || $type === MorphOne::class) {
+            return collect([
+                new Drawer($type, $this->localKey(), $this->foreignKey())
+            ]);
+        }
+
+        if ($type === HasMany::class || $type === MorphMany::class) {
+            return collect([
+                new Drawer($type, $this->localKey(), $this->foreignKey())
+            ]);
+        }
+
+        if ($type === BelongsTo::class) {
+            return collect([
+                new Drawer($type, $this->localKey(), $this->foreignKey())
+            ]);
+        }
+
+        if ($type === BelongsToMany::class || $type === MorphToMany::class) {
+            /** @var Pivot $pivot */
+            $pivot = $this->pivot();
+
+            return collect([
+                new Drawer($type, $this->localKey(), $this->foreignKey()),
+                new Drawer($type, $pivot->localKey(), $pivot->foreignKey()),
+            ]);
+        }
+
+        return collect();
     }
 }

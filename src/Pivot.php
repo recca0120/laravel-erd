@@ -2,9 +2,8 @@
 
 namespace Recca0120\LaravelErdGo;
 
-use Recca0120\LaravelErdGo\Contracts\Drawable;
 
-class Pivot implements Drawable
+class Pivot
 {
     private array $attributes;
 

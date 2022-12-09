@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErdGo\Drawer;
 use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\RelationFinder;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
@@ -318,6 +319,6 @@ class RelationFinderTest extends TestCase
         /** @var Relation $relation */
         $relation = $relations->get($method);
 
-        return $relation->draw();
+        return $relation->all()->map(fn(Drawer $drawer) => $drawer->draw())->toArray();
     }
 }

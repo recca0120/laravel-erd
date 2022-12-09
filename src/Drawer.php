@@ -9,62 +9,37 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Recca0120\LaravelErdGo\Contracts\Drawable;
 
 class Drawer
 {
-    private Relation $relation;
-
     /** @var string[] */
-    private array $relations = [
+    private static array $relations = [
         BelongsTo::class => '1--1',
         HasOne::class => '1--1',
         MorphOne::class => '1--1',
         HasMany::class => '1--*',
         MorphMany::class => '1--*',
         BelongsToMany::class => '*--*',
+        MorphToMany::class => '*--*'
     ];
+    private string $type;
+    private string $localKey;
+    private string $foreignKey;
 
-    public function __construct(Relation $relation)
+    public function __construct(string $type, string $localKey, string $foreignKey)
     {
-        $this->relation = $relation;
+        $this->type = $type;
+        $this->localKey = $localKey;
+        $this->foreignKey = $foreignKey;
     }
 
-    public function draw(): array
+    public function draw(): string
     {
-        $type = $this->relation->type();
-
-        if ($type === HasOne::class || $type === MorphOne::class) {
-            return [$this->doDraw($type, $this->relation)];
-        }
-
-        if ($type === HasMany::class || $type === MorphMany::class) {
-            return [$this->doDraw($type, $this->relation)];
-        }
-
-        if ($type === BelongsTo::class) {
-            return [$this->doDraw($type, $this->relation)];
-        }
-
-        if ($type === BelongsToMany::class || $type === MorphToMany::class) {
-            return [
-                $this->doDraw(BelongsToMany::class, $this->relation),
-                $this->doDraw(BelongsToMany::class, $this->relation->pivot())
-            ];
-        }
-
-        return [];
-    }
-
-    private function doDraw(string $type, Drawable $drawable): string
-    {
-        return vsprintf(
+        return sprintf(
             '%s %s %s',
-            [
-                $this->getTableName($drawable->localKey()),
-                $this->relations[$type],
-                $this->getTableName($drawable->foreignKey()),
-            ]
+            $this->getTableName($this->localKey),
+            self::$relations[$this->type],
+            $this->getTableName($this->foreignKey)
         );
     }
 

@@ -25,7 +25,7 @@ class ErdGo
         $models
             ->merge($missing)
             ->flatMap(fn($model) => $this->relationFinder->generate($model)->values())
-            ->flatMap(fn(Relation $relation) => $relation->draw())
+            ->flatMap(fn(Relation $relation) => $relation->all()->map->draw())
             ->unique()
             ->sort()
             ->values()
