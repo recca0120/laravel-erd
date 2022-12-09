@@ -254,6 +254,7 @@ class RelationFinderTest extends TestCase
         $user = $this->givenRelations(User::class);
         self::assertEquals(['users 1--* posts'], $this->draw($user, 'posts'));
         self::assertEquals(['users 1--1 images'], $this->draw($user, 'image'));
+        self::assertEquals(['users 1--* images'], $this->draw($user, 'images'));
 
         $post = $this->givenRelations(Post::class);
         self::assertEquals(['posts *--1 users'], $this->draw($post, 'user'));
@@ -262,6 +263,32 @@ class RelationFinderTest extends TestCase
 
         $comment = $this->givenRelations(Comment::class);
         self::assertEquals(['comments *--1 posts'], $this->draw($comment, 'post'));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_draw_user_role_permission_relations(): void
+    {
+        $user = $this->givenRelations(User::class);
+        self::assertEquals([
+            'users *--* model_has_roles',
+            'model_has_roles *--* roles',
+        ], $this->draw($user, 'roles'));
+        self::assertEquals([
+            'users *--* model_has_permissions',
+            'model_has_permissions *--* permissions',
+        ], $this->draw($user, 'permissions'));
+
+        $role = $this->givenRelations(Role::class);
+        self::assertEquals([
+            'roles *--* model_has_roles',
+            'model_has_roles *--* users',
+        ], $this->draw($role, 'users'));
+        self::assertEquals([
+            'roles *--* role_has_permissions',
+            'role_has_permissions *--* permissions',
+        ], $this->draw($role, 'permissions'));
     }
 
     /**
