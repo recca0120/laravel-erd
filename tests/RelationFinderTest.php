@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelErdGo\Tests;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -18,6 +19,7 @@ use Recca0120\LaravelErdGo\Tests\fixtures\Models\Owner;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Post;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\User;
 use ReflectionException;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RelationFinderTest extends TestCase
@@ -151,7 +153,27 @@ class RelationFinderTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function test_find_roles_relations(): void
+    public function test_find_user_permissions_relations(): void
+    {
+        $relations = $this->givenRelations(User::class);
+
+        /** @var Relation $permissions */
+        $permissions = $relations->get('permissions');
+        self::assertEquals(MorphToMany::class, $permissions->type());
+        self::assertEquals(Permission::class, $permissions->related());
+        self::assertEquals('users.id', $permissions->localKey());
+        self::assertEquals('model_has_permissions.model_id', $permissions->foreignKey());
+        self::assertEquals('model_has_permissions', $permissions->pivot()->table());
+        self::assertEquals('model_has_permissions.permission_id', $permissions->pivot()->localKey());
+        self::assertEquals('permissions.id', $permissions->pivot()->foreignKey());
+        self::assertEquals('model_type', $permissions->pivot()->morphType());
+        self::assertEquals(User::class, $permissions->pivot()->morphClass());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_find_roles_users_relations(): void
     {
         $relations = $this->givenRelations(Role::class);
 
@@ -166,6 +188,24 @@ class RelationFinderTest extends TestCase
         self::assertEquals('users.id', $users->pivot()->foreignKey());
         self::assertEquals('model_type', $users->pivot()->morphType());
         self::assertEquals(AuthUser::class, $users->pivot()->morphClass());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function test_find_role_permissions_relations(): void
+    {
+        $relations = $this->givenRelations(Role::class);
+
+        /** @var Relation $permissions */
+        $permissions = $relations->get('permissions');
+        self::assertEquals(BelongsToMany::class, $permissions->type());
+        self::assertEquals(Permission::class, $permissions->related());
+        self::assertEquals('roles.id', $permissions->localKey());
+        self::assertEquals('role_has_permissions.role_id', $permissions->foreignKey());
+        self::assertEquals('role_has_permissions', $permissions->pivot()->table());
+        self::assertEquals('role_has_permissions.permission_id', $permissions->pivot()->localKey());
+        self::assertEquals('permissions.id', $permissions->pivot()->foreignKey());
     }
 
     /**
