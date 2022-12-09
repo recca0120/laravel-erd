@@ -17,4 +17,14 @@ class User extends Model
     {
         return $this->hasOne(Phone::class);
     }
+
+    public function latestPost(): HasOne
+    {
+        return $this->hasOne(Post::class)->latestOfMany();
+    }
+
+    public function oldestPost(): HasOne
+    {
+        return $this->hasOne(Post::class)->oldestOfMany();
+    }
 }

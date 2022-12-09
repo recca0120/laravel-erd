@@ -106,6 +106,28 @@ class RelationFinderTest extends TestCase
     /**
      * @throws ReflectionException
      */
+    public function test_find_user_relations(): void
+    {
+        $relations = $this->givenRelations(User::class);
+
+        /** @var Relation $latestPost */
+        $latestPost = $relations->get('latestPost');
+        self::assertEquals(HasOne::class, $latestPost->type());
+        self::assertEquals(Post::class, $latestPost->related());
+        self::assertEquals('id', $latestPost->localKey());
+        self::assertEquals('user_id', $latestPost->foreignKey());
+
+        /** @var Relation $oldestPost */
+        $oldestPost = $relations->get('oldestPost');
+        self::assertEquals(HasOne::class, $oldestPost->type());
+        self::assertEquals(Post::class, $oldestPost->related());
+        self::assertEquals('id', $oldestPost->localKey());
+        self::assertEquals('user_id', $oldestPost->foreignKey());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     private function givenRelations(string $model): Collection
     {
         return $this->finder->generate($model);
