@@ -49,6 +49,8 @@ class RelationFinderTest extends TestCase
         self::assertEquals(Car::class, $car->related());
         self::assertEquals('mechanics.id', $car->localKey());
         self::assertEquals('cars.mechanic_id', $car->foreignKey());
+
+        self::assertEquals('mechanics 1--1 cars', $car->draw());
     }
 
     /**

@@ -45,4 +45,10 @@ class Relation
     {
         return $this->attributes['pivot'] ?? null;
     }
+
+    public function draw(): ?string
+    {
+        return (new Drawer($this))->draw();
+    }
+
 }
