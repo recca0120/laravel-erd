@@ -289,6 +289,20 @@ class RelationFinderTest extends TestCase
             'roles *--* role_has_permissions',
             'role_has_permissions *--* permissions',
         ], $this->draw($role, 'permissions'));
+
+        $permission = $this->givenRelations(Permission::class);
+        self::assertEquals([
+            'permissions *--* role_has_permissions',
+            'role_has_permissions *--* roles',
+        ], $this->draw($permission, 'roles'));
+        self::assertEquals([
+            'permissions *--* model_has_permissions',
+            'model_has_permissions *--* users',
+        ], $this->draw($permission, 'users'));
+        self::assertEquals([
+            'permissions *--* model_has_permissions',
+            'model_has_permissions *--* permissions',
+        ], $this->draw($permission, 'permissions'));
     }
 
     /**
