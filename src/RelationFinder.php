@@ -5,6 +5,7 @@ namespace Recca0120\LaravelErdGo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -137,13 +138,16 @@ class RelationFinder
         ]);
     }
 
-    private function hasOneOrMany(HasOneOrMany $return, string $type, string $related): Relation
+    private function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Relation
     {
+        if ($return instanceof HasOne && $return->isOneOfMany()) {
+            return null;
+        }
+
 //        dump([
 //            'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
 //            'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
 //        ]);
-
         $attributes = [
             'type' => $type,
             'related' => $related,

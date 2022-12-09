@@ -5,6 +5,8 @@ namespace Recca0120\LaravelErdGo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Drawer
 {
@@ -13,7 +15,9 @@ class Drawer
     private array $relations = [
         BelongsTo::class => '*--1',
         HasOne::class => '1--1',
+        MorphOne::class => '1--1',
         HasMany::class => '1--*',
+        MorphMany::class => '1--*',
     ];
 
     public function __construct(Relation $relation)
@@ -25,7 +29,7 @@ class Drawer
     {
         $type = $this->relation->type();
 
-        if ($type === HasOne::class) {
+        if ($type === HasOne::class || $type === MorphOne::class) {
             $localKey = $this->relation->localKey();
             $foreignKey = $this->relation->foreignKey();
             $relation = $this->relations[$type];
@@ -42,7 +46,7 @@ class Drawer
             ];
         }
 
-        if ($type === HasMany::class) {
+        if ($type === HasMany::class || $type === MorphMany::class) {
             $localKey = $this->relation->localKey();
             $foreignKey = $this->relation->foreignKey();
             $relation = $this->relations[$type];
@@ -75,7 +79,6 @@ class Drawer
                 )
             ];
         }
-
 
         return [];
     }

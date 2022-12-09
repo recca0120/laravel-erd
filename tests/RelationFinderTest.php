@@ -121,19 +121,8 @@ class RelationFinderTest extends TestCase
     {
         $relations = $this->givenRelations(User::class);
 
-        /** @var Relation $latestPost */
-        $latestPost = $relations->get('latestPost');
-        self::assertEquals(HasOne::class, $latestPost->type());
-        self::assertEquals(Post::class, $latestPost->related());
-        self::assertEquals('users.id', $latestPost->localKey());
-        self::assertEquals('posts.user_id', $latestPost->foreignKey());
-
-        /** @var Relation $oldestPost */
-        $oldestPost = $relations->get('oldestPost');
-        self::assertEquals(HasOne::class, $oldestPost->type());
-        self::assertEquals(Post::class, $oldestPost->related());
-        self::assertEquals('users.id', $oldestPost->localKey());
-        self::assertEquals('posts.user_id', $oldestPost->foreignKey());
+        self::assertNull($relations->get('latestPost'));
+        self::assertNull($relations->get('oldestPost'));
     }
 
     /**
@@ -264,10 +253,12 @@ class RelationFinderTest extends TestCase
     {
         $user = $this->givenRelations(User::class);
         self::assertEquals(['users 1--* posts'], $this->draw($user, 'posts'));
+        self::assertEquals(['users 1--1 images'], $this->draw($user, 'image'));
 
         $post = $this->givenRelations(Post::class);
-        self::assertEquals(['posts 1--* comments'], $this->draw($post, 'comments'));
         self::assertEquals(['posts *--1 users'], $this->draw($post, 'user'));
+        self::assertEquals(['posts 1--* comments'], $this->draw($post, 'comments'));
+        self::assertEquals(['posts 1--1 images'], $this->draw($post, 'image'));
 
         $comment = $this->givenRelations(Comment::class);
         self::assertEquals(['comments *--1 posts'], $this->draw($comment, 'post'));
