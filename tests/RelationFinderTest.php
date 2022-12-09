@@ -319,6 +319,6 @@ class RelationFinderTest extends TestCase
         /** @var Relation $relation */
         $relation = $relations->get($method);
 
-        return $relation->all()->map(fn(Relationship $drawer) => $drawer->render())->toArray();
+        return $relation->relationships()->map(fn(Relationship $drawer) => $drawer->render())->toArray();
     }
 }

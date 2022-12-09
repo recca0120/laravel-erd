@@ -1,0 +1,96 @@
+[cars] {}
+id {label: "integer, not null"}
+model {label: "string, not null"}
+mechanic_id {label: "integer, not null"}
+
+[comments] {}
+id {label: "integer, not null"}
+post_id {label: "integer, not null"}
+title {label: "string, not null"}
+created_at {label: "datetime, null"}
+updated_at {label: "datetime, null"}
+
+[images] {}
+id {label: "integer, not null"}
+url {label: "string, not null"}
+imageable_type {label: "string, not null"}
+imageable_id {label: "integer, not null"}
+created_at {label: "datetime, null"}
+updated_at {label: "datetime, null"}
+
+[mechanics] {}
+id {label: "integer, not null"}
+name {label: "string, not null"}
+
+[model_has_permissions] {}
+permission_id {label: "integer, not null"}
+model_type {label: "string, not null"}
+model_id {label: "integer, not null"}
+
+[model_has_roles] {}
+role_id {label: "integer, not null"}
+model_type {label: "string, not null"}
+model_id {label: "integer, not null"}
+
+[owners] {}
+id {label: "integer, not null"}
+name {label: "string, not null"}
+car_id {label: "integer, not null"}
+
+[permissions] {}
+id {label: "integer, not null"}
+name {label: "string, not null"}
+guard_name {label: "string, not null"}
+created_at {label: "datetime, null"}
+updated_at {label: "datetime, null"}
+
+[phones] {}
+id {label: "integer, not null"}
+user_id {label: "integer, not null"}
+phone_numbers {label: "string, not null"}
+
+[posts] {}
+id {label: "integer, not null"}
+user_id {label: "integer, not null"}
+title {label: "string, not null"}
+created_at {label: "datetime, null"}
+updated_at {label: "datetime, null"}
+
+[role_has_permissions] {}
+permission_id {label: "integer, not null"}
+role_id {label: "integer, not null"}
+
+[roles] {}
+id {label: "integer, not null"}
+name {label: "string, not null"}
+guard_name {label: "string, not null"}
+created_at {label: "datetime, null"}
+updated_at {label: "datetime, null"}
+
+[users] {}
+id {label: "integer, not null"}
+name {label: "string, not null"}
+email {label: "string, not null"}
+email_verified_at {label: "datetime, null"}
+password {label: "string, not null"}
+remember_token {label: "string, null"}
+created_at {label: "datetime, null"}
+updated_at {label: "datetime, null"}
+
+owners 1--1 cars
+mechanics 1--1 cars
+posts 1--* comments
+posts 1--1 users
+posts 1--1 images
+users 1--1 phones
+users 1--* posts
+users 1--1 images
+users 1--* images
+users *--* model_has_roles
+model_has_roles *--* roles
+users *--* model_has_permissions
+model_has_permissions *--* permissions
+comments 1--1 posts
+roles *--* role_has_permissions
+role_has_permissions *--* permissions
+permissions *--* model_has_permissions

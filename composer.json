@@ -26,7 +26,8 @@
     "phpunit/phpunit": "^9.5",
     "mockery/mockery": "^1.5",
     "orchestra/testbench": "^7.13",
-    "spatie/laravel-permission": "^5.7"
+    "spatie/laravel-permission": "^5.7",
+    "spatie/phpunit-snapshot-assertions": "^4.2"
   },
   "scripts": {
     "post-autoload-dump": [

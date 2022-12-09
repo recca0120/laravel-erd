@@ -55,7 +55,7 @@ class Relation
         return $this->attributes['pivot'] ?? null;
     }
 
-    public function all(): Collection
+    public function relationships(): Collection
     {
         $type = $this->type();
 
