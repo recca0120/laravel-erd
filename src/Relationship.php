@@ -13,14 +13,11 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class Relationship
 {
     /** @var string[] */
-    private static array $relations = [
-        BelongsTo::class => '1--1',
-        HasOne::class => '1--1',
-        MorphOne::class => '1--1',
-        HasMany::class => '1--*',
-        MorphMany::class => '1--*',
-        BelongsToMany::class => '*--*',
-        MorphToMany::class => '*--*'
+    private static array $lookup = [
+        BelongsTo::class => HasOne::class,
+        MorphOne::class => HasOne::class,
+        MorphMany::class => HasMany::class,
+        MorphToMany::class => BelongsToMany::class
     ];
     private string $type;
     private string $localKey;
@@ -33,6 +30,11 @@ class Relationship
         $this->foreignKey = $foreignKey;
     }
 
+    public function type(): string
+    {
+        return $this->type;
+    }
+
     public function localKey(): string
     {
         return $this->localKey;
@@ -43,29 +45,17 @@ class Relationship
         return $this->foreignKey;
     }
 
-    public function render(): string
-    {
-        return sprintf(
-            '%s %s %s',
-            $this->getTableName($this->localKey),
-            self::$relations[$this->type],
-            $this->getTableName($this->foreignKey)
-        );
-    }
-
     public function hash(): string
     {
+        $relationship = Template::$relationships[$this->type];
+
         $sortBy = [$this->localKey, $this->foreignKey];
         sort($sortBy);
+
         if ($sortBy !== [$this->localKey, $this->foreignKey]) {
-            return md5(implode('', [$this->foreignKey, self::$relations[$this->type], $this->localKey]));
+            return md5(implode('', [$this->foreignKey, $relationship, $this->localKey]));
         }
 
-        return md5(implode('', [$this->localKey, self::$relations[$this->type], $this->foreignKey]));
-    }
-
-    private function getTableName(string $qualifiedKeyName)
-    {
-        return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));
+        return md5(implode('', [$this->localKey, $relationship, $this->foreignKey]));
     }
 }

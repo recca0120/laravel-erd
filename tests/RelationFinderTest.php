@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErdGo\Relationship;
 use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\RelationFinder;
+use Recca0120\LaravelErdGo\Relationship;
+use Recca0120\LaravelErdGo\Template;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Comment;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Image;
@@ -316,9 +317,12 @@ class RelationFinderTest extends TestCase
 
     private function draw(Collection $relations, $method): array
     {
+        $template = new Template();
         /** @var Relation $relation */
         $relation = $relations->get($method);
 
-        return $relation->relationships()->map(fn(Relationship $drawer) => $drawer->render())->toArray();
+        return $relation->relationships()
+            ->map(fn(Relationship $relationship) => $template->renderRelationship($relationship))
+            ->toArray();
     }
 }

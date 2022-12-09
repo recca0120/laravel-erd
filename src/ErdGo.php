@@ -10,12 +10,14 @@ class ErdGo
     private AbstractSchemaManager $schemaManager;
     private ModelFinder $modelFinder;
     private RelationFinder $relationFinder;
+    private Template $template;
 
     public function __construct(AbstractSchemaManager $schemaManager, ModelFinder $modelFinder, RelationFinder $relationFinder)
     {
         $this->schemaManager = $schemaManager;
         $this->modelFinder = $modelFinder;
         $this->relationFinder = $relationFinder;
+        $this->template = new Template();
     }
 
     public function generate(string $directory): Collection
@@ -38,11 +40,11 @@ class ErdGo
             ->sort()
             ->unique()
             ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
-            ->map(fn(Table $table): string => $table->render());
+            ->map(fn(Table $table): string => $this->template->renderTable($table));
 
         $relationships = $relations
             ->unique(fn(Relationship $relationship) => $relationship->hash())
-            ->map(fn(Relationship $relationship) => $relationship->render());
+            ->map(fn(Relationship $relationship) => $this->template->renderRelationship($relationship));
 
         return $tables->merge($relationships);
     }

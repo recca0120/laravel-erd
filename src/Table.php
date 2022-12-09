@@ -2,11 +2,7 @@
 
 namespace Recca0120\LaravelErdGo;
 
-use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Column as DBALColumn;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\DBAL\Types\TypeRegistry;
 
 class Table
 {
@@ -25,34 +21,13 @@ class Table
         $this->columns = $columns;
     }
 
-    public function render(): string
+    public function name(): string
     {
-        $result = sprintf("[%s] {}\n", $this->name);
-        $result .= collect($this->columns)
-                ->map(function (Column $column) {
-                    return sprintf(
-                        '%s {label: "%s, %s"}',
-                        $column->getName(),
-                        $this->getColumnType($column),
-                        $column->getNotnull() ? 'not null' : 'null'
-                    );
-                })
-                ->implode("\n") . "\n";
-
-        return $result;
+        return $this->name;
     }
 
-    private function getColumnType(Column $column): string
+    public function columns(): array
     {
-        try {
-            return $this->getTypeRegistry()->lookupName($column->getType());
-        } catch (Exception $e) {
-            return 'unknown';
-        }
-    }
-
-    private function getTypeRegistry(): TypeRegistry
-    {
-        return Type::getTypeRegistry();
+        return $this->columns;
     }
 }
