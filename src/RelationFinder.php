@@ -4,7 +4,7 @@ namespace Recca0120\LaravelErdGo;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use Illuminate\Support\Collection;
 use ReflectionClass;
@@ -76,7 +76,7 @@ class RelationFinder
 //                ]
 //            ];
 
-            $type = (new ReflectionClass($return))->getShortName();
+            $type = (new ReflectionClass($return))->getName();
             $related = (new ReflectionClass($return->getRelated()))->getName();
 
             if ($return instanceof BelongsTo) {
@@ -95,11 +95,9 @@ class RelationFinder
                         'foreign_key' => $return->getQualifiedOwnerKeyName(),
                     ])
                 ];
-
             }
 
-
-            if ($return instanceof HasOne) {
+            if ($return instanceof HasOneOrMany) {
 //                dump($return->getQualifiedParentKeyName());
 //                dump($return->getQualifiedForeignKeyName());
 //                dump((new ReflectionClass($return->getRelated()))->getName());
