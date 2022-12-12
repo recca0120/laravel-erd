@@ -4,6 +4,7 @@ namespace Recca0120\LaravelErdGo;
 
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Illuminate\Support\Collection;
 
 class ErdGo
 {
@@ -40,6 +41,34 @@ class ErdGo
     {
         $models = $this->modelFinder->find($this->directory ?? __DIR__, $patterns);
 
+        return $this->generateByModels($models);
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function generateByFile($file)
+    {
+        $models = $this->modelFinder->find($this->directory ?? __DIR__, $file);
+
+        return $this->generateByModels($models);
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function generateByModel($className)
+    {
+        return $this->generateByModels(collect($className));
+    }
+
+    /**
+     * @param  Collection  $models
+     * @return mixed
+     * @throws DBALException
+     */
+    private function generateByModels(Collection $models)
+    {
         $missing = $models
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model))
             ->map(fn(Relation $relation) => $relation->related())
