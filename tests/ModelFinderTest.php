@@ -17,7 +17,7 @@ class ModelFinderTest extends TestCase
     {
         parent::setUp();
 
-        $this->files = (new ModelFinder)->find(__DIR__ . '/fixtures');
+        $this->files = (new ModelFinder)->find(__DIR__ . '/fixtures', '*.php');
     }
 
     public function test_it_should_find_user_model(): void

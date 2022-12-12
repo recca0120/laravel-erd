@@ -27,9 +27,14 @@ class ModelFinder
         $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
     }
 
-    public function find(string $directory): Collection
+    /**
+     * @param  string  $directory
+     * @param  string|string[]  $patterns
+     * @return Collection
+     */
+    public function find(string $directory, $patterns = '*.php'): Collection
     {
-        $files = Finder::create()->files()->name('*.php')->in($directory);
+        $files = Finder::create()->files()->name($patterns)->in($directory);
 
         return collect($files)
             ->map(fn(SplFileInfo $file) => $this->getFullyQualifiedClassName($file))

@@ -2,6 +2,7 @@
 
 namespace Recca0120\LaravelErdGo;
 
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
 class ErdGo
@@ -11,17 +12,26 @@ class ErdGo
     private RelationFinder $relationFinder;
     private Template $template;
 
-    public function __construct(AbstractSchemaManager $schemaManager, ModelFinder $modelFinder, RelationFinder $relationFinder)
-    {
+    public function __construct(
+        AbstractSchemaManager $schemaManager,
+        ModelFinder $modelFinder,
+        RelationFinder $relationFinder
+    ) {
         $this->schemaManager = $schemaManager;
         $this->modelFinder = $modelFinder;
         $this->relationFinder = $relationFinder;
         $this->template = new Template();
     }
 
-    public function generate(string $directory): string
+    /**
+     * @param  string  $directory
+     * @param  string|string[]  $patterns
+     * @return string
+     * @throws DBALException
+     */
+    public function generate(string $directory, $patterns = '*.php'): string
     {
-        $models = $this->modelFinder->find($directory);
+        $models = $this->modelFinder->find($directory, '*.php');
 
         $missing = $models
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model))
