@@ -90,16 +90,16 @@ class ErdGo
         $tables = $relationships
             ->flatMap(fn(Relationship $relationship) => [$relationship->localKey(), $relationship->foreignKey()])
             ->map(fn(string $key) => Helpers::getTableName($key))
-            ->sort()
             ->unique()
+            ->sortBy(fn(string $table) => $table)
             ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
             ->map(fn(Table $table): string => $this->template->renderTable($table));
 
         $relationships = $relationships
             ->unique(fn(Relationship $relationship) => $relationship->hash())
             ->map(fn(Relationship $relationship) => $this->template->renderRelationship($relationship))
-            ->sort()
-            ->unique();
+            ->unique()
+            ->sortBy(fn(string $line) => $line);
 
         return $tables->merge($relationships)->implode("\n");
     }
