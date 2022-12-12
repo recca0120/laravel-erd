@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelErdGo\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Recca0120\LaravelErdGo\ErdGoServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
 class TestCase extends BaseTestCase
@@ -10,7 +11,8 @@ class TestCase extends BaseTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            PermissionServiceProvider::class
+            PermissionServiceProvider::class,
+            ErdGoServiceProvider::class,
         ];
     }
 
