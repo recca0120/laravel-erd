@@ -31,6 +31,7 @@ class ErdGoTest extends TestCase
         $this->assertMatchesSnapshot($erdGo->generateByFile('Car.php'));
     }
 
+
     /**
      * @throws Exception
      */
@@ -39,6 +40,16 @@ class ErdGoTest extends TestCase
         $erdGo = $this->givenErdGo();
 
         $this->assertMatchesSnapshot($erdGo->generateByModel(Car::class));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function test_generate_er_model_exclude_owner(): void
+    {
+        $erdGo = $this->givenErdGo();
+
+        $this->assertMatchesSnapshot($erdGo->generateByFile('Car.php', ['owners']));
     }
 
     private function givenErdGo(): ErdGo
