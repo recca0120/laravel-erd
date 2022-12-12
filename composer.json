@@ -33,5 +33,17 @@
     "post-autoload-dump": [
       "@php vendor/bin/testbench package:discover --ansi"
     ]
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Recca0120\\LaravelErdGo\\ErdGoServiceProvider"
+      ]
+    }
   }
 }
