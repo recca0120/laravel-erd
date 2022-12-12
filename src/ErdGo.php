@@ -83,10 +83,7 @@ class ErdGo
             ->flatMap(fn($model) => $this->relationFinder->generate($model)->values())
             ->flatMap(fn(Relation $relation) => $relation->relationships())
             ->when(count($excludes) > 0, function (Collection $relationships) use ($excludes) {
-                return $relationships->filter(function (Relationship $relationship) use ($excludes) {
-                    return !in_array(Helpers::getTableName($relationship->localKey()), $excludes, true)
-                        && !in_array(Helpers::getTableName($relationship->foreignKey()), $excludes, true);
-                });
+                return $relationships->filter(fn(Relationship $relationship) => !$relationship->includes($excludes));
             });
 
         /** @var Collection $tables */

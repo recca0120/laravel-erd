@@ -17,7 +17,7 @@ class Relationship
         BelongsTo::class => HasOne::class,
         MorphOne::class => HasOne::class,
         MorphMany::class => HasMany::class,
-        MorphToMany::class => BelongsToMany::class
+        MorphToMany::class => BelongsToMany::class,
     ];
     private string $type;
     private string $localKey;
@@ -57,5 +57,17 @@ class Relationship
         }
 
         return md5(implode('', [$this->localKey, $relationship, $this->foreignKey]));
+    }
+
+    /**
+     * @param  string|string[]  $tables
+     * @return bool
+     */
+    public function includes($tables): bool
+    {
+        $localTable = Helpers::getTableName($this->localKey());
+        $foreignTable = Helpers::getTableName($this->foreignKey());
+
+        return in_array($localTable, $tables, true) || in_array($foreignTable, $tables, true);
     }
 }
