@@ -17,7 +17,7 @@ class ErdGoTest extends TestCase
     {
         $erdGo = $this->givenErdGo();
 
-        $this->assertMatchesSnapshot($erdGo->generate(__DIR__ . '/fixtures'));
+        $this->assertMatchesSnapshot($erdGo->generate());
     }
 
     /**
@@ -27,11 +27,11 @@ class ErdGoTest extends TestCase
     {
         $erdGo = $this->givenErdGo();
 
-        $this->assertMatchesSnapshot($erdGo->generate(__DIR__ . '/fixtures', 'Car.php'));
+        $this->assertMatchesSnapshot($erdGo->generate('Car.php'));
     }
 
     private function givenErdGo(): ErdGo
     {
-        return $this->app->make(ErdGo::class);
+        return $this->app->make(ErdGo::class)->in(__DIR__ . '/fixtures');
     }
 }

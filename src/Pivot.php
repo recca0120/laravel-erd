@@ -14,7 +14,7 @@ class Pivot
 
     public function table(): string
     {
-        return $this->getTableName($this->attributes['local_key']);
+        return Helpers::getTableName($this->attributes['local_key']);
     }
 
     public function localKey(): string
@@ -35,10 +35,5 @@ class Pivot
     public function morphType(): string
     {
         return $this->attributes['morph_type'] ?? '';
-    }
-
-    private function getTableName(string $qualifiedKeyName)
-    {
-        return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));
     }
 }

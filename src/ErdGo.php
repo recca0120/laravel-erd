@@ -11,6 +11,7 @@ class ErdGo
     private ModelFinder $modelFinder;
     private RelationFinder $relationFinder;
     private Template $template;
+    private string $directory;
 
     public function __construct(
         AbstractSchemaManager $schemaManager,
@@ -23,15 +24,21 @@ class ErdGo
         $this->template = new Template();
     }
 
+    public function in(string $directory): ErdGo
+    {
+        $this->directory = $directory;
+
+        return $this;
+    }
+
     /**
-     * @param  string  $directory
      * @param  string|string[]  $patterns
      * @return string
      * @throws DBALException
      */
-    public function generate(string $directory, $patterns = '*.php'): string
+    public function generate($patterns = '*.php'): string
     {
-        $models = $this->modelFinder->find($directory, $patterns);
+        $models = $this->modelFinder->find($this->directory ?? __DIR__, $patterns);
 
         $missing = $models
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model))
@@ -45,7 +52,7 @@ class ErdGo
 
         $tables = $relations
             ->flatMap(fn(Relationship $drawer) => [$drawer->localKey(), $drawer->foreignKey()])
-            ->map(fn(string $key) => $this->getTableName($key))
+            ->map(fn(string $key) => Helpers::getTableName($key))
             ->sort()
             ->unique()
             ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
@@ -58,10 +65,5 @@ class ErdGo
             ->unique();
 
         return $tables->merge($relationships)->implode("\n");
-    }
-
-    private function getTableName(string $qualifiedKeyName)
-    {
-        return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));
     }
 }
