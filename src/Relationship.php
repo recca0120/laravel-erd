@@ -52,11 +52,11 @@ class Relationship
         $sortBy = [$this->localKey, $this->foreignKey];
         sort($sortBy);
 
-        if ($sortBy !== [$this->localKey, $this->foreignKey]) {
-            return md5(implode('', [$this->foreignKey, $relationship, $this->localKey]));
-        }
+        $keys = $sortBy !== [$this->localKey, $this->foreignKey]
+            ? [$this->foreignKey, $relationship, $this->localKey]
+            : [$this->localKey, $relationship, $this->foreignKey];
 
-        return md5(implode('', [$this->localKey, $relationship, $this->foreignKey]));
+        return md5(implode('', $keys));
     }
 
     /**
