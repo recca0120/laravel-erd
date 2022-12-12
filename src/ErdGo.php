@@ -31,7 +31,7 @@ class ErdGo
      */
     public function generate(string $directory, $patterns = '*.php'): string
     {
-        $models = $this->modelFinder->find($directory, '*.php');
+        $models = $this->modelFinder->find($directory, $patterns);
 
         $missing = $models
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model))

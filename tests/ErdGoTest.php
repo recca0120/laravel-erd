@@ -13,11 +13,25 @@ class ErdGoTest extends TestCase
     /**
      * @throws Exception
      */
-    public function test_generate(): void
+    public function test_generate_er_model_in_directory(): void
     {
-        /** @var ErdGo $erdGo */
-        $erdGo = $this->app->make(ErdGo::class);
+        $erdGo = $this->givenErdGo();
 
         $this->assertMatchesSnapshot($erdGo->generate(__DIR__ . '/fixtures'));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function test_generate_er_model_by_file(): void
+    {
+        $erdGo = $this->givenErdGo();
+
+        $this->assertMatchesSnapshot($erdGo->generate(__DIR__ . '/fixtures', 'Car.php'));
+    }
+
+    private function givenErdGo(): ErdGo
+    {
+        return $this->app->make(ErdGo::class);
     }
 }
