@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Recca0120\LaravelErdGo\Helpers;
 use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\Table;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 
 class ErdGo
@@ -55,13 +56,17 @@ class ErdGo
         $erdGoBinary = $options['erd-go'] ?? '/usr/local/bin/erd-go';
         $dotBinary = $options['dot'] ?? '/usr/local/bin/dot';
 
-        $command = sprintf('cat %s | %s | %s -T png -o %s', $tempFile, $erdGoBinary, $dotBinary, $path);
+        $command = sprintf('cat %s | %s | %s -T svg -o %s', $tempFile, $erdGoBinary, $dotBinary, $path);
         $process = Process::fromShellCommandline($command);
 
         $process->start();
         $exitCode = $process->wait();
 
         fclose($fp);
+
+        if ($exitCode !== 0) {
+            throw new RuntimeException($process->getExitCodeText());
+        }
 
         return $exitCode;
     }

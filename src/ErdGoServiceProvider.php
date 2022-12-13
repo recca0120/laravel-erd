@@ -12,13 +12,13 @@ class ErdGoServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/erd-go.php', 'erd-go');
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__ . '/../config/erd-go.php',], 'erd-go');
+            $this->publishes([__DIR__ . '/../config/erd-go.php'], 'erd-go');
         }
 
         $this->app->singleton(ErdFinder::class, function () {
             return (new ErdFinder(
                 $this->app['db']->getDoctrineSchemaManager(), new ModelFinder(), new RelationFinder()
-            ))->in(app_path());
+            ));
         });
 
         $this->commands([ErdGoCommand::class]);

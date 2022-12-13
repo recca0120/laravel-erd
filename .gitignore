@@ -5,3 +5,4 @@ vendor/
 
 .phpunit.result.cache
 composer.lock
+tests/fixtures/actual_artisan.svg
