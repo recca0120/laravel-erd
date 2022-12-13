@@ -78,7 +78,7 @@ class ErdGo
             ->diff($models);
 
         /** @var Collection $uniqueMerged */
-        $uniqueMerged = $models
+        $relationships = $models
             ->merge($missing)
             ->flatMap(fn($model) => $this->relationFinder->generate($model)->values())
             ->flatMap(fn(Relation $relation) => $relation->relationships())
@@ -87,22 +87,14 @@ class ErdGo
             })
             ->values();
 
-        $tables = $uniqueMerged
+        $tables = $relationships
             ->flatMap(fn(Relationship $relationship) => [$relationship->localKey(), $relationship->foreignKey()])
             ->map(fn(string $key) => Helpers::getTableName($key))
             ->unique()
             ->sort()
             ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
-            ->map(fn(Table $table): string => $this->template->renderTable($table))
             ->values();
 
-        $relationships = $uniqueMerged
-            ->unique(fn(Relationship $relationship) => $relationship->uniqueId())
-            ->sortBy(fn(Relationship $relationship) => $relationship->sortBy())
-            ->map(fn(Relationship $relationship) => $this->template->renderRelationship($relationship))
-            ->sort()
-            ->values();
-
-        return $tables->merge($relationships)->implode("\n");
+        return $this->template->render($tables, $relationships);
     }
 }

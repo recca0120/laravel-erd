@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Collection;
 
 class Template
 {
     /** @var string[] */
-    public static array $relationships = [
+    private static array $relationships = [
         BelongsTo::class => '1--1',
         HasOne::class => '1--1',
         MorphOne::class => '1--1',
@@ -23,6 +24,19 @@ class Template
         BelongsToMany::class => '*--*',
         MorphToMany::class => '*--*',
     ];
+
+    public function render(Collection $tables, Collection $relationships): string
+    {
+        $results = $tables->map(fn(Table $table): string => $this->renderTable($table));
+
+        return $results->merge(
+            $relationships
+                ->unique(fn(Relationship $relationship) => $relationship->uniqueId())
+                ->sortBy(fn(Relationship $relationship) => $relationship->sortBy())
+                ->map(fn(Relationship $relationship) => $this->renderRelationship($relationship))
+                ->sort()
+        )->implode("\n");
+    }
 
     public function renderTable(Table $table): string
     {
@@ -34,7 +48,7 @@ class Template
         return $result;
     }
 
-    public function renderRelationship(Relationship $relationship): string
+    private function renderRelationship(Relationship $relationship): string
     {
         return sprintf(
             '%s %s %s',

@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErdGo\Helpers;
 use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\RelationFinder;
 use Recca0120\LaravelErdGo\Relationship;
@@ -30,6 +32,15 @@ class RelationFinderTest extends TestCase
 {
     use RefreshDatabase;
 
+    private static array $relationships = [
+        BelongsTo::class => '1--1',
+        HasOne::class => '1--1',
+        MorphOne::class => '1--1',
+        HasMany::class => '1--*',
+        MorphMany::class => '1--*',
+        BelongsToMany::class => '*--*',
+        MorphToMany::class => '*--*',
+    ];
     private RelationFinder $finder;
 
     protected function setUp(): void
@@ -322,7 +333,17 @@ class RelationFinderTest extends TestCase
         $relation = $relations->get($method);
 
         return $relation->relationships()
-            ->map(fn(Relationship $relationship) => $template->renderRelationship($relationship))
+            ->map(fn(Relationship $relationship) => $this->renderRelationship($relationship))
             ->toArray();
+    }
+
+    private function renderRelationship(Relationship $relationship): string
+    {
+        return sprintf(
+            '%s %s %s',
+            Helpers::getTableName($relationship->localKey()),
+            self::$relationships[$relationship->type()],
+            Helpers::getTableName($relationship->foreignKey())
+        );
     }
 }
