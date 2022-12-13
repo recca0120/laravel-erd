@@ -86,9 +86,7 @@ class ErdFinder
             ->groupBy(fn(Relation $relation) => $relation->table())
             ->sortBy(fn(Collection $relations, $table) => $table)
             ->map(function (Collection $relations, $table) {
-                $columns = $this->schemaManager->listTableColumns($table);
-
-                return new Table($table, collect($columns), $relations);
+                return new Table($this->schemaManager->introspectTable($table), $relations);
             });
     }
 
