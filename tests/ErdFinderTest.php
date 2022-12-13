@@ -74,6 +74,6 @@ class ErdFinderTest extends TestCase
 
     private function render(array $results): string
     {
-        return $this->template->render($results['tables'], $results['relationships']);
+        return $this->template->render($results['tables'], $results['relations']);
     }
 }

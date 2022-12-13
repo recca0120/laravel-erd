@@ -17,6 +17,13 @@ class Pivot
         return Helpers::getTableName($this->attributes['local_key']);
     }
 
+    public function type(): string
+    {
+        dump($this->attributes);
+
+        return $this->attributes['type'];
+    }
+
     public function localKey(): string
     {
         return $this->attributes['local_key'];
@@ -35,5 +42,10 @@ class Pivot
     public function morphType(): string
     {
         return $this->attributes['morph_type'] ?? '';
+    }
+
+    public function toArray(): array
+    {
+        return $this->attributes;
     }
 }

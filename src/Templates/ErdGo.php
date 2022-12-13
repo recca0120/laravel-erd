@@ -12,14 +12,14 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErdGo\Helpers;
-use Recca0120\LaravelErdGo\Relationship;
+use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\Table;
 use Symfony\Component\Process\Process;
 
 class ErdGo
 {
     /** @var string[] */
-    private static array $relationships = [
+    private static array $relations = [
         BelongsTo::class => '1--1',
         HasOne::class => '1--1',
         MorphOne::class => '1--1',
@@ -36,9 +36,9 @@ class ErdGo
 
         return $this->output = $results->merge(
             $relationships
-                ->unique(fn(Relationship $relationship) => $relationship->uniqueId())
-                ->sortBy(fn(Relationship $relationship) => $relationship->sortBy())
-                ->map(fn(Relationship $relationship) => $this->renderRelationship($relationship))
+                ->unique(fn(Relation $relationship) => $relationship->uniqueId())
+                ->sortBy(fn(Relation $relationship) => $relationship->sortBy())
+                ->map(fn(Relation $relationship) => $this->renderRelations($relationship))
                 ->sort()
         )->implode("\n");
     }
@@ -75,13 +75,13 @@ class ErdGo
         return $result;
     }
 
-    private function renderRelationship(Relationship $relationship): string
+    private function renderRelations(Relation $relations): string
     {
         return sprintf(
             '%s %s %s',
-            Helpers::getTableName($relationship->localKey()),
-            self::$relationships[$relationship->type()],
-            Helpers::getTableName($relationship->foreignKey())
+            Helpers::getTableName($relations->localKey()),
+            self::$relations[$relations->type()],
+            Helpers::getTableName($relations->foreignKey())
         );
     }
 

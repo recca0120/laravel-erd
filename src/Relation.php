@@ -3,13 +3,10 @@
 namespace Recca0120\LaravelErdGo;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Collection;
 
 class Relation
 {
@@ -26,9 +23,9 @@ class Relation
         return $this->attributes['type'];
     }
 
-    public function related(): string
+    public function related(): ?string
     {
-        return $this->attributes['related'];
+        return $this->attributes['related'] ?? null;
     }
 
     public function localKey(): string
@@ -41,14 +38,14 @@ class Relation
         return $this->attributes['foreign_key'];
     }
 
-    public function morphClass()
+    public function morphClass(): ?string
     {
-        return $this->attributes['morph_class'] ?? '';
+        return $this->attributes['morph_class'] ?? null;
     }
 
-    public function morphType()
+    public function morphType(): ?string
     {
-        return $this->attributes['morph_type'] ?? '';
+        return $this->attributes['morph_type'] ?? null;
     }
 
     public function pivot(): ?Pivot
@@ -56,38 +53,39 @@ class Relation
         return $this->attributes['pivot'] ?? null;
     }
 
-    public function relationships(): Collection
+    public function uniqueId(): string
     {
-        $type = $this->type();
+        $localKey = Helpers::getTableName($this->localKey());
+        $foreignKey = Helpers::getTableName($this->foreignKey());
 
-        if ($type === HasOne::class || $type === MorphOne::class) {
-            return collect([
-                new Relationship($type, $this->localKey(), $this->foreignKey()),
-            ]);
+        $sortBy = [$localKey, $foreignKey];
+        sort($sortBy);
+
+        return implode('::', $sortBy);
+    }
+
+    public function sortBy(): int
+    {
+        if (in_array($this->type(), [BelongsTo::class, HasOne::class, MorphOne::class])) {
+            return 3;
         }
 
-        if ($type === HasMany::class || $type === MorphMany::class) {
-            return collect([
-                new Relationship($type, $this->localKey(), $this->foreignKey()),
-            ]);
+        if (in_array($this->type(), [HasMany::class, MorphMany::class])) {
+            return 2;
         }
 
-        if ($type === BelongsTo::class) {
-            return collect([
-                new Relationship($type, $this->localKey(), $this->foreignKey()),
-            ]);
-        }
+        return 1;
+    }
 
-        if ($type === BelongsToMany::class || $type === MorphToMany::class) {
-            /** @var Pivot $pivot */
-            $pivot = $this->pivot();
+    /**
+     * @param  string|string[]  $tables
+     * @return bool
+     */
+    public function includes($tables): bool
+    {
+        $localTable = Helpers::getTableName($this->localKey());
+        $foreignTable = Helpers::getTableName($this->foreignKey());
 
-            return collect([
-                new Relationship($type, $this->localKey(), $this->foreignKey()),
-                new Relationship($type, $pivot->localKey(), $pivot->foreignKey()),
-            ]);
-        }
-
-        return collect();
+        return in_array($localTable, $tables, true) || in_array($foreignTable, $tables, true);
     }
 }

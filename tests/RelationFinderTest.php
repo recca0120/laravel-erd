@@ -15,8 +15,6 @@ use Illuminate\Support\Collection;
 use Recca0120\LaravelErdGo\Helpers;
 use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\RelationFinder;
-use Recca0120\LaravelErdGo\Relationship;
-use Recca0120\LaravelErdGo\Templates\ErdGo;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Comment;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Image;
@@ -57,7 +55,7 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(Mechanic::class);
 
         /** @var Relation $car */
-        $car = $relations->get('car');
+        $car = $relations->get('car')->firstOrFail();
         self::assertEquals(HasOne::class, $car->type());
         self::assertEquals(Car::class, $car->related());
         self::assertEquals('mechanics.id', $car->localKey());
@@ -73,14 +71,14 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(Car::class);
 
         /** @var Relation $mechanic */
-        $mechanic = $relations->get('mechanic');
+        $mechanic = $relations->get('mechanic')->firstOrFail();
         self::assertEquals(BelongsTo::class, $mechanic->type());
         self::assertEquals(Mechanic::class, $mechanic->related());
         self::assertEquals('cars.mechanic_id', $mechanic->localKey());
         self::assertEquals('mechanics.id', $mechanic->foreignKey());
 
         /** @var Relation $owner */
-        $owner = $relations->get('owner');
+        $owner = $relations->get('owner')->firstOrFail();
         self::assertEquals(HasOne::class, $owner->type());
         self::assertEquals(Owner::class, $owner->related());
         self::assertEquals('cars.id', $owner->localKey());
@@ -96,7 +94,7 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(Owner::class);
 
         /** @var Relation $car */
-        $car = $relations->get('car');
+        $car = $relations->get('car')->firstOrFail();
         self::assertEquals(BelongsTo::class, $car->type());
         self::assertEquals(Car::class, $car->related());
         self::assertEquals('owners.car_id', $car->localKey());
@@ -112,14 +110,14 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(Post::class);
 
         /** @var Relation $comments */
-        $comments = $relations->get('comments');
+        $comments = $relations->get('comments')->firstOrFail();
         self::assertEquals(HasMany::class, $comments->type());
         self::assertEquals(Comment::class, $comments->related());
         self::assertEquals('posts.id', $comments->localKey());
         self::assertEquals('comments.post_id', $comments->foreignKey());
 
         /** @var Relation $user */
-        $user = $relations->get('user');
+        $user = $relations->get('user')->firstOrFail();
         self::assertEquals(BelongsTo::class, $user->type());
         self::assertEquals(User::class, $user->related());
         self::assertEquals('posts.user_id', $user->localKey());
@@ -146,7 +144,7 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(User::class);
 
         /** @var Relation $roles */
-        $roles = $relations->get('roles');
+        $roles = $relations->get('roles')->firstOrFail();
         self::assertEquals(MorphToMany::class, $roles->type());
         self::assertEquals(Role::class, $roles->related());
         self::assertEquals('users.id', $roles->localKey());
@@ -166,7 +164,7 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(User::class);
 
         /** @var Relation $permissions */
-        $permissions = $relations->get('permissions');
+        $permissions = $relations->get('permissions')->firstOrFail();
         self::assertEquals(MorphToMany::class, $permissions->type());
         self::assertEquals(Permission::class, $permissions->related());
         self::assertEquals('users.id', $permissions->localKey());
@@ -186,7 +184,7 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(Role::class);
 
         /** @var Relation $users */
-        $users = $relations->get('users');
+        $users = $relations->get('users')->firstOrFail();
         self::assertEquals(MorphToMany::class, $users->type());
         self::assertEquals(AuthUser::class, $users->related());
         self::assertEquals('roles.id', $users->localKey());
@@ -206,7 +204,7 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(Role::class);
 
         /** @var Relation $permissions */
-        $permissions = $relations->get('permissions');
+        $permissions = $relations->get('permissions')->firstOrFail();
         self::assertEquals(BelongsToMany::class, $permissions->type());
         self::assertEquals(Permission::class, $permissions->related());
         self::assertEquals('roles.id', $permissions->localKey());
@@ -224,7 +222,7 @@ class RelationFinderTest extends TestCase
         $relations = $this->givenRelations(User::class);
 
         /** @var Relation $image */
-        $image = $relations->get('image');
+        $image = $relations->get('image')->firstOrFail();
         self::assertEquals(MorphOne::class, $image->type());
         self::assertEquals(Image::class, $image->related());
         self::assertEquals('users.id', $image->localKey());
@@ -328,22 +326,18 @@ class RelationFinderTest extends TestCase
 
     private function draw(Collection $relations, $method): array
     {
-        $template = new ErdGo();
-        /** @var Relation $relation */
-        $relation = $relations->get($method);
-
-        return $relation->relationships()
-            ->map(fn(Relationship $relationship) => $this->renderRelationship($relationship))
-            ->toArray();
+        return $relations->get($method)->map(function (Relation $relationship) {
+            return $this->renderRelationship($relationship);
+        })->toArray();
     }
 
-    private function renderRelationship(Relationship $relationship): string
+    private function renderRelationship(Relation $relation): string
     {
         return sprintf(
             '%s %s %s',
-            Helpers::getTableName($relationship->localKey()),
-            self::$relationships[$relationship->type()],
-            Helpers::getTableName($relationship->foreignKey())
+            Helpers::getTableName($relation->localKey()),
+            self::$relationships[$relation->type()],
+            Helpers::getTableName($relation->foreignKey())
         );
     }
 }

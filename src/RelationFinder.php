@@ -35,11 +35,11 @@ class RelationFinder
             ->reject(
                 fn(ReflectionMethod $method) => $method->class !== $className || $method->getNumberOfParameters() > 0
             )
-            ->flatMap(fn(ReflectionMethod $method) => $this->findRelations($method, $model))
+            ->mapWithKeys(fn(ReflectionMethod $method) => [$method->getName() => $this->findRelations($method, $model)])
             ->filter();
     }
 
-    private function findRelations(ReflectionMethod $method, Model $model): ?array
+    private function findRelations(ReflectionMethod $method, Model $model): ?Collection
     {
         try {
             $return = $method->invoke($model);
@@ -52,15 +52,15 @@ class RelationFinder
             $related = (new ReflectionClass($return->getRelated()))->getName();
 
             if ($return instanceof BelongsToMany) {
-                return [$method->getName() => $this->belongsToMany($return, $type, $related)];
+                return $this->belongsToMany($return, $type, $related);
             }
 
             if ($return instanceof BelongsTo) {
-                return [$method->getName() => $this->belongsTo($return, $type, $related)];
+                return $this->belongsTo($return, $type, $related);
             }
 
             if ($return instanceof HasOneOrMany) {
-                return [$method->getName() => $this->hasOneOrMany($return, $type, $related)];
+                return $this->hasOneOrMany($return, $type, $related);
             }
         } catch (RuntimeException|ReflectionException $e) {
 //            dump($method->getName());
@@ -72,7 +72,7 @@ class RelationFinder
         return null;
     }
 
-    private function belongsToMany(BelongsToMany $return, string $type, string $related): Relation
+    private function belongsToMany(BelongsToMany $return, string $type, string $related): Collection
     {
 //        dump([
 //            'getExistenceCompareKey' => $return->getExistenceCompareKey(),
@@ -90,6 +90,7 @@ class RelationFinder
 //        ]);
 
         $pivot = [
+            'type' => $type,
             'local_key' => $return->getQualifiedRelatedPivotKeyName(),
             'foreign_key' => $return->getQualifiedRelatedKeyName(),
         ];
@@ -106,7 +107,7 @@ class RelationFinder
             ], $pivot);
         }
 
-        return new Relation([
+        return $this->makeRelation([
             'type' => $type,
             'related' => $related,
             'local_key' => $return->getQualifiedParentKeyName(),
@@ -116,7 +117,7 @@ class RelationFinder
 
     }
 
-    private function belongsTo(BelongsTo $return, string $type, string $related): ?Relation
+    private function belongsTo(BelongsTo $return, string $type, string $related): ?Collection
     {
 //        dump([
 //            'getForeignKeyName' => $return->getForeignKeyName(),
@@ -135,7 +136,7 @@ class RelationFinder
             return null;
         }
 
-        return new Relation([
+        return $this->makeRelation([
             'type' => $type,
             'related' => $related,
             'local_key' => $return->getQualifiedForeignKeyName(),
@@ -143,7 +144,7 @@ class RelationFinder
         ]);
     }
 
-    private function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Relation
+    private function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Collection
     {
         if ($return instanceof HasOne && $return->isOneOfMany()) {
             return null;
@@ -171,7 +172,7 @@ class RelationFinder
             ]);
         }
 
-        return new Relation($attributes);
+        return $this->makeRelation($attributes);
     }
 
     private function getTraitMethods(ReflectionClass $class): Collection
@@ -179,5 +180,19 @@ class RelationFinder
         return collect($class->getTraits())->flatMap(
             static fn(ReflectionClass $trait) => $trait->getMethods(ReflectionMethod::IS_PUBLIC)
         );
+    }
+
+    private function makeRelation(array $attributes): Collection
+    {
+        $relation = new Relation($attributes);
+        $relations = collect([$relation]);
+
+        $pivot = $relation->pivot();
+
+        if ($pivot) {
+            $relations->add(new Relation($pivot->toArray()));
+        }
+
+        return $relations;
     }
 }

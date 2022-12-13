@@ -72,27 +72,28 @@ class ErdFinder
         /** @var Collection $missing */
         $missing = $models
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model))
+            ->collapse()
             ->map(fn(Relation $relation) => $relation->related())
+            ->filter()
             ->diff($models);
 
-        /** @var Collection $uniqueMerged */
-        $relationships = $models
+        /** @var Collection $relations */
+        $relations = $models
             ->merge($missing)
             ->flatMap(fn($model) => $this->relationFinder->generate($model)->values())
-            ->flatMap(fn(Relation $relation) => $relation->relationships())
-            ->when(count($excludes) > 0, function (Collection $relationships) use ($excludes) {
-                return $relationships->filter(fn(Relationship $relationship) => !$relationship->includes($excludes));
-            })
-            ->values();
+            ->collapse()
+            ->when(count($excludes) > 0, function (Collection $relations) use ($excludes) {
+                return $relations->filter(fn(Relation $relations) => !$relations->includes($excludes));
+            });
 
-        $tables = $relationships
-            ->flatMap(fn(Relationship $relationship) => [$relationship->localKey(), $relationship->foreignKey()])
+        $tables = $relations
+            ->flatMap(fn(Relation $relationship) => [$relationship->localKey(), $relationship->foreignKey()])
             ->map(fn(string $key) => Helpers::getTableName($key))
             ->unique()
             ->sort()
             ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
             ->values();
 
-        return ['tables' => $tables, 'relationships' => $relationships];
+        return ['tables' => $tables, 'relations' => $relations];
     }
 }

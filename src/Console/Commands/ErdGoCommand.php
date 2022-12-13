@@ -19,7 +19,7 @@ class ErdGoCommand extends Command
         $patterns = trim($this->option('patterns'), "\"'");
         $exclude = preg_split('/\s*,\s*/', $this->option('exclude'));
         $result = $finder->find($patterns, $exclude);
-        $template->render($result['tables'], $result['relationships']);
+        $template->render($result['tables'], $result['relations']);
 
         return $template->save($this->argument('output'), config('erd-go'));
     }
