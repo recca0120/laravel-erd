@@ -4,7 +4,7 @@ namespace Recca0120\LaravelErdGo\Tests;
 
 use Doctrine\DBAL\Exception;
 use Recca0120\LaravelErdGo\ErdFinder;
-use Recca0120\LaravelErdGo\Template;
+use Recca0120\LaravelErdGo\Templates\ErdGo;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -15,7 +15,7 @@ class ErdFinderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->template = new Template();
+        $this->template = new ErdGo();
     }
 
     /**

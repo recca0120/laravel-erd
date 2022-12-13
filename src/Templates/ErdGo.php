@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo;
+namespace Recca0120\LaravelErdGo\Templates;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,8 +11,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErdGo\Helpers;
+use Recca0120\LaravelErdGo\Relationship;
+use Recca0120\LaravelErdGo\Table;
+use Symfony\Component\Process\Process;
 
-class Template
+class ErdGo
 {
     /** @var string[] */
     private static array $relationships = [
@@ -24,12 +28,13 @@ class Template
         BelongsToMany::class => '*--*',
         MorphToMany::class => '*--*',
     ];
+    private string $output;
 
     public function render(Collection $tables, Collection $relationships): string
     {
         $results = $tables->map(fn(Table $table): string => $this->renderTable($table));
 
-        return $results->merge(
+        return $this->output = $results->merge(
             $relationships
                 ->unique(fn(Relationship $relationship) => $relationship->uniqueId())
                 ->sortBy(fn(Relationship $relationship) => $relationship->sortBy())
@@ -38,7 +43,29 @@ class Template
         )->implode("\n");
     }
 
-    public function renderTable(Table $table): string
+    public function save(string $path, array $options = []): int
+    {
+        $fp = tmpfile();
+        fwrite($fp, $this->output);
+
+        $meta = stream_get_meta_data($fp);
+        $tempFile = $meta['uri'];
+
+        $erdGoBinary = $options['erd-go'] ?? '/usr/local/bin/erd-go';
+        $dotBinary = $options['dot'] ?? '/usr/local/bin/dot';
+
+        $command = sprintf('cat %s | %s | %s -T png -o %s', $tempFile, $erdGoBinary, $dotBinary, $path);
+        $process = Process::fromShellCommandline($command);
+
+        $process->start();
+        $exitCode = $process->wait();
+
+        fclose($fp);
+
+        return $exitCode;
+    }
+
+    private function renderTable(Table $table): string
     {
         $result = sprintf("[%s] {}\n", $table->name());
         $result .= collect($table->columns())

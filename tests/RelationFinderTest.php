@@ -16,7 +16,7 @@ use Recca0120\LaravelErdGo\Helpers;
 use Recca0120\LaravelErdGo\Relation;
 use Recca0120\LaravelErdGo\RelationFinder;
 use Recca0120\LaravelErdGo\Relationship;
-use Recca0120\LaravelErdGo\Template;
+use Recca0120\LaravelErdGo\Templates\ErdGo;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Comment;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Image;
@@ -328,7 +328,7 @@ class RelationFinderTest extends TestCase
 
     private function draw(Collection $relations, $method): array
     {
-        $template = new Template();
+        $template = new ErdGo();
         /** @var Relation $relation */
         $relation = $relations->get($method);
 
