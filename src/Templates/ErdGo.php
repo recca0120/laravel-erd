@@ -33,12 +33,12 @@ class ErdGo
     public function render(Collection $tables): string
     {
         $results = $tables->map(fn(Table $table): string => $this->renderTable($table));
-        $relationships = $tables->flatMap(fn(Table $table) => $table->relations());
+        $relations = $tables->flatMap(fn(Table $table) => $table->relations());
 
         return $this->output = $results->merge(
-            $relationships
-                ->unique(fn(Relation $relationship) => $relationship->uniqueId())
-                ->sortBy(fn(Relation $relationship) => $relationship->sortBy())
+            $relations
+                ->unique(fn(Relation $relation) => $this->uniqueId($relation))
+                ->sortBy(fn(Relation $relation) => $this->sortBy($relation))
                 ->map(fn(Relation $relationship) => $this->renderRelations($relationship))
                 ->sort()
         )->implode("\n");
@@ -68,12 +68,36 @@ class ErdGo
 
     private function renderTable(Table $table): string
     {
+        $primaryKeys = $table->primaryKeys();
+        $indexes = $table
+            ->relations()
+            ->filter(fn(Relation $relation) => $relation->type() !== BelongsTo::class)
+            ->flatMap(fn(Relation $relation) => [
+                Helpers::getColumnName($relation->localKey()),
+                Helpers::getColumnName($relation->morphType()),
+            ])
+            ->filter()
+            ->toArray();
+
         $result = sprintf("[%s] {}\n", $table->name());
         $result .= $table->columns()
-                ->map(fn(Column $column) => $this->renderColumn($column))
+                ->map(fn(Column $column) => $this->renderColumn($column, $primaryKeys, $indexes))
                 ->implode("\n") . "\n";
 
         return $result;
+    }
+
+    private function renderColumn(Column $column, array $primaryKeys, array $indexes): string
+    {
+
+        return sprintf(
+            '%s%s%s {label: "%s, %s"}',
+            in_array($column->getName(), $primaryKeys, true) ? '*' : '',
+            in_array($column->getName(), $indexes, true) ? '+' : '',
+            $column->getName(),
+            Helpers::getColumnType($column),
+            $column->getNotnull() ? 'not null' : 'null'
+        );
     }
 
     private function renderRelations(Relation $relations): string
@@ -86,14 +110,27 @@ class ErdGo
         );
     }
 
-    private function renderColumn(Column $column): string
+    private function uniqueId(Relation $relation): string
     {
-        return sprintf(
-            '%s {label: "%s, %s"}',
-            $column->getName(),
-            Helpers::getColumnType($column),
-            $column->getNotnull() ? 'not null' : 'null'
-        );
+        $localKey = Helpers::getTableName($relation->localKey());
+        $foreignKey = Helpers::getTableName($relation->foreignKey());
+
+        $sortBy = [$localKey, $foreignKey];
+        sort($sortBy);
+
+        return implode('::', $sortBy);
     }
 
+    private function sortBy(Relation $relation): int
+    {
+        if (in_array($relation->type(), [BelongsTo::class, HasOne::class, MorphOne::class])) {
+            return 1;
+        }
+
+        if (in_array($relation->type(), [HasMany::class, MorphMany::class])) {
+            return 2;
+        }
+
+        return 3;
+    }
 }

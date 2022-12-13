@@ -13,6 +13,13 @@ class Helpers
         return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));
     }
 
+    public static function getColumnName(?string $qualifiedKeyName): ?string
+    {
+        return strpos($qualifiedKeyName, '.') !== false
+            ? substr($qualifiedKeyName, strpos($qualifiedKeyName, '.') + 1)
+            : $qualifiedKeyName;
+    }
+
     public static function getColumnType(Column $column): string
     {
         try {
@@ -21,4 +28,5 @@ class Helpers
             return 'unknown';
         }
     }
+
 }

@@ -30,6 +30,13 @@ class Table
         return collect($this->table->getColumns());
     }
 
+    public function primaryKeys(): array
+    {
+        $primaryKey = $this->table->getPrimaryKey();
+
+        return $primaryKey ? $primaryKey->getColumns() : [];
+    }
+
     public function relations(): Collection
     {
         return $this->relations;

@@ -76,7 +76,6 @@ class ErdFinder
             ->filter()
             ->diff($models);
 
-
         return $models
             ->merge($missing)
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model)->collapse())
@@ -84,10 +83,12 @@ class ErdFinder
             ->sortBy(fn(Relation $relation) => $this->uniqueRelation($relation))
             ->unique(fn(Relation $relation) => $this->uniqueRelation($relation))
             ->groupBy(fn(Relation $relation) => $relation->table())
-            ->sortBy(fn(Collection $relations, $table) => $table)
-            ->map(function (Collection $relations, $table) {
-                return new Table($this->schemaManager->introspectTable($table), $relations);
-            });
+            ->reject(fn(Collection $relations, string $table) => in_array($table, $excludes, true))
+            ->sortBy(fn(Collection $relations, string $table) => $table)
+            ->map(fn(Collection $relations, $table) => new Table(
+                $this->schemaManager->introspectTable($table),
+                $relations->reject(fn(Relation $relation) => $relation->includes($excludes))
+            ));
     }
 
     private function uniqueRelation(Relation $relation): array
