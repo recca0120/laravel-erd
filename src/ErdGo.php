@@ -77,29 +77,31 @@ class ErdGo
             ->map(fn(Relation $relation) => $relation->related())
             ->diff($models);
 
-        /** @var Collection $relationships */
-        $relationships = $models
+        /** @var Collection $uniqueMerged */
+        $uniqueMerged = $models
             ->merge($missing)
             ->flatMap(fn($model) => $this->relationFinder->generate($model)->values())
             ->flatMap(fn(Relation $relation) => $relation->relationships())
             ->when(count($excludes) > 0, function (Collection $relationships) use ($excludes) {
                 return $relationships->filter(fn(Relationship $relationship) => !$relationship->includes($excludes));
-            });
+            })
+            ->values();
 
-        /** @var Collection $tables */
-        $tables = $relationships
+        $tables = $uniqueMerged
             ->flatMap(fn(Relationship $relationship) => [$relationship->localKey(), $relationship->foreignKey()])
             ->map(fn(string $key) => Helpers::getTableName($key))
             ->unique()
-            ->sortBy(fn(string $table) => $table)
+            ->sort()
             ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
-            ->map(fn(Table $table): string => $this->template->renderTable($table));
+            ->map(fn(Table $table): string => $this->template->renderTable($table))
+            ->values();
 
-        $relationships = $relationships
-            ->unique(fn(Relationship $relationship) => $relationship->hash())
+        $relationships = $uniqueMerged
+            ->unique(fn(Relationship $relationship) => $relationship->uniqueId())
+            ->sortBy(fn(Relationship $relationship) => $relationship->sortBy())
             ->map(fn(Relationship $relationship) => $this->template->renderRelationship($relationship))
-            ->unique()
-            ->sortBy(fn(string $line) => $line);
+            ->sort()
+            ->values();
 
         return $tables->merge($relationships)->implode("\n");
     }

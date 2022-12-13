@@ -61,19 +61,19 @@ class Relation
 
         if ($type === HasOne::class || $type === MorphOne::class) {
             return collect([
-                new Relationship($type, $this->localKey(), $this->foreignKey())
+                new Relationship($type, $this->localKey(), $this->foreignKey()),
             ]);
         }
 
         if ($type === HasMany::class || $type === MorphMany::class) {
             return collect([
-                new Relationship($type, $this->localKey(), $this->foreignKey())
+                new Relationship($type, $this->localKey(), $this->foreignKey()),
             ]);
         }
 
         if ($type === BelongsTo::class) {
             return collect([
-                new Relationship($type, $this->localKey(), $this->foreignKey())
+                new Relationship($type, $this->localKey(), $this->foreignKey()),
             ]);
         }
 

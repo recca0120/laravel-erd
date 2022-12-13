@@ -21,7 +21,7 @@ use Throwable;
 class RelationFinder
 {
     /**
-     * @param string $className
+     * @param  string  $className
      * @return Collection<string, Relation>
      * @throws ReflectionException
      */
@@ -32,7 +32,9 @@ class RelationFinder
 
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
             ->merge($this->getTraitMethods($class))
-            ->reject(fn(ReflectionMethod $method) => $method->class !== $className || $method->getNumberOfParameters() > 0)
+            ->reject(
+                fn(ReflectionMethod $method) => $method->class !== $className || $method->getNumberOfParameters() > 0
+            )
             ->flatMap(fn(ReflectionMethod $method) => $this->findRelations($method, $model))
             ->filter();
     }
@@ -109,7 +111,7 @@ class RelationFinder
             'related' => $related,
             'local_key' => $return->getQualifiedParentKeyName(),
             'foreign_key' => $return->getQualifiedForeignPivotKeyName(),
-            'pivot' => new Pivot($pivot)
+            'pivot' => new Pivot($pivot),
         ]);
 
     }

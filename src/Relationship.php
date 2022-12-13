@@ -3,22 +3,13 @@
 namespace Recca0120\LaravelErdGo;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Relationship
 {
-    /** @var string[] */
-    private static array $lookup = [
-        BelongsTo::class => HasOne::class,
-        MorphOne::class => HasOne::class,
-        MorphMany::class => HasMany::class,
-        MorphToMany::class => BelongsToMany::class,
-    ];
     private string $type;
     private string $localKey;
     private string $foreignKey;
@@ -28,6 +19,11 @@ class Relationship
         $this->type = $type;
         $this->localKey = $localKey;
         $this->foreignKey = $foreignKey;
+    }
+
+    public function table()
+    {
+        return Helpers::getTableName($this->localKey());
     }
 
     public function type(): string
@@ -45,18 +41,28 @@ class Relationship
         return $this->foreignKey;
     }
 
-    public function hash(): string
+    public function uniqueId(): string
     {
-        $relationship = Template::$relationships[$this->type];
+        $localKey = Helpers::getTableName($this->localKey());
+        $foreignKey = Helpers::getTableName($this->foreignKey());
 
-        $sortBy = [$this->localKey, $this->foreignKey];
+        $sortBy = [$localKey, $foreignKey];
         sort($sortBy);
 
-        $keys = $sortBy !== [$this->localKey, $this->foreignKey]
-            ? [$this->foreignKey, $relationship, $this->localKey]
-            : [$this->localKey, $relationship, $this->foreignKey];
+        return implode('::', $sortBy);
+    }
 
-        return md5(implode('', $keys));
+    public function sortBy(): int
+    {
+        if (in_array($this->type(), [BelongsTo::class, HasOne::class, MorphOne::class])) {
+            return 3;
+        }
+
+        if (in_array($this->type(), [HasMany::class, MorphMany::class])) {
+            return 2;
+        }
+
+        return 1;
     }
 
     /**
