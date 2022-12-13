@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'erd-go' => '/usr/local/bin/erd-go',
-    'dot' => '/usr/local/bin/dot',
+    'erd-go' => env('ERD_GO', '/usr/local/bin/erd-go'),
+    'dot' => env('ERD_GO_DOT', '/usr/local/bin/dot'),
 ];
