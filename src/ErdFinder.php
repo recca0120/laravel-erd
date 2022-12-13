@@ -6,12 +6,11 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\Collection;
 
-class ErdGo
+class ErdFinder
 {
     private AbstractSchemaManager $schemaManager;
     private ModelFinder $modelFinder;
     private RelationFinder $relationFinder;
-    private Template $template;
     private string $directory;
 
     public function __construct(
@@ -22,10 +21,9 @@ class ErdGo
         $this->schemaManager = $schemaManager;
         $this->modelFinder = $modelFinder;
         $this->relationFinder = $relationFinder;
-        $this->template = new Template();
     }
 
-    public function in(string $directory): ErdGo
+    public function in(string $directory): ErdFinder
     {
         $this->directory = $directory;
 
@@ -35,41 +33,41 @@ class ErdGo
     /**
      * @param  string|string[]  $patterns
      * @param  string|string[]  $excludes
-     * @return string
+     * @return array
      * @throws DBALException
      */
-    public function generate($patterns = '*.php', array $excludes = []): string
+    public function find($patterns = '*.php', array $excludes = []): array
     {
         $models = $this->modelFinder->find($this->directory ?? __DIR__, $patterns);
 
-        return $this->generateByModels($models, $excludes);
+        return $this->findByModels($models, $excludes);
     }
 
     /**
      * @throws DBALException
      */
-    public function generateByFile($file, array $excludes = []): string
+    public function findByFile($file, array $excludes = []): array
     {
         $models = $this->modelFinder->find($this->directory ?? __DIR__, $file);
 
-        return $this->generateByModels($models, $excludes);
+        return $this->findByModels($models, $excludes);
     }
 
     /**
      * @throws DBALException
      */
-    public function generateByModel($className, array $excludes = []): string
+    public function findByModel($className, array $excludes = []): array
     {
-        return $this->generateByModels(collect($className), $excludes);
+        return $this->findByModels(collect($className), $excludes);
     }
 
     /**
      * @param  Collection  $models
      * @param  string|string[]  $excludes
-     * @return string
+     * @return array
      * @throws DBALException
      */
-    private function generateByModels(Collection $models, $excludes = []): string
+    private function findByModels(Collection $models, $excludes = []): array
     {
         /** @var Collection $missing */
         $missing = $models
@@ -95,6 +93,6 @@ class ErdGo
             ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
             ->values();
 
-        return $this->template->render($tables, $relationships);
+        return ['tables' => $tables, 'relationships' => $relationships];
     }
 }

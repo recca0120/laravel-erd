@@ -18,9 +18,10 @@
   },
   "require": {
     "doctrine/dbal": "^3.5",
-    "nikic/php-parser": "^4.15",
     "illuminate/collections": "^8.0|^9.0",
-    "illuminate/database": "^8.0|^9.0"
+    "illuminate/console": "^8.0|^9.0",
+    "illuminate/database": "^8.0|^9.0",
+    "nikic/php-parser": "^4.15"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",

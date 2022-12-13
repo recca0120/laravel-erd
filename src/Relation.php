@@ -20,6 +20,7 @@ class Relation
         $this->attributes = $attributes;
     }
 
+
     public function type(): string
     {
         return $this->attributes['type'];
