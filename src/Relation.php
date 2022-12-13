@@ -93,4 +93,13 @@ class Relation
 
         return in_array($localTable, $tables, true) || in_array($foreignTable, $tables, true);
     }
+
+    public function relatedRelation(): Relation
+    {
+        return new Relation([
+            'type' => $this->type(),
+            'local_key' => $this->foreignKey(),
+            'foreign_key' => $this->localKey(),
+        ]);
+    }
 }

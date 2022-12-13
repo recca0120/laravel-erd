@@ -9,15 +9,12 @@ class Table
 {
     private string $name;
     /**
-     * @var DBALColumn[]
+     * @var Collection<DBALColumn>
      */
-    private array $columns;
+    private Collection $columns;
     private Collection $relations;
 
-    /**
-     * @param  DBALColumn[]  $columns
-     */
-    public function __construct(string $name, array $columns, Collection $relations)
+    public function __construct(string $name, Collection $columns, Collection $relations)
     {
         $this->name = $name;
         $this->columns = $columns;
@@ -29,7 +26,7 @@ class Table
         return $this->name;
     }
 
-    public function columns(): array
+    public function columns(): Collection
     {
         return $this->columns;
     }

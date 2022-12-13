@@ -71,44 +71,29 @@ class ErdFinder
     {
         /** @var Collection $missing */
         $missing = $models
-            ->flatMap(fn(string $model) => $this->relationFinder->generate($model))
-            ->collapse()
+            ->flatMap(fn(string $model) => $this->relationFinder->generate($model)->collapse())
             ->map(fn(Relation $relation) => $relation->related())
             ->filter()
             ->diff($models);
 
+
         return $models
             ->merge($missing)
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model)->collapse())
-            ->flatMap(function (Relation $relation) {
-                $type = $relation->type();
-                $localKey = $relation->localKey();
-                $foreignKey = $relation->foreignKey();
-
-                return [
-                    new Relation([
-                        'type' => $type,
-                        'local_key' => $localKey,
-                        'foreign_key' => $foreignKey,
-                    ]), new Relation([
-                        'type' => $type,
-                        'local_key' => $foreignKey,
-                        'foreign_key' => $localKey,
-                    ]),
-                ];
-            })
-            ->sortBy(fn(Relation $relation) => [$relation->type(), $relation->localKey(), $relation->foreignKey()])
-            ->unique(fn(Relation $relation) => [$relation->type(), $relation->localKey(), $relation->foreignKey()])
+            ->flatMap(fn(Relation $relation) => [$relation, $relation->relatedRelation()])
+            ->sortBy(fn(Relation $relation) => $this->uniqueRelation($relation))
+            ->unique(fn(Relation $relation) => $this->uniqueRelation($relation))
             ->groupBy(fn(Relation $relation) => $relation->table())
             ->sortBy(fn(Collection $relations, $table) => $table)
             ->map(function (Collection $relations, $table) {
                 $columns = $this->schemaManager->listTableColumns($table);
 
-                return new Table(
-                    $table,
-                    $columns,
-                    $relations
-                );
+                return new Table($table, collect($columns), $relations);
             });
+    }
+
+    private function uniqueRelation(Relation $relation): array
+    {
+        return [$relation->type(), $relation->localKey(), $relation->foreignKey()];
     }
 }

@@ -69,7 +69,7 @@ class ErdGo
     private function renderTable(Table $table): string
     {
         $result = sprintf("[%s] {}\n", $table->name());
-        $result .= collect($table->columns())
+        $result .= $table->columns()
                 ->map(fn(Column $column) => $this->renderColumn($column))
                 ->implode("\n") . "\n";
 
