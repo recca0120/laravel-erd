@@ -62,11 +62,9 @@ class RelationFinder
             if ($return instanceof HasOneOrMany) {
                 return $this->hasOneOrMany($return, $type, $related);
             }
-        } catch (RuntimeException|ReflectionException $e) {
+        } catch (RuntimeException|ReflectionException|Throwable $e) {
 //            dump($method->getName());
 //            dump($e->getMessage());
-        } catch (Throwable $e) {
-
         }
 
         return null;

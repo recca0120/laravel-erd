@@ -59,13 +59,14 @@ class ErdGo
         $command = sprintf('cat %s | %s | %s -T svg -o %s', $tempFile, $erdGoBinary, $dotBinary, $path);
         $process = Process::fromShellCommandline($command);
 
-        $process->start();
+        $process->run();
         $exitCode = $process->wait();
 
         fclose($fp);
+        $errorOutput = $process->getErrorOutput();
 
-        if ($exitCode !== 0) {
-            throw new RuntimeException($process->getExitCodeText());
+        if (!empty($errorOutput)) {
+            throw new RuntimeException($errorOutput);
         }
 
         return $exitCode;
