@@ -7,4 +7,10 @@ mechanic_id {label: "integer, not null"}
 id {label: "integer, not null"}
 name {label: "string, not null"}
 
+[owners] {}
+id {label: "integer, not null"}
+name {label: "string, not null"}
+car_id {label: "integer, not null"}
+
 cars 1--1 mechanics
+cars 1--1 owners

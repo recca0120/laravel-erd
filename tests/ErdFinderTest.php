@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelErdGo\Tests;
 
 use Doctrine\DBAL\Exception;
+use Illuminate\Support\Collection;
 use Recca0120\LaravelErdGo\ErdFinder;
 use Recca0120\LaravelErdGo\Templates\ErdGo;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
@@ -72,8 +73,8 @@ class ErdFinderTest extends TestCase
         return $this->app->make(ErdFinder::class)->in(__DIR__ . '/fixtures');
     }
 
-    private function render(array $results): string
+    private function render(Collection $results): string
     {
-        return $this->template->render($results['tables'], $results['relations']);
+        return $this->template->render($results);
     }
 }

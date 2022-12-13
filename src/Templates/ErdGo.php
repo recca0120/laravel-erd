@@ -30,9 +30,10 @@ class ErdGo
     ];
     private string $output;
 
-    public function render(Collection $tables, Collection $relationships): string
+    public function render(Collection $tables): string
     {
         $results = $tables->map(fn(Table $table): string => $this->renderTable($table));
+        $relationships = $tables->flatMap(fn(Table $table) => $table->relations());
 
         return $this->output = $results->merge(
             $relationships

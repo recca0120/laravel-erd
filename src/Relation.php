@@ -28,6 +28,11 @@ class Relation
         return $this->attributes['related'] ?? null;
     }
 
+    public function table(): string
+    {
+        return Helpers::getTableName($this->localKey());
+    }
+
     public function localKey(): string
     {
         return $this->attributes['local_key'];

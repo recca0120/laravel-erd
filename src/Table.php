@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelErdGo;
 
 use Doctrine\DBAL\Schema\Column as DBALColumn;
+use Illuminate\Support\Collection;
 
 class Table
 {
@@ -11,14 +12,16 @@ class Table
      * @var DBALColumn[]
      */
     private array $columns;
+    private Collection $relations;
 
     /**
-     * @param DBALColumn[] $columns
+     * @param  DBALColumn[]  $columns
      */
-    public function __construct(string $name, array $columns)
+    public function __construct(string $name, array $columns, Collection $relations)
     {
         $this->name = $name;
         $this->columns = $columns;
+        $this->relations = $relations;
     }
 
     public function name(): string
@@ -29,5 +32,10 @@ class Table
     public function columns(): array
     {
         return $this->columns;
+    }
+
+    public function relations(): Collection
+    {
+        return $this->relations;
     }
 }

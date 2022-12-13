@@ -33,10 +33,10 @@ class ErdFinder
     /**
      * @param  string|string[]  $patterns
      * @param  string|string[]  $excludes
-     * @return array
+     * @return Collection
      * @throws DBALException
      */
-    public function find($patterns = '*.php', array $excludes = []): array
+    public function find($patterns = '*.php', array $excludes = []): Collection
     {
         $models = $this->modelFinder->find($this->directory ?? __DIR__, $patterns);
 
@@ -46,7 +46,7 @@ class ErdFinder
     /**
      * @throws DBALException
      */
-    public function findByFile($file, array $excludes = []): array
+    public function findByFile($file, array $excludes = []): Collection
     {
         $models = $this->modelFinder->find($this->directory ?? __DIR__, $file);
 
@@ -56,7 +56,7 @@ class ErdFinder
     /**
      * @throws DBALException
      */
-    public function findByModel($className, array $excludes = []): array
+    public function findByModel($className, array $excludes = []): Collection
     {
         return $this->findByModels(collect($className), $excludes);
     }
@@ -64,10 +64,10 @@ class ErdFinder
     /**
      * @param  Collection  $models
      * @param  string|string[]  $excludes
-     * @return array
+     * @return Collection
      * @throws DBALException
      */
-    private function findByModels(Collection $models, $excludes = []): array
+    private function findByModels(Collection $models, $excludes = []): Collection
     {
         /** @var Collection $missing */
         $missing = $models
@@ -77,23 +77,38 @@ class ErdFinder
             ->filter()
             ->diff($models);
 
-        /** @var Collection $relations */
-        $relations = $models
+        return $models
             ->merge($missing)
-            ->flatMap(fn($model) => $this->relationFinder->generate($model)->values())
-            ->collapse()
-            ->when(count($excludes) > 0, function (Collection $relations) use ($excludes) {
-                return $relations->filter(fn(Relation $relations) => !$relations->includes($excludes));
+            ->flatMap(fn(string $model) => $this->relationFinder->generate($model)->collapse())
+            ->flatMap(function (Relation $relation) {
+                $type = $relation->type();
+                $localKey = $relation->localKey();
+                $foreignKey = $relation->foreignKey();
+
+                return [
+                    new Relation([
+                        'type' => $type,
+                        'local_key' => $localKey,
+                        'foreign_key' => $foreignKey,
+                    ]), new Relation([
+                        'type' => $type,
+                        'local_key' => $foreignKey,
+                        'foreign_key' => $localKey,
+                    ]),
+                ];
+            })
+            ->sortBy(fn(Relation $relation) => [$relation->type(), $relation->localKey(), $relation->foreignKey()])
+            ->unique(fn(Relation $relation) => [$relation->type(), $relation->localKey(), $relation->foreignKey()])
+            ->groupBy(fn(Relation $relation) => $relation->table())
+            ->sortBy(fn(Collection $relations, $table) => $table)
+            ->map(function (Collection $relations, $table) {
+                $columns = $this->schemaManager->listTableColumns($table);
+
+                return new Table(
+                    $table,
+                    $columns,
+                    $relations
+                );
             });
-
-        $tables = $relations
-            ->flatMap(fn(Relation $relationship) => [$relationship->localKey(), $relationship->foreignKey()])
-            ->map(fn(string $key) => Helpers::getTableName($key))
-            ->unique()
-            ->sort()
-            ->map(fn(string $table) => new Table($table, $this->schemaManager->listTableColumns($table)))
-            ->values();
-
-        return ['tables' => $tables, 'relations' => $relations];
     }
 }
