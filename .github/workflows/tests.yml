@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [ '8.1' ]
+        php: [ '7.4', '8.0', '8.1' ]
 
     name: PHP ${{ matrix.php }}
     env:
@@ -58,3 +58,10 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+
+      - name: Send to codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          flags: unittests
+          files: ./coverage.xml
