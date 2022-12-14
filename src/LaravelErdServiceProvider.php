@@ -5,6 +5,7 @@ namespace Recca0120\LaravelErd;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\ServiceProvider;
 use Recca0120\LaravelErd\Console\Commands\LaravelErdCommand;
+use Recca0120\LaravelErd\Console\Commands\LaravelErdInitCommand;
 use Recca0120\LaravelErd\Templates\Factory;
 
 class LaravelErdServiceProvider extends ServiceProvider
@@ -30,6 +31,9 @@ class LaravelErdServiceProvider extends ServiceProvider
         $this->app->singleton(Factory::class, Factory::class);
         $this->app->singleton(ErdFinder::class, ErdFinder::class);
 
-        $this->commands([LaravelErdCommand::class]);
+        $this->commands([
+            LaravelErdInitCommand::class,
+            LaravelErdCommand::class,
+        ]);
     }
 }

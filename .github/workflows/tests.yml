@@ -17,16 +17,6 @@ jobs:
       key: cache-v1 # can be any string, change to clear the extension cache.
 
     steps:
-      - name: Install erd-go
-        run: |
-          curl -o /usr/local/bin/erd-go -L https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/linux_amd64_erd-go 
-          chmod +x /usr/local/bin/erd-go
-
-      - name: Install dot
-        run: |
-          curl -o /usr/local/bin/dot -L https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/graphviz-dot-linux-x64
-          chmod +x /usr/local/bin/dot
-
       - name: Checkout code
         uses: actions/checkout@v3
 
