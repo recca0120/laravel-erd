@@ -25,7 +25,7 @@ class ErdCommand extends Command
             $template->save(
                 $template->render($finder->in($directory)->find($patterns, $exclude)),
                 $this->argument('file'),
-                config('erd-go')
+                config('erd.er')
             );
 
             return self::SUCCESS;

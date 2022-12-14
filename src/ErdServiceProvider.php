@@ -10,10 +10,10 @@ class ErdServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/erd-go.php', 'erd-go');
+        $this->mergeConfigFrom(__DIR__ . '/../config/erd.php', 'erd');
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__ . '/../config/erd-go.php'], 'erd-go');
+            $this->publishes([__DIR__ . '/../config/erd.php'], 'erd');
         }
 
         $this->app->singleton(AbstractSchemaManager::class, function () {
