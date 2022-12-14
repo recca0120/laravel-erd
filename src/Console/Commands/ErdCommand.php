@@ -10,7 +10,7 @@ use RuntimeException;
 
 class ErdCommand extends Command
 {
-    protected $signature = 'erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=}';
+    protected $signature = 'erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=er}';
 
     /**
      * @throws Exception
@@ -20,7 +20,7 @@ class ErdCommand extends Command
         $directory = $this->option('directory') ?? app_path();
         $patterns = trim($this->option('patterns'), "\"'");
         $exclude = preg_split('/\s*,\s*/', $this->option('exclude'));
-        $template = $factory->create('er');
+        $template = $factory->create($this->option('template'));
 
         try {
             $template->save(
