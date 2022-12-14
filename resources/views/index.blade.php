@@ -18,7 +18,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vuerd/dist/vuerd.min.js"></script>
 <script>
     const editor = document.querySelector('erd-editor');
-    editor.loadSQLDDL();
+    editor.loadSQLDDL(atob('{{ $contents }}'));
 </script>
 </body>
 </html>

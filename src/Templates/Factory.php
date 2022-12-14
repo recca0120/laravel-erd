@@ -17,7 +17,7 @@ class Factory
         ];
     }
 
-    public function create($templateName)
+    public function create($templateName): Template
     {
         $class = $this->lookup[$templateName] ?? Er::class;
 

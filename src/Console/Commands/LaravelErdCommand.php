@@ -10,7 +10,7 @@ use RuntimeException;
 
 class LaravelErdCommand extends Command
 {
-    protected $signature = 'laravel-erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
+    protected $signature = 'laravel-erd {file=laravel-erd.ddl} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
 
     /**
      * @throws Exception
@@ -23,9 +23,11 @@ class LaravelErdCommand extends Command
         $template = $factory->create($this->option('template'));
 
         try {
+            $storagePath = config('laravel-erd.storage_path') ?? storage_path('framework/cache');
+
             $template->save(
                 $template->render($finder->in($directory)->find($patterns, $exclude)),
-                $this->argument('file'),
+                $storagePath . '/' . $this->argument('file'),
                 config('laravel-erd.er')
             );
 
