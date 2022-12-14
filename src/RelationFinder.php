@@ -22,7 +22,7 @@ class RelationFinder
 {
     /**
      * @param  string  $className
-     * @return Collection<string, Relation>
+     * @return Collection<string, Collection<int, Relation>|null>
      * @throws ReflectionException
      */
     public function generate(string $className): Collection
@@ -39,6 +39,11 @@ class RelationFinder
             ->filter();
     }
 
+    /**
+     * @param  ReflectionMethod  $method
+     * @param  Model  $model
+     * @return ?Collection<int, Relation>
+     */
     private function findRelations(ReflectionMethod $method, Model $model): ?Collection
     {
         try {
@@ -70,6 +75,12 @@ class RelationFinder
         return null;
     }
 
+    /**
+     * @param  BelongsToMany  $return
+     * @param  string  $type
+     * @param  string  $related
+     * @return Collection<int, Relation>
+     */
     private function belongsToMany(BelongsToMany $return, string $type, string $related): Collection
     {
 //        dump([
@@ -115,6 +126,12 @@ class RelationFinder
 
     }
 
+    /**
+     * @param  BelongsTo  $return
+     * @param  string  $type
+     * @param  string  $related
+     * @return ?Collection<int, Relation>
+     */
     private function belongsTo(BelongsTo $return, string $type, string $related): ?Collection
     {
 //        dump([
@@ -142,6 +159,12 @@ class RelationFinder
         ]);
     }
 
+    /**
+     * @param  HasOneOrMany  $return
+     * @param  string  $type
+     * @param  string  $related
+     * @return ?Collection<int, Relation>
+     */
     private function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Collection
     {
         if ($return instanceof HasOne && $return->isOneOfMany()) {
@@ -173,6 +196,10 @@ class RelationFinder
         return $this->makeRelation($attributes);
     }
 
+    /**
+     * @param  ReflectionClass<Model>  $class
+     * @return Collection<int, ReflectionMethod>
+     */
     private function getTraitMethods(ReflectionClass $class): Collection
     {
         return collect($class->getTraits())->flatMap(
@@ -180,6 +207,10 @@ class RelationFinder
         );
     }
 
+    /**
+     * @param  string[]  $attributes
+     * @return Collection<int, Relation>
+     */
     private function makeRelation(array $attributes): Collection
     {
         $relation = new Relation($attributes);

@@ -13,7 +13,7 @@ class Factory
         'svg' => Er::class,
     ];
 
-    public function create($templateName): Template
+    public function create(string $templateName): Template
     {
         $class = $this->lookup[$templateName] ?? Er::class;
 

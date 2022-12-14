@@ -54,6 +54,10 @@ class DDL implements Template
             ->implode(",\n");
     }
 
+    /**
+     * @param  Table  $table
+     * @return Collection<int|string, string>
+     */
     private function renderRelations(Table $table): Collection
     {
         return $table
@@ -73,10 +77,14 @@ class DDL implements Template
             ->unique();
     }
 
-    private function renderPrimaryKeys(Table $table): ?string
+    /**
+     * @param  Table  $table
+     * @return string[]
+     */
+    private function renderPrimaryKeys(Table $table): array
     {
         $primaryKeys = (implode(', ', $table->primaryKeys()));
 
-        return $primaryKeys ? "PRIMARY KEY({$primaryKeys})" : null;
+        return $primaryKeys ? ["PRIMARY KEY({$primaryKeys})"] : [];
     }
 }

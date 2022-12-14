@@ -92,9 +92,14 @@ class Er implements Template
         return $result;
     }
 
+    /**
+     * @param  Column  $column
+     * @param  array<int, string>  $primaryKeys
+     * @param  array<int, string>  $indexes
+     * @return string
+     */
     private function renderColumn(Column $column, array $primaryKeys, array $indexes): string
     {
-
         return sprintf(
             '%s%s%s {label: "%s, %s"}',
             in_array($column->getName(), $primaryKeys, true) ? '*' : '',

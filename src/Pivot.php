@@ -5,8 +5,14 @@ namespace Recca0120\LaravelErd;
 
 class Pivot
 {
+    /**
+     * @var array<string, string>
+     */
     private array $attributes;
 
+    /**
+     * @param  array<string, string>  $pivot
+     */
     public function __construct(array $pivot)
     {
         $this->attributes = $pivot;
@@ -19,8 +25,6 @@ class Pivot
 
     public function type(): string
     {
-        dump($this->attributes);
-
         return $this->attributes['type'];
     }
 
@@ -44,6 +48,9 @@ class Pivot
         return $this->attributes['morph_type'] ?? '';
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toArray(): array
     {
         return $this->attributes;

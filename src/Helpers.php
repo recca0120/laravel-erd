@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Type;
 
 class Helpers
 {
-    public static function getTableName(string $qualifiedKeyName)
+    public static function getTableName(string $qualifiedKeyName): string
     {
         return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));
     }

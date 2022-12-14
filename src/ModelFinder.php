@@ -53,20 +53,24 @@ class ModelFinder
             !(new ReflectionClass($className))->isAbstract();
     }
 
-    private function getFullyQualifiedClassName(SplFileInfo $file): string
+    private function getFullyQualifiedClassName(SplFileInfo $file): ?string
     {
         $parser = $this->parser;
         $nodeTraverser = new NodeTraverser();
         $nodeTraverser->addVisitor(new NameResolver());
         $nodes = $nodeTraverser->traverse($parser->parse($file->getContents()));
 
-        /** @var Namespace_ $rootNode */
+        /** @var ?Namespace_ $rootNode */
         $rootNode = collect($nodes)->first(fn(Node $node) => $node instanceof Namespace_);
 
-        return !$rootNode ? '' : collect($rootNode->stmts)
+        if (!$rootNode) {
+            return null;
+        }
+
+        return collect($rootNode->stmts)
             ->filter(static fn(Stmt $stmt) => $stmt instanceof Class_)
             ->map(static fn(Class_ $stmt) => $stmt->namespacedName->toString())
-            ->first() ?? '';
+            ->first();
     }
 
 }

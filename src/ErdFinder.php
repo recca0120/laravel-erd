@@ -32,8 +32,8 @@ class ErdFinder
 
     /**
      * @param  string|string[]  $patterns
-     * @param  string|string[]  $excludes
-     * @return Collection
+     * @param  string[]  $excludes
+     * @return Collection<int|string, Table>
      * @throws DBALException
      */
     public function find($patterns = '*.php', array $excludes = []): Collection
@@ -44,6 +44,9 @@ class ErdFinder
     }
 
     /**
+     * @param  string|string[]  $file
+     * @param  string[]  $excludes
+     * @return Collection<int|string, Table>
      * @throws DBALException
      */
     public function findByFile($file, array $excludes = []): Collection
@@ -54,9 +57,12 @@ class ErdFinder
     }
 
     /**
+     * @param  string  $className
+     * @param  string[]  $excludes
+     * @return Collection<int|string, Table>
      * @throws DBALException
      */
-    public function findByModel($className, array $excludes = []): Collection
+    public function findByModel(string $className, array $excludes = []): Collection
     {
         return $this->findByModels(collect($className), $excludes);
     }
@@ -64,7 +70,7 @@ class ErdFinder
     /**
      * @param  Collection  $models
      * @param  string|string[]  $excludes
-     * @return Collection
+     * @return Collection<int|string, Table>
      * @throws DBALException
      */
     private function findByModels(Collection $models, $excludes = []): Collection
