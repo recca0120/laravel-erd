@@ -2,6 +2,7 @@
 
 namespace Recca0120\LaravelErdGo;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\ServiceProvider;
 use Recca0120\LaravelErdGo\Console\Commands\ErdGoCommand;
 
@@ -15,11 +16,11 @@ class ErdGoServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/../config/erd-go.php'], 'erd-go');
         }
 
-        $this->app->singleton(ErdFinder::class, function () {
-            return (new ErdFinder(
-                $this->app['db']->getDoctrineSchemaManager(), new ModelFinder(), new RelationFinder()
-            ));
+        $this->app->singleton(AbstractSchemaManager::class, function () {
+            return $this->app['db']->getDoctrineSchemaManager();
         });
+
+        $this->app->singleton(ErdFinder::class, ErdFinder::class);
 
         $this->commands([ErdGoCommand::class]);
     }

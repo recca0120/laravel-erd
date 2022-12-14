@@ -2,6 +2,7 @@
 
 namespace Recca0120\LaravelErdGo\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErdGo\ModelFinder;
 use Recca0120\LaravelErdGo\Tests\fixtures\Models\BaseModel;
@@ -11,6 +12,8 @@ use Recca0120\LaravelErdGo\Tests\fixtures\NonModel;
 
 class ModelFinderTest extends TestCase
 {
+    use RefreshDatabase;
+
     private Collection $files;
 
     protected function setUp(): void
