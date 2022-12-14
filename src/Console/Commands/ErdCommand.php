@@ -5,7 +5,7 @@ namespace Recca0120\LaravelErd\Console\Commands;
 use Doctrine\DBAL\Exception;
 use Illuminate\Console\Command;
 use Recca0120\LaravelErd\ErdFinder;
-use Recca0120\LaravelErd\Templates\ErdGo;
+use Recca0120\LaravelErd\Templates\Er;
 use RuntimeException;
 
 class ErdCommand extends Command
@@ -15,7 +15,7 @@ class ErdCommand extends Command
     /**
      * @throws Exception
      */
-    public function handle(ErdFinder $finder, ErdGo $template): int
+    public function handle(ErdFinder $finder, Er $template): int
     {
         $directory = $this->option('directory') ?? app_path();
         $patterns = trim($this->option('patterns'), "\"'");

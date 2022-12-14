@@ -6,7 +6,7 @@ use Doctrine\DBAL\Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ErdFinder;
-use Recca0120\LaravelErd\Templates\ErdGo;
+use Recca0120\LaravelErd\Templates\Er;
 use Recca0120\LaravelErd\Tests\fixtures\Models\Car;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -18,7 +18,7 @@ class ErdFinderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->template = new ErdGo();
+        $this->template = new Er();
     }
 
     /**
