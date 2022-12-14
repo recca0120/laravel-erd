@@ -10,8 +10,7 @@ class ErdCommandTest extends TestCase
     {
         $file = __DIR__ . '/../../fixtures/actual_artisan.svg';
 
-        $parameters = ['file' => $file, '--directory' => __DIR__ . '/../../fixtures'];
-        $this->artisan('erd', $parameters)->assertSuccessful();
+        $this->artisan('erd', $this->givenParameters($file))->assertSuccessful();
 
         self::assertFileEquals(__DIR__ . '/../../fixtures/expected_artisan.svg', $file);
     }
@@ -21,7 +20,15 @@ class ErdCommandTest extends TestCase
         $this->app['config']->set('erd.er.erd-go', '/bin/erd-go');
         $file = __DIR__ . '/../../fixtures/actual_artisan.svg';
 
-        $parameters = ['file' => $file, '--directory' => __DIR__ . '/../../fixtures'];
-        $this->artisan('erd', $parameters)->assertFailed();
+        $this->artisan('erd', $this->givenParameters($file))->assertFailed();
+    }
+
+    private function givenParameters(string $file): array
+    {
+        return [
+            'file' => $file,
+            '--directory' => __DIR__ . '/../../fixtures',
+            '--template' => 'er',
+        ];
     }
 }

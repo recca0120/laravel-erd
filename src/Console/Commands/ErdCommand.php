@@ -10,7 +10,7 @@ use RuntimeException;
 
 class ErdCommand extends Command
 {
-    protected $signature = 'erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=er}';
+    protected $signature = 'erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
 
     /**
      * @throws Exception
