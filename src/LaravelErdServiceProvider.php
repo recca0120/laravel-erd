@@ -4,16 +4,16 @@ namespace Recca0120\LaravelErd;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\ServiceProvider;
-use Recca0120\LaravelErd\Console\Commands\ErdCommand;
+use Recca0120\LaravelErd\Console\Commands\LaravelErdCommand;
 
-class ErdServiceProvider extends ServiceProvider
+class LaravelErdServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/erd.php', 'erd');
+        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-erd.php', 'laravel-erd');
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__ . '/../config/erd.php'], 'erd');
+            $this->publishes([__DIR__ . '/../config/laravel-erd.php'], 'laravel-erd');
         }
 
         $this->app->singleton(AbstractSchemaManager::class, function () {
@@ -22,6 +22,6 @@ class ErdServiceProvider extends ServiceProvider
 
         $this->app->singleton(ErdFinder::class, ErdFinder::class);
 
-        $this->commands([ErdCommand::class]);
+        $this->commands([LaravelErdCommand::class]);
     }
 }

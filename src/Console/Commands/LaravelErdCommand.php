@@ -8,9 +8,9 @@ use Recca0120\LaravelErd\ErdFinder;
 use Recca0120\LaravelErd\Templates\Factory;
 use RuntimeException;
 
-class ErdCommand extends Command
+class LaravelErdCommand extends Command
 {
-    protected $signature = 'erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
+    protected $signature = 'laravel-erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
 
     /**
      * @throws Exception
@@ -26,7 +26,7 @@ class ErdCommand extends Command
             $template->save(
                 $template->render($finder->in($directory)->find($patterns, $exclude)),
                 $this->argument('file'),
-                config('erd.er')
+                config('laravel-erd.er')
             );
 
             return self::SUCCESS;

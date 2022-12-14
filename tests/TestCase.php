@@ -3,7 +3,7 @@
 namespace Recca0120\LaravelErd\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
-use Recca0120\LaravelErd\ErdServiceProvider;
+use Recca0120\LaravelErd\LaravelErdServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
 
 abstract class TestCase extends BaseTestCase
@@ -12,7 +12,7 @@ abstract class TestCase extends BaseTestCase
     {
         return [
             PermissionServiceProvider::class,
-            ErdServiceProvider::class,
+            LaravelErdServiceProvider::class,
         ];
     }
 

@@ -43,7 +43,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Recca0120\\LaravelErd\\ErdServiceProvider"
+        "Recca0120\\LaravelErd\\LaravelErdServiceProvider"
       ]
     }
   }
