@@ -20,14 +20,15 @@ class LaravelErdCommand extends Command
         $directory = $this->option('directory') ?? app_path();
         $patterns = trim($this->option('patterns'), "\"'");
         $exclude = preg_split('/\s*,\s*/', $this->option('exclude'));
-        $template = $factory->create($this->option('template'));
+        $file = $this->argument('file');
 
         try {
             $storagePath = config('laravel-erd.storage_path') ?? storage_path('framework/cache');
+            $template = $factory->supports($file)->create($this->option('template'));
 
             $template->save(
                 $template->render($finder->in($directory)->find($patterns, $exclude)),
-                $storagePath . '/' . $this->argument('file'),
+                $storagePath . '/' . $file,
                 config('laravel-erd.er')
             );
 
