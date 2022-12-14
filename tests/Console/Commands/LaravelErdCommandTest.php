@@ -6,10 +6,12 @@ use Recca0120\LaravelErd\Tests\TestCase;
 
 class LaravelErdCommandTest extends TestCase
 {
+    private string $storagePath;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->storagePath = __DIR__ . '/../../fixtures/';
+        $this->storagePath = __DIR__ . '/../../fixtures';
         $this->app['config']->set('laravel-erd.storage_path', $this->storagePath);
     }
 
@@ -19,7 +21,7 @@ class LaravelErdCommandTest extends TestCase
 
         $this->artisan('laravel-erd', $this->givenParameters($file))->assertSuccessful();
 
-        self::assertFileEquals($this->storagePath . 'expected_artisan.svg', $this->storagePath . $file);
+        self::assertFileEquals($this->storagePath . '/expected_artisan.svg', $this->storagePath . '/' . $file);
     }
 
     public function test_command_not_exists(): void

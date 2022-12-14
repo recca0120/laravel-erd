@@ -4,6 +4,7 @@ namespace Recca0120\LaravelErd\Console\Commands;
 
 use Doctrine\DBAL\Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Recca0120\LaravelErd\ErdFinder;
 use Recca0120\LaravelErd\Templates\Factory;
 use RuntimeException;
@@ -24,6 +25,7 @@ class LaravelErdCommand extends Command
 
         try {
             $storagePath = config('laravel-erd.storage_path') ?? storage_path('framework/cache');
+            File::ensureDirectoryExists($storagePath);
             $template = $factory->supports($file)->create($this->option('template'));
 
             $template->save(
