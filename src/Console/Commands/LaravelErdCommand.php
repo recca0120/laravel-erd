@@ -24,15 +24,14 @@ class LaravelErdCommand extends Command
         $file = $this->argument('file');
 
         try {
-            $storagePath = config('laravel-erd.storage_path') ?? storage_path('framework/cache');
+            $options = config('laravel-erd.er');
+            $storagePath = config('laravel-erd.storage_path') ?? storage_path('framework/cache/laravel-erd');
             File::ensureDirectoryExists($storagePath);
-            $template = $factory->supports($file)->create($this->option('template'));
 
-            $template->save(
-                $template->render($finder->in($directory)->find($patterns, $exclude)),
-                $storagePath . '/' . $file,
-                config('laravel-erd.er')
-            );
+            $template = $factory->supports($file)->create($this->option('template'));
+            $output = $template->render($finder->in($directory)->find($patterns, $exclude));
+
+            $template->save($output, $storagePath . '/' . $file, $options);
 
             return self::SUCCESS;
         } catch (RuntimeException $e) {
