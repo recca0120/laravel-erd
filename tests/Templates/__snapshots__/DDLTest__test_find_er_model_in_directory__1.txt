@@ -1,0 +1,120 @@
+CREATE TABLE cars (
+    id integer NOT NULL AUTO_INCREMENT,
+    model string NOT NULL,
+    mechanic_id integer NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id) REFERENCES owners (car_id),
+    FOREIGN KEY(mechanic_id) REFERENCES mechanics (id)
+)
+CREATE TABLE comments (
+    id integer NOT NULL AUTO_INCREMENT,
+    post_id integer NOT NULL,
+    title string NOT NULL,
+    created_at datetime,
+    updated_at datetime,
+    PRIMARY KEY(id),
+    FOREIGN KEY(post_id) REFERENCES posts (id)
+)
+CREATE TABLE images (
+    id integer NOT NULL AUTO_INCREMENT,
+    url string NOT NULL,
+    imageable_type string NOT NULL,
+    imageable_id integer NOT NULL,
+    created_at datetime,
+    updated_at datetime,
+    PRIMARY KEY(id),
+    FOREIGN KEY(imageable_id) REFERENCES users (id),
+    FOREIGN KEY(imageable_id) REFERENCES posts (id)
+)
+CREATE TABLE mechanics (
+    id integer NOT NULL AUTO_INCREMENT,
+    name string NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id) REFERENCES cars (mechanic_id)
+)
+CREATE TABLE model_has_permissions (
+    permission_id integer NOT NULL,
+    model_type string NOT NULL,
+    model_id integer NOT NULL,
+    PRIMARY KEY(permission_id, model_id, model_type),
+    FOREIGN KEY(model_id) REFERENCES permissions (id),
+    FOREIGN KEY(model_id) REFERENCES users (id),
+    FOREIGN KEY(permission_id) REFERENCES permissions (id)
+)
+CREATE TABLE model_has_roles (
+    role_id integer NOT NULL,
+    model_type string NOT NULL,
+    model_id integer NOT NULL,
+    PRIMARY KEY(role_id, model_id, model_type),
+    FOREIGN KEY(model_id) REFERENCES users (id),
+    FOREIGN KEY(role_id) REFERENCES roles (id)
+)
+CREATE TABLE owners (
+    id integer NOT NULL AUTO_INCREMENT,
+    name string NOT NULL,
+    car_id integer NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(car_id) REFERENCES cars (id)
+)
+CREATE TABLE permissions (
+    id integer NOT NULL AUTO_INCREMENT,
+    name string NOT NULL,
+    guard_name string NOT NULL,
+    created_at datetime,
+    updated_at datetime,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id) REFERENCES role_has_permissions (permission_id),
+    FOREIGN KEY(id) REFERENCES model_has_permissions (model_id),
+    FOREIGN KEY(id) REFERENCES model_has_permissions (permission_id)
+)
+CREATE TABLE phones (
+    id integer NOT NULL AUTO_INCREMENT,
+    user_id integer NOT NULL,
+    phone_numbers string NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id) REFERENCES users (id)
+)
+CREATE TABLE posts (
+    id integer NOT NULL AUTO_INCREMENT,
+    user_id integer NOT NULL,
+    title string NOT NULL DEFAULT foo,
+    created_at datetime,
+    updated_at datetime,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id) REFERENCES comments (post_id),
+    FOREIGN KEY(user_id) REFERENCES users (id),
+    FOREIGN KEY(id) REFERENCES images (imageable_id)
+)
+CREATE TABLE role_has_permissions (
+    permission_id integer NOT NULL,
+    role_id integer NOT NULL,
+    PRIMARY KEY(permission_id, role_id),
+    FOREIGN KEY(permission_id) REFERENCES permissions (id),
+    FOREIGN KEY(role_id) REFERENCES roles (id)
+)
+CREATE TABLE roles (
+    id integer NOT NULL AUTO_INCREMENT,
+    name string NOT NULL,
+    guard_name string NOT NULL,
+    created_at datetime,
+    updated_at datetime,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id) REFERENCES role_has_permissions (role_id),
+    FOREIGN KEY(id) REFERENCES model_has_roles (role_id)
+)
+CREATE TABLE users (
+    id integer NOT NULL AUTO_INCREMENT,
+    name string NOT NULL,
+    email string NOT NULL,
+    email_verified_at datetime,
+    password string NOT NULL,
+    remember_token string,
+    created_at datetime,
+    updated_at datetime,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id) REFERENCES phones (user_id),
+    FOREIGN KEY(id) REFERENCES posts (user_id),
+    FOREIGN KEY(id) REFERENCES images (imageable_id),
+    FOREIGN KEY(id) REFERENCES model_has_permissions (model_id),
+    FOREIGN KEY(id) REFERENCES model_has_roles (model_id)
+)

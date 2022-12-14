@@ -17,7 +17,7 @@ use Recca0120\LaravelErdGo\Table;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
-class ErdGo
+class ErdGo implements Template
 {
     /** @var string[] */
     private static array $relations = [
