@@ -17,7 +17,8 @@ class LaravelErdServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../config/laravel-erd.php' => config_path('laravel-erd.php'),
-                __DIR__ . '/../resources/views' => base_path('resources/views/vendor/laravel-erd'),
+                __DIR__ . '/../resources/dist' => public_path('vendor/laravel-erd'),
+                __DIR__ . '/../resources/views' => resource_path('views/vendor/laravel-erd'),
             ], 'laravel-erd');
         }
 

@@ -15,10 +15,25 @@
 </head>
 <body>
 <erd-editor automatic-layout></erd-editor>
-<script src="https://cdn.jsdelivr.net/npm/vuerd/dist/vuerd.min.js"></script>
 <script>
-    const editor = document.querySelector('erd-editor');
-    editor.loadSQLDDL(atob('{{ $contents }}'));
+    function loadScript(src, onError) {
+        var script = document.createElement('script');
+        script.onload = function () {
+            var editor = document.querySelector('erd-editor');
+            editor.loadSQLDDL(atob('{{ $contents }}'));
+        }
+
+        if (onError === false) {
+            script.onerror = function () {
+                loadScript("https://cdn.jsdelivr.net/npm/vuerd/dist/vuerd.min.js", true);
+            }
+        }
+
+        script.src = src
+        document.body.appendChild(script);
+    }
+
+    loadScript("{{ asset('vendor/laravel-erd/vuerd.min.js') }}", false);
 </script>
 </body>
 </html>
