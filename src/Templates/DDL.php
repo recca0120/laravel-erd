@@ -11,11 +11,9 @@ use Recca0120\LaravelErdGo\Table;
 
 class DDL implements Template
 {
-    private string $output;
-
     public function render(Collection $tables): string
     {
-        return $this->output = $tables
+        return $tables
             ->map(function (Table $table) {
                 return sprintf(
                     "CREATE TABLE %s (\n%s\n)",
@@ -26,9 +24,9 @@ class DDL implements Template
             ->implode("\n");
     }
 
-    public function save(string $path, array $options = []): int
+    public function save(string $output, string $path, array $options = []): int
     {
-        return (int) File::put($path, $this->output);
+        return (int) File::put($path, $output);
     }
 
     private function renderColumn(Table $table): string

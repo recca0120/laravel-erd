@@ -29,14 +29,13 @@ class ErdGo implements Template
         BelongsToMany::class => '*--*',
         MorphToMany::class => '*--*',
     ];
-    private string $output;
 
     public function render(Collection $tables): string
     {
         $results = $tables->map(fn(Table $table): string => $this->renderTable($table));
         $relations = $tables->flatMap(fn(Table $table) => $table->relations());
 
-        return $this->output = $results->merge(
+        return $results->merge(
             $relations
                 ->unique(fn(Relation $relation) => $this->uniqueId($relation))
                 ->sortBy(fn(Relation $relation) => $this->sortBy($relation))
@@ -45,10 +44,10 @@ class ErdGo implements Template
         )->implode("\n");
     }
 
-    public function save(string $path, array $options = []): int
+    public function save(string $output, string $path, array $options = []): int
     {
         $fp = tmpfile();
-        fwrite($fp, $this->output);
+        fwrite($fp, $output);
 
         $meta = stream_get_meta_data($fp);
         $tempFile = $meta['uri'];

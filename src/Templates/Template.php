@@ -8,5 +8,5 @@ interface Template
 {
     public function render(Collection $tables): string;
 
-    public function save(string $path, array $options = []): int;
+    public function save(string $output, string $path, array $options = []): int;
 }

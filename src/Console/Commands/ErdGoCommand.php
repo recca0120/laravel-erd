@@ -20,10 +20,13 @@ class ErdGoCommand extends Command
         $directory = $this->option('directory') ?? app_path();
         $patterns = trim($this->option('patterns'), "\"'");
         $exclude = preg_split('/\s*,\s*/', $this->option('exclude'));
-        $template->render($finder->in($directory)->find($patterns, $exclude));
 
         try {
-            $template->save($this->argument('file'), config('erd-go'));
+            $template->save(
+                $template->render($finder->in($directory)->find($patterns, $exclude)),
+                $this->argument('file'),
+                config('erd-go')
+            );
 
             return self::SUCCESS;
         } catch (RuntimeException $e) {
