@@ -55,15 +55,15 @@ class Er implements Template
         $erdGoBinary = $options['erd-go'] ?? '/usr/local/bin/erd-go';
         $dotBinary = $options['dot'] ?? '/usr/local/bin/dot';
 
-        $command = sprintf('cat %s | %s | %s -T svg -o %s', $tempFile, $erdGoBinary, $dotBinary, $path);
+        $command = sprintf('cat %s | %s | %s -T svg > "%s"', $tempFile, $erdGoBinary, $dotBinary, $path);
         $process = Process::fromShellCommandline($command);
 
         $process->run();
         $exitCode = $process->wait();
 
         fclose($fp);
-        $errorOutput = $process->getErrorOutput();
 
+        $errorOutput = $process->getErrorOutput();
         if (!empty($errorOutput)) {
             throw new RuntimeException($errorOutput);
         }

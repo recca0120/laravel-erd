@@ -11,7 +11,7 @@ class LaravelErdCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->storagePath = __DIR__ . '/../../fixtures';
+        $this->storagePath = realpath(__DIR__ . '/../../fixtures');
         $this->app['config']->set('laravel-erd.storage_path', $this->storagePath);
     }
 
@@ -21,7 +21,9 @@ class LaravelErdCommandTest extends TestCase
 
         $this->artisan('laravel-erd', $this->givenParameters($file))->assertSuccessful();
 
-        self::assertFileEquals($this->storagePath . '/expected_artisan.svg', $this->storagePath . '/' . $file);
+        $contents = file_get_contents($this->storagePath . '/' . $file);
+        self::assertStringContainsString('<!-- cars -->', $contents);
+        self::assertStringContainsString('<!-- phones&#45;&#45;users -->', $contents);
     }
 
     public function test_command_not_exists(): void

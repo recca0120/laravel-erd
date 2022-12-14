@@ -5,4 +5,5 @@ use Recca0120\LaravelErd\Http\Controllers\LaravelErdController;
 
 Route::get('laravel-erd/{file?}', [LaravelErdController::class, 'index'])
     ->name('laravel-erd.index')
+    ->middleware(config('laravel-erd.middleware'))
     ->where('file', '.*');
