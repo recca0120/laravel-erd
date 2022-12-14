@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Tests\fixtures\Models;
+namespace Recca0120\LaravelErd\Tests\fixtures\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

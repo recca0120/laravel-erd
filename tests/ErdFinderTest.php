@@ -1,13 +1,13 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Tests;
+namespace Recca0120\LaravelErd\Tests;
 
 use Doctrine\DBAL\Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErdGo\ErdFinder;
-use Recca0120\LaravelErdGo\Templates\ErdGo;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
+use Recca0120\LaravelErd\ErdFinder;
+use Recca0120\LaravelErd\Templates\ErdGo;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Car;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class ErdFinderTest extends TestCase

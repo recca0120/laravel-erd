@@ -1,13 +1,13 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Templates;
+namespace Recca0120\LaravelErd\Templates;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use Recca0120\LaravelErdGo\Helpers;
-use Recca0120\LaravelErdGo\Relation;
-use Recca0120\LaravelErdGo\Table;
+use Recca0120\LaravelErd\Helpers;
+use Recca0120\LaravelErd\Relation;
+use Recca0120\LaravelErd\Table;
 
 class DDL implements Template
 {

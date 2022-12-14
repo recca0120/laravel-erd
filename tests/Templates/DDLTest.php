@@ -1,13 +1,13 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Tests\Templates;
+namespace Recca0120\LaravelErd\Tests\Templates;
 
 use Doctrine\DBAL\Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErdGo\ErdFinder;
-use Recca0120\LaravelErdGo\Templates\DDL;
-use Recca0120\LaravelErdGo\Tests\TestCase;
+use Recca0120\LaravelErd\ErdFinder;
+use Recca0120\LaravelErd\Templates\DDL;
+use Recca0120\LaravelErd\Tests\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class DDLTest extends TestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Tests\fixtures;
+namespace Recca0120\LaravelErd\Tests\fixtures;
 
 class NonModel
 {

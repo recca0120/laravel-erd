@@ -1,17 +1,17 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Tests\Console\Commands;
+namespace Recca0120\LaravelErd\Tests\Console\Commands;
 
-use Recca0120\LaravelErdGo\Tests\TestCase;
+use Recca0120\LaravelErd\Tests\TestCase;
 
-class ErdGoCommandTest extends TestCase
+class ErdCommmndTest extends TestCase
 {
     public function test_generate_svg(): void
     {
         $file = __DIR__ . '/../../fixtures/actual_artisan.svg';
 
         $parameters = ['file' => $file, '--directory' => __DIR__ . '/../../fixtures'];
-        $this->artisan('erd-go', $parameters)->assertSuccessful();
+        $this->artisan('erd', $parameters)->assertSuccessful();
 
         self::assertFileEquals(__DIR__ . '/../../fixtures/expected_artisan.svg', $file);
     }
@@ -22,6 +22,6 @@ class ErdGoCommandTest extends TestCase
         $file = __DIR__ . '/../../fixtures/actual_artisan.svg';
 
         $parameters = ['file' => $file, '--directory' => __DIR__ . '/../../fixtures'];
-        $this->artisan('erd-go', $parameters)->assertFailed();
+        $this->artisan('erd', $parameters)->assertFailed();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo;
+namespace Recca0120\LaravelErd;
 
 use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Schema\Table as DBALTable;

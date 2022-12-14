@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo;
+namespace Recca0120\LaravelErd;
 
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Column;

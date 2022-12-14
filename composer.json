@@ -1,5 +1,5 @@
 {
-  "name": "recca0120/laravel-erd-go",
+  "name": "recca0120/laravel-erd",
   "authors": [
     {
       "name": "recca0120",
@@ -8,12 +8,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "Recca0120\\LaravelErdGo\\": "src/"
+      "Recca0120\\LaravelErd\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Recca0120\\LaravelErdGo\\Tests\\": "tests/"
+      "Recca0120\\LaravelErd\\Tests\\": "tests/"
     }
   },
   "require": {
@@ -43,7 +43,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Recca0120\\LaravelErdGo\\ErdGoServiceProvider"
+        "ErdServiceProvider"
       ]
     }
   }

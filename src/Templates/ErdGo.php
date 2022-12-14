@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Templates;
+namespace Recca0120\LaravelErd\Templates;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErdGo\Helpers;
-use Recca0120\LaravelErdGo\Relation;
-use Recca0120\LaravelErdGo\Table;
+use Recca0120\LaravelErd\Helpers;
+use Recca0120\LaravelErd\Relation;
+use Recca0120\LaravelErd\Table;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 

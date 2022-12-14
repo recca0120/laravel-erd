@@ -1,16 +1,16 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Console\Commands;
+namespace Recca0120\LaravelErd\Console\Commands;
 
 use Doctrine\DBAL\Exception;
 use Illuminate\Console\Command;
-use Recca0120\LaravelErdGo\ErdFinder;
-use Recca0120\LaravelErdGo\Templates\ErdGo;
+use Recca0120\LaravelErd\ErdFinder;
+use Recca0120\LaravelErd\Templates\ErdGo;
 use RuntimeException;
 
-class ErdGoCommand extends Command
+class ErdCommand extends Command
 {
-    protected $signature = 'erd-go {file} {--patterns=\'*.php\'} {--exclude=} {--directory=}';
+    protected $signature = 'erd {file} {--patterns=\'*.php\'} {--exclude=} {--directory=}';
 
     /**
      * @throws Exception

@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Tests;
+namespace Recca0120\LaravelErd\Tests;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,16 +12,16 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErdGo\Helpers;
-use Recca0120\LaravelErdGo\Relation;
-use Recca0120\LaravelErdGo\RelationFinder;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Car;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Comment;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Image;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Mechanic;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Owner;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\Post;
-use Recca0120\LaravelErdGo\Tests\fixtures\Models\User;
+use Recca0120\LaravelErd\Helpers;
+use Recca0120\LaravelErd\Relation;
+use Recca0120\LaravelErd\RelationFinder;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Car;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Comment;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Image;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Mechanic;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Owner;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Post;
+use Recca0120\LaravelErd\Tests\fixtures\Models\User;
 use ReflectionException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

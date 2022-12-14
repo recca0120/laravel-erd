@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo\Templates;
+namespace Recca0120\LaravelErd\Templates;
 
 use Illuminate\Support\Collection;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Recca0120\LaravelErdGo;
+namespace Recca0120\LaravelErd;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\ServiceProvider;
-use Recca0120\LaravelErdGo\Console\Commands\ErdGoCommand;
+use Recca0120\LaravelErd\Console\Commands\ErdCommand;
 
-class ErdGoServiceProvider extends ServiceProvider
+class ErdServiceProvider extends ServiceProvider
 {
     public function register()
     {
@@ -22,6 +22,6 @@ class ErdGoServiceProvider extends ServiceProvider
 
         $this->app->singleton(ErdFinder::class, ErdFinder::class);
 
-        $this->commands([ErdGoCommand::class]);
+        $this->commands([ErdCommand::class]);
     }
 }

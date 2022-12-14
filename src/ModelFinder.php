@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErdGo;
+namespace Recca0120\LaravelErd;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
