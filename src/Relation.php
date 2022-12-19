@@ -2,6 +2,12 @@
 
 namespace Recca0120\LaravelErd;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+
 class Relation
 {
     private array $attributes;
@@ -52,7 +58,7 @@ class Relation
     }
 
     /**
-     * @param  string|string[]  $tables
+     * @param string|string[] $tables
      * @return bool
      */
     public function includes($tables): bool
@@ -70,5 +76,29 @@ class Relation
             'local_key' => $this->foreignKey(),
             'foreign_key' => $this->localKey(),
         ]);
+    }
+
+    public function uniqueId(): string
+    {
+        $localKey = Helpers::getTableName($this->localKey());
+        $foreignKey = Helpers::getTableName($this->foreignKey());
+
+        $sortBy = [$localKey, $foreignKey];
+        sort($sortBy);
+
+        return implode('::', $sortBy);
+    }
+
+    public function order(): int
+    {
+        if (in_array($this->type(), [BelongsTo::class, HasOne::class, MorphOne::class])) {
+            return 1;
+        }
+
+        if (in_array($this->type(), [HasMany::class, MorphMany::class])) {
+            return 2;
+        }
+
+        return 3;
     }
 }

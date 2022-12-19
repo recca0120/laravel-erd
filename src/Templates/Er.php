@@ -37,8 +37,8 @@ class Er implements Template
 
         return $results->merge(
             $relations
-                ->unique(fn(Relation $relation) => $this->uniqueId($relation))
-                ->sortBy(fn(Relation $relation) => $this->sortBy($relation))
+                ->unique(fn(Relation $relation) => $relation->uniqueId())
+                ->sortBy(fn(Relation $relation) => $relation->order())
                 ->map(fn(Relation $relationship) => $this->renderRelations($relationship))
                 ->sort()
         )->implode("\n");
@@ -93,9 +93,9 @@ class Er implements Template
     }
 
     /**
-     * @param  Column  $column
-     * @param  array<int, string>  $primaryKeys
-     * @param  array<int, string>  $indexes
+     * @param Column $column
+     * @param array<int, string> $primaryKeys
+     * @param array<int, string> $indexes
      * @return string
      */
     private function renderColumn(Column $column, array $primaryKeys, array $indexes): string
@@ -118,29 +118,5 @@ class Er implements Template
             self::$relations[$relations->type()],
             Helpers::getTableName($relations->foreignKey())
         );
-    }
-
-    private function uniqueId(Relation $relation): string
-    {
-        $localKey = Helpers::getTableName($relation->localKey());
-        $foreignKey = Helpers::getTableName($relation->foreignKey());
-
-        $sortBy = [$localKey, $foreignKey];
-        sort($sortBy);
-
-        return implode('::', $sortBy);
-    }
-
-    private function sortBy(Relation $relation): int
-    {
-        if (in_array($relation->type(), [BelongsTo::class, HasOne::class, MorphOne::class])) {
-            return 1;
-        }
-
-        if (in_array($relation->type(), [HasMany::class, MorphMany::class])) {
-            return 2;
-        }
-
-        return 3;
     }
 }
