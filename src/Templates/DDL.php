@@ -72,22 +72,24 @@ class DDL implements Template
         return $tables
             ->map(fn(Table $table) => $table->relations())
             ->collapse()
-            ->sortBy(fn(Relation $relation) => $relation->order())
             ->unique(fn(Relation $relation) => $relation->uniqueId())
-            ->map(function (Relation $relation) {
-                $localTable = Helpers::getTableName($relation->localKey());
-                $foreignTable = Helpers::getTableName($relation->foreignKey());
-                $localColumn = Helpers::getColumnName($relation->localKey());
-                $foreignColumn = Helpers::getColumnName($relation->foreignKey());
-
-                return sprintf(
-                    'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s (%s)',
-                    $localTable,
-                    $localColumn,
-                    $foreignTable,
-                    $foreignColumn
-                );
-            })
+            ->map(fn(Relation $relation) => $this->renderRelation($relation))
             ->sort();
+    }
+
+    private function renderRelation(Relation $relation): string
+    {
+        $localTable = Helpers::getTableName($relation->localKey());
+        $foreignTable = Helpers::getTableName($relation->foreignKey());
+        $localColumn = Helpers::getColumnName($relation->localKey());
+        $foreignColumn = Helpers::getColumnName($relation->foreignKey());
+
+        return sprintf(
+            'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s (%s)',
+            $localTable,
+            $localColumn,
+            $foreignTable,
+            $foreignColumn
+        );
     }
 }

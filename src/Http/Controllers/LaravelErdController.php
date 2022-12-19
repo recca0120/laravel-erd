@@ -11,7 +11,7 @@ class LaravelErdController extends Controller
 {
     public function index(Factory $factory, string $file = 'laravel-erd.sql'): View
     {
-        $factory->supports($file);
+        $factory->allowFileExtension($file);
         $storagePath = config('laravel-erd.storage_path');
         $contents = base64_encode(File::get($storagePath . '/' . $file));
 

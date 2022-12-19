@@ -20,11 +20,11 @@ class Factory
         return new $class;
     }
 
-    public function supports(string $file): Factory
+    public function allowFileExtension(string $file): Factory
     {
         $extension = substr($file, strrpos($file, '.') + 1);
         if (!array_key_exists($extension, $this->lookup)) {
-            throw new RuntimeException('only support [' . implode(',', array_keys($this->lookup)) . ']');
+            throw new RuntimeException('allow [' . implode(',', array_keys($this->lookup)) . '] only');
         }
 
         return $this;

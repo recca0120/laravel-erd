@@ -38,7 +38,6 @@ class Er implements Template
         return $results->merge(
             $relations
                 ->unique(fn(Relation $relation) => $relation->uniqueId())
-                ->sortBy(fn(Relation $relation) => $relation->order())
                 ->map(fn(Relation $relationship) => $this->renderRelations($relationship))
                 ->sort()
         )->implode("\n");

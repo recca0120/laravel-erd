@@ -11,7 +11,7 @@ use RuntimeException;
 
 class LaravelErdCommand extends Command
 {
-    protected $signature = 'laravel-erd {file=laravel-erd.ddl} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
+    protected $signature = 'laravel-erd {file=laravel-erd.sql} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
 
     /**
      * @throws Exception
@@ -24,14 +24,13 @@ class LaravelErdCommand extends Command
         $file = $this->argument('file');
 
         try {
-            $options = config('laravel-erd.er');
+            $template = $factory->allowFileExtension($file)->create($this->option('template'));
+            $output = $template->render($finder->in($directory)->find($patterns, $exclude));
+
             $storagePath = config('laravel-erd.storage_path') ?? storage_path('framework/cache/laravel-erd');
             File::ensureDirectoryExists($storagePath);
 
-            $template = $factory->supports($file)->create($this->option('template'));
-            $output = $template->render($finder->in($directory)->find($patterns, $exclude));
-
-            $template->save($output, $storagePath . '/' . $file, $options);
+            $template->save($output, $storagePath . '/' . $file, config('laravel-erd.er'));
 
             return self::SUCCESS;
         } catch (RuntimeException $e) {
