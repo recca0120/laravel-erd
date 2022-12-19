@@ -14,19 +14,18 @@ class DDL implements Template
     public function render(Collection $tables): string
     {
         return $tables
-            ->map(function (Table $table) {
-                return sprintf(
-                    "CREATE TABLE %s (\n%s\n)",
-                    $table->name(),
-                    $this->renderColumn($table)
-                );
-            })
+            ->map(fn(Table $table) => sprintf(
+                "CREATE TABLE %s (\n%s\n)",
+                $table->name(),
+                $this->renderColumn($table)
+            ))
+            ->merge($this->renderRelations($tables))
             ->implode("\n");
     }
 
     public function save(string $output, string $path, array $options = []): int
     {
-        return (int) File::put($path, $output);
+        return (int)File::put($path, $output);
     }
 
     private function renderColumn(Table $table): string
@@ -48,37 +47,13 @@ class DDL implements Template
                 ]));
             })
             ->merge($this->renderPrimaryKeys($table))
-            ->merge($this->renderRelations($table))
             ->filter()
             ->map(fn(string $line) => '    ' . $line)
             ->implode(",\n");
     }
 
     /**
-     * @param  Table  $table
-     * @return Collection<int|string, string>
-     */
-    private function renderRelations(Table $table): Collection
-    {
-        return $table
-            ->relations()
-            ->map(function (Relation $relation) {
-                $localColumn = Helpers::getColumnName($relation->localKey());
-                $foreignTable = Helpers::getTableName($relation->foreignKey());
-                $foreignColumn = Helpers::getColumnName($relation->foreignKey());
-
-                return sprintf(
-                    'FOREIGN KEY(%s) REFERENCES %s (%s)',
-                    $localColumn,
-                    $foreignTable,
-                    $foreignColumn
-                );
-            })
-            ->unique();
-    }
-
-    /**
-     * @param  Table  $table
+     * @param Table $table
      * @return string[]
      */
     private function renderPrimaryKeys(Table $table): array
@@ -86,5 +61,33 @@ class DDL implements Template
         $primaryKeys = (implode(', ', $table->primaryKeys()));
 
         return $primaryKeys ? ["PRIMARY KEY({$primaryKeys})"] : [];
+    }
+
+    /**
+     * @param Collection<string, Table> $tables
+     * @return Collection<string, string>
+     */
+    private function renderRelations(Collection $tables): Collection
+    {
+        return $tables
+            ->map(fn(Table $table) => $table->relations())
+            ->collapse()
+            ->sortBy(fn(Relation $relation) => $relation->order())
+            ->unique(fn(Relation $relation) => $relation->uniqueId())
+            ->map(function (Relation $relation) {
+                $localTable = Helpers::getTableName($relation->localKey());
+                $foreignTable = Helpers::getTableName($relation->foreignKey());
+                $localColumn = Helpers::getColumnName($relation->localKey());
+                $foreignColumn = Helpers::getColumnName($relation->foreignKey());
+
+                return sprintf(
+                    'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s (%s)',
+                    $localTable,
+                    $localColumn,
+                    $foreignTable,
+                    $foreignColumn
+                );
+            })
+            ->sort();
     }
 }
