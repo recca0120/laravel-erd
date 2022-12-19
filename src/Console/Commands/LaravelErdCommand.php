@@ -20,7 +20,7 @@ class LaravelErdCommand extends Command
     {
         $directory = $this->option('directory') ?? app_path();
         $patterns = trim($this->option('patterns'), "\"'");
-        $exclude = preg_split('/\s*,\s*/', $this->option('exclude'));
+        $exclude = preg_split('/\s*,\s*/', $this->option('exclude') ?? '');
         $file = $this->argument('file');
 
         try {

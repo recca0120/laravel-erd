@@ -79,7 +79,7 @@ class Er implements Template
             ->filter(fn(Relation $relation) => $relation->type() !== BelongsTo::class)
             ->flatMap(fn(Relation $relation) => [
                 Helpers::getColumnName($relation->localKey()),
-                Helpers::getColumnName($relation->morphType()),
+                Helpers::getColumnName($relation->morphType() ?? ''),
             ])
             ->filter()
             ->toArray();
