@@ -9,7 +9,7 @@ use Recca0120\LaravelErd\Templates\Factory;
 
 class LaravelErdController extends Controller
 {
-    public function index(Factory $factory, string $file = 'laravel-erd.ddl'): View
+    public function index(Factory $factory, string $file = 'laravel-erd.sql'): View
     {
         $factory->supports($file);
         $storagePath = config('laravel-erd.storage_path');

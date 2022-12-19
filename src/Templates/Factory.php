@@ -8,7 +8,7 @@ class Factory
 {
     /** @var array<string, string> */
     private array $lookup = [
-        'ddl' => DDL::class,
+        'sql' => DDL::class,
         'er' => Er::class,
         'svg' => Er::class,
     ];
