@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ErdFinder;
 use Recca0120\LaravelErd\Templates\Er;
+use Recca0120\LaravelErd\Templates\Template;
 use Recca0120\LaravelErd\Tests\fixtures\Models\Car;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -14,6 +15,8 @@ class ErdFinderTest extends TestCase
 {
     use RefreshDatabase;
     use MatchesSnapshots;
+
+    private Template $template;
 
     protected function setUp(): void
     {
