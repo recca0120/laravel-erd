@@ -4,7 +4,6 @@ namespace Recca0120\LaravelErd\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\File;
 
 class LaravelErdController extends Controller
 {
@@ -13,12 +12,8 @@ class LaravelErdController extends Controller
         $storagePath = config('laravel-erd.storage_path');
         $extension = substr($file, strrpos($file, '.') + 1);
         $path = $storagePath . '/' . $file;
-        if ($extension === 'sql') {
-            $contents = base64_encode(File::get($path));
+        $view = $extension === 'svg' ? 'svg' : 'vuerd';
 
-            return view('laravel-erd::vuerd', ['contents' => $contents]);
-        }
-
-        return view('laravel-erd::svg', ['path' => $path]);
+        return view('laravel-erd::' . $view, ['path' => $path]);
     }
 }
