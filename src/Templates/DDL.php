@@ -33,13 +33,13 @@ class DDL implements Template
         return $table->columns()
             ->map(function (Column $column) {
                 $type = Helpers::getColumnType($column);
-                $length = $column->getLength();
+                $precision = $column->getPrecision();
                 $default = $column->getDefault();
                 $comment = $column->getComment();
 
                 return implode(' ', array_filter([
                     $column->getName(),
-                    $type . ($length ? "({$length})" : ''),
+                    $type . ($precision ? "({$precision})" : ''),
                     $column->getNotnull() ? 'NOT NULL' : '',
                     $default ? "DEFAULT {$default}" : '',
                     $comment ? "COMMENT {$comment}" : '',

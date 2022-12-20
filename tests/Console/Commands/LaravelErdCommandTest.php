@@ -42,6 +42,6 @@ class LaravelErdCommandTest extends TestCase
 
     private function givenParameters(string $file): array
     {
-        return ['file' => $file, '--directory' => $this->storagePath, '--template' => 'er'];
+        return ['file' => $file, '--directory' => $this->storagePath];
     }
 }
