@@ -16,15 +16,17 @@
 <body>
 <erd-editor automatic-layout></erd-editor>
 <script>
-    function loadScript(src, remote, onError) {
+    function loadScript(src, fallback, callback) {
         var script = document.createElement('script');
         script.onload = function () {
-            init();
+            if (callback) {
+                callback();
+            }
         }
 
-        if (!onError) {
+        if (fallback) {
             script.onerror = function () {
-                loadScript(remote, true);
+                loadScript(fallback, undefined, callback);
             }
         }
 
@@ -37,7 +39,11 @@
         editor.loadSQLDDL(atob('{{ base64_encode(File::get($path)) }}'));
     }
 
-    loadScript("{{ asset('vendor/laravel-erd/vuerd.min.js') }}", "https://cdn.jsdelivr.net/npm/vuerd/dist/vuerd.min.js");
+    loadScript(
+        "{{ asset('vendor/laravel-erd/vuerd.min.js') }}",
+        "https://cdn.jsdelivr.net/npm/vuerd/dist/vuerd.min.js",
+        init
+    );
 </script>
 </body>
 </html>

@@ -6,6 +6,16 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laravel Erd</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        #svg {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
 @php
@@ -15,15 +25,17 @@
     echo $svg->saveXML($svg->documentElement);
 @endphp
 <script>
-    function loadScript(src, remote, onError) {
+    function loadScript(src, fallback, callback) {
         var script = document.createElement('script');
         script.onload = function () {
-            init();
+            if (callback) {
+                callback();
+            }
         }
 
-        if (!onError) {
+        if (fallback) {
             script.onerror = function () {
-                loadScript(remote, true);
+                loadScript(fallback, undefined, callback);
             }
         }
 
@@ -40,7 +52,11 @@
         parent.addEventListener('wheel', panzoom.zoomWithWheel)
     }
 
-    loadScript("{{ asset('vendor/laravel-erd/panzoom.min.js') }}", "https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.5.1/dist/panzoom.min.js");
+    loadScript(
+        "{{ asset('vendor/laravel-erd/panzoom.min.js') }}",
+        "https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.5.1/dist/panzoom.min.js",
+        init
+    );
 </script>
 </body>
 </html>
