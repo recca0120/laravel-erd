@@ -1,21 +1,21 @@
 CREATE TABLE cars (
     id integer(10) NOT NULL AUTO_INCREMENT,
-    model string(10) NOT NULL,
+    model varchar(10) NOT NULL,
     mechanic_id integer(10) NOT NULL,
     PRIMARY KEY(id)
 )
 CREATE TABLE comments (
     id integer(10) NOT NULL AUTO_INCREMENT,
     post_id integer(10) NOT NULL,
-    title string(10) NOT NULL,
+    title varchar(10) NOT NULL,
     created_at datetime(10),
     updated_at datetime(10),
     PRIMARY KEY(id)
 )
 CREATE TABLE images (
     id integer(10) NOT NULL AUTO_INCREMENT,
-    url string(10) NOT NULL,
-    imageable_type string(10) NOT NULL,
+    url varchar(10) NOT NULL,
+    imageable_type varchar(10) NOT NULL,
     imageable_id integer(10) NOT NULL,
     created_at datetime(10),
     updated_at datetime(10),
@@ -23,31 +23,31 @@ CREATE TABLE images (
 )
 CREATE TABLE mechanics (
     id integer(10) NOT NULL AUTO_INCREMENT,
-    name string(10) NOT NULL,
+    name varchar(10) NOT NULL,
     PRIMARY KEY(id)
 )
 CREATE TABLE model_has_permissions (
     permission_id integer(10) NOT NULL,
-    model_type string(10) NOT NULL,
+    model_type varchar(10) NOT NULL,
     model_id integer(10) NOT NULL,
     PRIMARY KEY(permission_id, model_id, model_type)
 )
 CREATE TABLE model_has_roles (
     role_id integer(10) NOT NULL,
-    model_type string(10) NOT NULL,
+    model_type varchar(10) NOT NULL,
     model_id integer(10) NOT NULL,
     PRIMARY KEY(role_id, model_id, model_type)
 )
 CREATE TABLE owners (
     id integer(10) NOT NULL AUTO_INCREMENT,
-    name string(10) NOT NULL,
+    name varchar(10) NOT NULL,
     car_id integer(10) NOT NULL,
     PRIMARY KEY(id)
 )
 CREATE TABLE permissions (
     id integer(10) NOT NULL AUTO_INCREMENT,
-    name string(10) NOT NULL,
-    guard_name string(10) NOT NULL,
+    name varchar(10) NOT NULL,
+    guard_name varchar(10) NOT NULL,
     created_at datetime(10),
     updated_at datetime(10),
     PRIMARY KEY(id)
@@ -55,13 +55,13 @@ CREATE TABLE permissions (
 CREATE TABLE phones (
     id integer(10) NOT NULL AUTO_INCREMENT,
     user_id integer(10) NOT NULL,
-    phone_numbers string(10) NOT NULL,
+    phone_numbers varchar(10) NOT NULL,
     PRIMARY KEY(id)
 )
 CREATE TABLE posts (
     id integer(10) NOT NULL AUTO_INCREMENT,
     user_id integer(10) NOT NULL,
-    title string(10) NOT NULL DEFAULT foo,
+    title varchar(10) NOT NULL DEFAULT foo,
     created_at datetime(10),
     updated_at datetime(10),
     PRIMARY KEY(id)
@@ -73,19 +73,19 @@ CREATE TABLE role_has_permissions (
 )
 CREATE TABLE roles (
     id integer(10) NOT NULL AUTO_INCREMENT,
-    name string(10) NOT NULL,
-    guard_name string(10) NOT NULL,
+    name varchar(10) NOT NULL,
+    guard_name varchar(10) NOT NULL,
     created_at datetime(10),
     updated_at datetime(10),
     PRIMARY KEY(id)
 )
 CREATE TABLE users (
     id integer(10) NOT NULL AUTO_INCREMENT,
-    name string(10) NOT NULL,
-    email string(10) NOT NULL,
+    name varchar(10) NOT NULL,
+    email varchar(10) NOT NULL,
     email_verified_at datetime(10),
-    password string(10) NOT NULL,
-    remember_token string(10),
+    password varchar(10) NOT NULL,
+    remember_token varchar(10),
     created_at datetime(10),
     updated_at datetime(10),
     PRIMARY KEY(id)

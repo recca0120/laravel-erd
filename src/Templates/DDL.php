@@ -32,7 +32,7 @@ class DDL implements Template
     {
         return $table->columns()
             ->map(function (Column $column) {
-                $type = Helpers::getColumnType($column);
+                $type = $this->getColumnType($column);
                 $precision = $column->getPrecision();
                 $default = $column->getDefault();
                 $comment = $column->getComment();
@@ -91,5 +91,12 @@ class DDL implements Template
             $foreignTable,
             $foreignColumn
         );
+    }
+
+    private function getColumnType(Column $column): string
+    {
+        $type = Helpers::getColumnType($column);
+
+        return $type === 'string' ? 'varchar' : $type;
     }
 }
