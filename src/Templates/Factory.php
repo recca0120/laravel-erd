@@ -13,20 +13,21 @@ class Factory
         'svg' => Er::class,
     ];
 
-    public function create(string $templateName): Template
+    public function create(string $file): Template
     {
-        $class = $this->lookup[$templateName] ?? Er::class;
+        $extension = $this->getExtension($file);
+        $class = $this->lookup[$extension] ?? Er::class;
 
         return new $class;
     }
 
-    public function allowFileExtension(string $file): Factory
+    private function getExtension(string $file): string
     {
         $extension = substr($file, strrpos($file, '.') + 1);
         if (!array_key_exists($extension, $this->lookup)) {
             throw new RuntimeException('allow [' . implode(',', array_keys($this->lookup)) . '] only');
         }
 
-        return $this;
+        return $extension;
     }
 }

@@ -10,7 +10,7 @@ use RuntimeException;
 
 class LaravelErdCommand extends Command
 {
-    protected $signature = 'laravel-erd {file=laravel-erd.sql} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--template=ddl}';
+    protected $signature = 'laravel-erd {file=laravel-erd.sql} {--patterns=\'*.php\'} {--exclude=} {--directory=}';
 
     public function handle(ErdFinder $finder, Factory $factory): int
     {
@@ -20,7 +20,7 @@ class LaravelErdCommand extends Command
         $file = $this->argument('file');
 
         try {
-            $template = $factory->allowFileExtension($file)->create($this->option('template'));
+            $template = $factory->create($file);
             $output = $template->render($finder->in($directory)->find($patterns, $exclude));
 
             $options = config('laravel-erd');
