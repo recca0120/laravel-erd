@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd;
 
-use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\Collection;
 
@@ -15,9 +14,10 @@ class ErdFinder
 
     public function __construct(
         AbstractSchemaManager $schemaManager,
-        ModelFinder $modelFinder,
-        RelationFinder $relationFinder
-    ) {
+        ModelFinder           $modelFinder,
+        RelationFinder        $relationFinder
+    )
+    {
         $this->schemaManager = $schemaManager;
         $this->modelFinder = $modelFinder;
         $this->relationFinder = $relationFinder;
@@ -31,10 +31,9 @@ class ErdFinder
     }
 
     /**
-     * @param  string|string[]  $patterns
-     * @param  string[]  $excludes
+     * @param string|string[] $patterns
+     * @param string[] $excludes
      * @return Collection<int|string, Table>
-     * @throws DBALException
      */
     public function find($patterns = '*.php', array $excludes = []): Collection
     {
@@ -44,10 +43,9 @@ class ErdFinder
     }
 
     /**
-     * @param  string|string[]  $file
-     * @param  string[]  $excludes
+     * @param string|string[] $file
+     * @param string[] $excludes
      * @return Collection<int|string, Table>
-     * @throws DBALException
      */
     public function findByFile($file, array $excludes = []): Collection
     {
@@ -57,10 +55,9 @@ class ErdFinder
     }
 
     /**
-     * @param  string  $className
-     * @param  string[]  $excludes
+     * @param string $className
+     * @param string[] $excludes
      * @return Collection<int|string, Table>
-     * @throws DBALException
      */
     public function findByModel(string $className, array $excludes = []): Collection
     {
@@ -68,14 +65,12 @@ class ErdFinder
     }
 
     /**
-     * @param  Collection  $models
-     * @param  string|string[]  $excludes
+     * @param Collection $models
+     * @param string[] $excludes
      * @return Collection<int|string, Table>
-     * @throws DBALException
      */
-    private function findByModels(Collection $models, $excludes = []): Collection
+    private function findByModels(Collection $models, array $excludes = []): Collection
     {
-        /** @var Collection $missing */
         $missing = $models
             ->flatMap(fn(string $model) => $this->relationFinder->generate($model)->collapse())
             ->map(fn(Relation $relation) => $relation->related())
@@ -96,6 +91,10 @@ class ErdFinder
             });
     }
 
+    /**
+     * @param Relation $relation
+     * @return string[]
+     */
     private function uniqueRelation(Relation $relation): array
     {
         return [$relation->type(), $relation->localKey(), $relation->foreignKey()];

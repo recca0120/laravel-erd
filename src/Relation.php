@@ -58,10 +58,10 @@ class Relation
     }
 
     /**
-     * @param string|string[] $tables
+     * @param string[] $tables
      * @return bool
      */
-    public function includes($tables): bool
+    public function includes(array $tables): bool
     {
         $localTable = Helpers::getTableName($this->localKey());
         $foreignTable = Helpers::getTableName($this->foreignKey());

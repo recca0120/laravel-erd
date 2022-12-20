@@ -21,7 +21,7 @@ use Throwable;
 class RelationFinder
 {
     /**
-     * @param  string  $className
+     * @param class-string<Model> $className
      * @return Collection<string, Collection<int, Relation>|null>
      * @throws ReflectionException
      */
@@ -40,8 +40,8 @@ class RelationFinder
     }
 
     /**
-     * @param  ReflectionMethod  $method
-     * @param  Model  $model
+     * @param ReflectionMethod $method
+     * @param Model $model
      * @return ?Collection<int, Relation>
      */
     private function findRelations(ReflectionMethod $method, Model $model): ?Collection
@@ -76,9 +76,9 @@ class RelationFinder
     }
 
     /**
-     * @param  BelongsToMany  $return
-     * @param  string  $type
-     * @param  string  $related
+     * @param BelongsToMany $return
+     * @param string $type
+     * @param string $related
      * @return Collection<int, Relation>
      */
     private function belongsToMany(BelongsToMany $return, string $type, string $related): Collection
@@ -127,9 +127,9 @@ class RelationFinder
     }
 
     /**
-     * @param  BelongsTo  $return
-     * @param  string  $type
-     * @param  string  $related
+     * @param BelongsTo $return
+     * @param string $type
+     * @param string $related
      * @return ?Collection<int, Relation>
      */
     private function belongsTo(BelongsTo $return, string $type, string $related): ?Collection
@@ -160,9 +160,9 @@ class RelationFinder
     }
 
     /**
-     * @param  HasOneOrMany  $return
-     * @param  string  $type
-     * @param  string  $related
+     * @param HasOneOrMany $return
+     * @param string $type
+     * @param string $related
      * @return ?Collection<int, Relation>
      */
     private function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Collection
@@ -197,7 +197,7 @@ class RelationFinder
     }
 
     /**
-     * @param  ReflectionClass<Model>  $class
+     * @param ReflectionClass<Model> $class
      * @return Collection<int, ReflectionMethod>
      */
     private function getTraitMethods(ReflectionClass $class): Collection
@@ -208,7 +208,7 @@ class RelationFinder
     }
 
     /**
-     * @param  string[]  $attributes
+     * @param string[] $attributes
      * @return Collection<int, Relation>
      */
     private function makeRelation(array $attributes): Collection
