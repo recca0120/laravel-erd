@@ -13,9 +13,9 @@ use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use ReflectionClass;
-use ReflectionException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Throwable;
 
 class ModelFinder
 {
@@ -28,8 +28,8 @@ class ModelFinder
     }
 
     /**
-     * @param  string  $directory
-     * @param  string|string[]  $patterns
+     * @param string $directory
+     * @param string|string[] $patterns
      * @return Collection
      */
     public function find(string $directory, $patterns = '*.php'): Collection
@@ -43,14 +43,15 @@ class ModelFinder
             ->values();
     }
 
-    /**
-     * @throws ReflectionException
-     */
     private function isEloquentModel(string $className): bool
     {
-        return $className &&
-            is_subclass_of($className, Model::class) &&
-            !(new ReflectionClass($className))->isAbstract();
+        try {
+            return $className &&
+                is_subclass_of($className, Model::class) &&
+                !(new ReflectionClass($className))->isAbstract();
+        } catch (Throwable $e) {
+            return false;
+        }
     }
 
     private function getFullyQualifiedClassName(SplFileInfo $file): ?string
