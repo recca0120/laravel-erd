@@ -3,23 +3,21 @@
 namespace Recca0120\LaravelErd\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Recca0120\LaravelErd\ErdFinder;
 use Recca0120\LaravelErd\Templates\Factory;
 use RuntimeException;
 
 class LaravelErdCommand extends Command
 {
-    protected $signature = 'laravel-erd {file=laravel-erd.sql} {--patterns=\'*.php\'} {--exclude=} {--directory=}';
+    protected $signature = 'laravel-erd {file=laravel-erd.sql} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--database=laravel-erd}';
 
     public function handle(ErdFinder $finder, Factory $factory): int
     {
-        config([
-            'database.default' => 'laravel-erd',
-            'passport.storage.database.connection' => 'laravel-erd',
-            'telescope.storage.database.connection' => 'laravel-erd',
-        ]);
+        $this->setConnection($this->option('database'));
 
         if (Artisan::call('migrate') !== 0) {
             $this->error(Artisan::output());
@@ -48,5 +46,16 @@ class LaravelErdCommand extends Command
 
             return self::FAILURE;
         }
+    }
+
+    private function setConnection(string $connection): void
+    {
+        config(
+            collect(Arr::dot(config()->all()))
+                ->filter(fn($value, $key) => $value && Str::endsWith($key, 'database.connection'))
+                ->map(fn() => $connection)
+                ->merge(['database.default' => $connection])
+                ->toArray()
+        );
     }
 }
