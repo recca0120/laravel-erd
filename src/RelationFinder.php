@@ -32,9 +32,7 @@ class RelationFinder
 
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
             ->merge($this->getTraitMethods($class))
-            ->reject(
-                fn(ReflectionMethod $method) => $method->class !== $className || $method->getNumberOfParameters() > 0
-            )
+            ->reject(fn(ReflectionMethod $method) => $method->class !== $className || $method->getNumberOfParameters() > 0)
             ->mapWithKeys(fn(ReflectionMethod $method) => [$method->getName() => $this->findRelations($method, $model)])
             ->filter();
     }
@@ -49,7 +47,7 @@ class RelationFinder
         try {
             $return = $method->invoke($model);
 
-            if (!$return instanceof EloquentRelation) {
+            if (! $return instanceof EloquentRelation) {
                 return null;
             }
 
