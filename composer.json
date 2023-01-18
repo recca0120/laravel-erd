@@ -1,5 +1,8 @@
 {
   "name": "recca0120/laravel-erd",
+  "description": "",
+  "type": "library",
+  "license": "MIT",
   "authors": [
     {
       "name": "recca0120",
