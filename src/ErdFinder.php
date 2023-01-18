@@ -8,16 +8,18 @@ use Illuminate\Support\Collection;
 class ErdFinder
 {
     private AbstractSchemaManager $schemaManager;
+
     private ModelFinder $modelFinder;
+
     private RelationFinder $relationFinder;
+
     private string $directory;
 
     public function __construct(
         AbstractSchemaManager $schemaManager,
-        ModelFinder           $modelFinder,
-        RelationFinder        $relationFinder
-    )
-    {
+        ModelFinder $modelFinder,
+        RelationFinder $relationFinder
+    ) {
         $this->schemaManager = $schemaManager;
         $this->modelFinder = $modelFinder;
         $this->relationFinder = $relationFinder;
@@ -31,8 +33,8 @@ class ErdFinder
     }
 
     /**
-     * @param string|string[] $patterns
-     * @param string[] $excludes
+     * @param  string|string[]  $patterns
+     * @param  string[]  $excludes
      * @return Collection<int|string, Table>
      */
     public function find($patterns = '*.php', array $excludes = []): Collection
@@ -43,8 +45,8 @@ class ErdFinder
     }
 
     /**
-     * @param string|string[] $file
-     * @param string[] $excludes
+     * @param  string|string[]  $file
+     * @param  string[]  $excludes
      * @return Collection<int|string, Table>
      */
     public function findByFile($file, array $excludes = []): Collection
@@ -55,8 +57,8 @@ class ErdFinder
     }
 
     /**
-     * @param string $className
-     * @param string[] $excludes
+     * @param  string  $className
+     * @param  string[]  $excludes
      * @return Collection<int|string, Table>
      */
     public function findByModel(string $className, array $excludes = []): Collection
@@ -65,34 +67,34 @@ class ErdFinder
     }
 
     /**
-     * @param Collection $models
-     * @param string[] $excludes
+     * @param  Collection  $models
+     * @param  string[]  $excludes
      * @return Collection<int|string, Table>
      */
     private function findByModels(Collection $models, array $excludes = []): Collection
     {
         $missing = $models
-            ->flatMap(fn(string $model) => $this->relationFinder->generate($model)->collapse())
-            ->map(fn(Relation $relation) => $relation->related())
+            ->flatMap(fn (string $model) => $this->relationFinder->generate($model)->collapse())
+            ->map(fn (Relation $relation) => $relation->related())
             ->filter()
             ->diff($models);
 
         return $models
             ->merge($missing)
-            ->flatMap(fn(string $model) => $this->relationFinder->generate($model)->collapse())
-            ->flatMap(fn(Relation $relation) => [$relation, $relation->relatedRelation()])
-            ->reject(fn(Relation $relation) => $relation->includes($excludes))
-            ->sortBy(fn(Relation $relation) => $this->uniqueRelation($relation))
-            ->unique(fn(Relation $relation) => $this->uniqueRelation($relation))
-            ->groupBy(fn(Relation $relation) => $relation->table())
-            ->sortBy(fn(Collection $relations, string $table) => $table)
+            ->flatMap(fn (string $model) => $this->relationFinder->generate($model)->collapse())
+            ->flatMap(fn (Relation $relation) => [$relation, $relation->relatedRelation()])
+            ->reject(fn (Relation $relation) => $relation->includes($excludes))
+            ->sortBy(fn (Relation $relation) => $this->uniqueRelation($relation))
+            ->unique(fn (Relation $relation) => $this->uniqueRelation($relation))
+            ->groupBy(fn (Relation $relation) => $relation->table())
+            ->sortBy(fn (Collection $relations, string $table) => $table)
             ->map(function (Collection $relations, $table) {
                 return new Table($this->schemaManager->introspectTable($table), $relations);
             });
     }
 
     /**
-     * @param Relation $relation
+     * @param  Relation  $relation
      * @return string[]
      */
     private function uniqueRelation(Relation $relation): array

@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd;
 
-
 class Pivot
 {
     /**

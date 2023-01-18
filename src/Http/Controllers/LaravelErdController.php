@@ -12,12 +12,12 @@ class LaravelErdController extends Controller
     {
         $storagePath = config('laravel-erd.storage_path');
         $extension = substr($file, strrpos($file, '.') + 1);
-        $path = $storagePath . '/' . $file;
+        $path = $storagePath.'/'.$file;
 
         abort_unless(File::exists($path), 404);
 
         $view = $extension === 'svg' ? 'svg' : 'vuerd';
 
-        return view('laravel-erd::' . $view, ['path' => $path]);
+        return view('laravel-erd::'.$view, ['path' => $path]);
     }
 }

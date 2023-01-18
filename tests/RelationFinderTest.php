@@ -39,6 +39,7 @@ class RelationFinderTest extends TestCase
         BelongsToMany::class => '*--*',
         MorphToMany::class => '*--*',
     ];
+
     private RelationFinder $finder;
 
     protected function setUp(): void
@@ -62,7 +63,6 @@ class RelationFinderTest extends TestCase
         self::assertEquals('cars.mechanic_id', $car->foreignKey());
     }
 
-
     /**
      * @throws ReflectionException
      */
@@ -85,7 +85,6 @@ class RelationFinderTest extends TestCase
         self::assertEquals('owners.car_id', $owner->foreignKey());
     }
 
-
     /**
      * @throws ReflectionException
      */
@@ -100,7 +99,6 @@ class RelationFinderTest extends TestCase
         self::assertEquals('owners.car_id', $car->localKey());
         self::assertEquals('cars.id', $car->foreignKey());
     }
-
 
     /**
      * @throws ReflectionException
@@ -123,7 +121,6 @@ class RelationFinderTest extends TestCase
         self::assertEquals('posts.user_id', $user->localKey());
         self::assertEquals('users.id', $user->foreignKey());
     }
-
 
     /**
      * @throws ReflectionException

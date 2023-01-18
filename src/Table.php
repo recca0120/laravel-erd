@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 class Table
 {
     private DBALTable $table;
+
     /**
      * @var Collection<int|string, Relation>
      */

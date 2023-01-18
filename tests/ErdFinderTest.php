@@ -48,7 +48,6 @@ class ErdFinderTest extends TestCase
         );
     }
 
-
     /**
      * @throws Exception
      */
@@ -75,7 +74,7 @@ class ErdFinderTest extends TestCase
 
     private function givenFinder(): ErdFinder
     {
-        return $this->app->make(ErdFinder::class)->in(__DIR__ . '/fixtures');
+        return $this->app->make(ErdFinder::class)->in(__DIR__.'/fixtures');
     }
 
     private function render(Collection $results): string

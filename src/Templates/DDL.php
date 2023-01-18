@@ -14,7 +14,7 @@ class DDL implements Template
     public function render(Collection $tables): string
     {
         return $tables
-            ->map(fn(Table $table) => sprintf(
+            ->map(fn (Table $table) => sprintf(
                 "CREATE TABLE %s (\n%s\n)",
                 $table->name(),
                 $this->renderColumn($table)
@@ -25,7 +25,7 @@ class DDL implements Template
 
     public function save(string $output, string $path, array $options = []): int
     {
-        return (int)File::put($path, $output);
+        return (int) File::put($path, $output);
     }
 
     private function renderColumn(Table $table): string
@@ -39,7 +39,7 @@ class DDL implements Template
 
                 return implode(' ', array_filter([
                     $column->getName(),
-                    $type . ($precision ? "({$precision})" : ''),
+                    $type.($precision ? "({$precision})" : ''),
                     $column->getNotnull() ? 'NOT NULL' : '',
                     $default ? "DEFAULT {$default}" : '',
                     $comment ? "COMMENT {$comment}" : '',
@@ -48,12 +48,12 @@ class DDL implements Template
             })
             ->merge($this->renderPrimaryKeys($table))
             ->filter()
-            ->map(fn(string $line) => '    ' . $line)
+            ->map(fn (string $line) => '    '.$line)
             ->implode(",\n");
     }
 
     /**
-     * @param Table $table
+     * @param  Table  $table
      * @return string[]
      */
     private function renderPrimaryKeys(Table $table): array
@@ -64,16 +64,16 @@ class DDL implements Template
     }
 
     /**
-     * @param Collection<string, Table> $tables
+     * @param  Collection<string, Table>  $tables
      * @return Collection<string, string>
      */
     private function renderRelations(Collection $tables): Collection
     {
         return $tables
-            ->map(fn(Table $table) => $table->relations())
+            ->map(fn (Table $table) => $table->relations())
             ->collapse()
-            ->unique(fn(Relation $relation) => $relation->uniqueId())
-            ->map(fn(Relation $relation) => $this->renderRelation($relation))
+            ->unique(fn (Relation $relation) => $relation->uniqueId())
+            ->map(fn (Relation $relation) => $this->renderRelation($relation))
             ->sort();
     }
 

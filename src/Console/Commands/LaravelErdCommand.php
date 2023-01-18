@@ -52,8 +52,8 @@ class LaravelErdCommand extends Command
     {
         config(
             collect(Arr::dot(config()->all()))
-                ->filter(fn($value, $key) => $value && Str::endsWith($key, 'database.connection'))
-                ->map(fn() => $connection)
+                ->filter(fn ($value, $key) => $value && Str::endsWith($key, 'database.connection'))
+                ->map(fn () => $connection)
                 ->merge(['database.default' => $connection])
                 ->toArray()
         );

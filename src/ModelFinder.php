@@ -28,8 +28,8 @@ class ModelFinder
     }
 
     /**
-     * @param string $directory
-     * @param string|string[] $patterns
+     * @param  string  $directory
+     * @param  string|string[]  $patterns
      * @return Collection
      */
     public function find(string $directory, $patterns = '*.php'): Collection
@@ -37,9 +37,9 @@ class ModelFinder
         $files = Finder::create()->files()->name($patterns)->in($directory);
 
         return collect($files)
-            ->map(fn(SplFileInfo $file) => $this->getFullyQualifiedClassName($file))
-            ->filter(fn($className) => !empty($className))
-            ->filter(fn(string $className) => $this->isEloquentModel($className))
+            ->map(fn (SplFileInfo $file) => $this->getFullyQualifiedClassName($file))
+            ->filter(fn ($className) => ! empty($className))
+            ->filter(fn (string $className) => $this->isEloquentModel($className))
             ->values();
     }
 
@@ -48,7 +48,7 @@ class ModelFinder
         try {
             return $className &&
                 is_subclass_of($className, Model::class) &&
-                !(new ReflectionClass($className))->isAbstract();
+                ! (new ReflectionClass($className))->isAbstract();
         } catch (Throwable $e) {
             return false;
         }
@@ -62,16 +62,15 @@ class ModelFinder
         $nodes = $nodeTraverser->traverse($parser->parse($file->getContents()));
 
         /** @var ?Namespace_ $rootNode */
-        $rootNode = collect($nodes)->first(fn(Node $node) => $node instanceof Namespace_);
+        $rootNode = collect($nodes)->first(fn (Node $node) => $node instanceof Namespace_);
 
-        if (!$rootNode) {
+        if (! $rootNode) {
             return null;
         }
 
         return collect($rootNode->stmts)
-            ->filter(static fn(Stmt $stmt) => $stmt instanceof Class_)
-            ->map(static fn(Class_ $stmt) => $stmt->namespacedName->toString())
+            ->filter(static fn (Stmt $stmt) => $stmt instanceof Class_)
+            ->map(static fn (Class_ $stmt) => $stmt->namespacedName->toString())
             ->first();
     }
-
 }

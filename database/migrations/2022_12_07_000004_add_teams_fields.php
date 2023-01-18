@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\PermissionRegistrar;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -18,7 +19,7 @@ return new class extends Migration {
         $tableNames = config('permission.table_names');
         $columnNames = config('permission.column_names');
 
-        if (!$teams) {
+        if (! $teams) {
             return;
         }
         if (empty($tableNames)) {
@@ -28,7 +29,7 @@ return new class extends Migration {
             throw new \Exception('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         }
 
-        if (!Schema::hasColumn($tableNames['roles'], $columnNames['team_foreign_key'])) {
+        if (! Schema::hasColumn($tableNames['roles'], $columnNames['team_foreign_key'])) {
             Schema::table($tableNames['roles'], function (Blueprint $table) use ($columnNames) {
                 $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable()->after('id');
                 $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
@@ -38,7 +39,7 @@ return new class extends Migration {
             });
         }
 
-        if (!Schema::hasColumn($tableNames['model_has_permissions'], $columnNames['team_foreign_key'])) {
+        if (! Schema::hasColumn($tableNames['model_has_permissions'], $columnNames['team_foreign_key'])) {
             Schema::table($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames) {
                 $table->unsignedBigInteger($columnNames['team_foreign_key'])->default('1');
                 $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
@@ -57,9 +58,9 @@ return new class extends Migration {
             });
         }
 
-        if (!Schema::hasColumn($tableNames['model_has_roles'], $columnNames['team_foreign_key'])) {
+        if (! Schema::hasColumn($tableNames['model_has_roles'], $columnNames['team_foreign_key'])) {
             Schema::table($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key'])->default('1');;
+                $table->unsignedBigInteger($columnNames['team_foreign_key'])->default('1');
                 $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
 
                 if (DB::getDriverName() !== 'sqlite') {
@@ -88,6 +89,5 @@ return new class extends Migration {
      */
     public function down()
     {
-
     }
 };

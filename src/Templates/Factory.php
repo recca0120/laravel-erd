@@ -24,8 +24,8 @@ class Factory
     private function getExtension(string $file): string
     {
         $extension = substr($file, strrpos($file, '.') + 1);
-        if (!array_key_exists($extension, $this->lookup)) {
-            throw new RuntimeException('allow [' . implode(',', array_keys($this->lookup)) . '] only');
+        if (! array_key_exists($extension, $this->lookup)) {
+            throw new RuntimeException('allow ['.implode(',', array_keys($this->lookup)).'] only');
         }
 
         return $extension;

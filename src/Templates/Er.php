@@ -32,13 +32,13 @@ class Er implements Template
 
     public function render(Collection $tables): string
     {
-        $results = $tables->map(fn(Table $table): string => $this->renderTable($table));
-        $relations = $tables->flatMap(fn(Table $table) => $table->relations());
+        $results = $tables->map(fn (Table $table): string => $this->renderTable($table));
+        $relations = $tables->flatMap(fn (Table $table) => $table->relations());
 
         return $results->merge(
             $relations
-                ->unique(fn(Relation $relation) => $relation->uniqueId())
-                ->map(fn(Relation $relationship) => $this->renderRelations($relationship))
+                ->unique(fn (Relation $relation) => $relation->uniqueId())
+                ->map(fn (Relation $relationship) => $this->renderRelations($relationship))
                 ->sort()
         )->implode("\n");
     }
@@ -63,7 +63,7 @@ class Er implements Template
         fclose($fp);
 
         $errorOutput = $process->getErrorOutput();
-        if (!empty($errorOutput)) {
+        if (! empty($errorOutput)) {
             throw new RuntimeException($errorOutput);
         }
 
@@ -75,8 +75,8 @@ class Er implements Template
         $primaryKeys = $table->primaryKeys();
         $indexes = $table
             ->relations()
-            ->filter(fn(Relation $relation) => $relation->type() !== BelongsTo::class)
-            ->flatMap(fn(Relation $relation) => [
+            ->filter(fn (Relation $relation) => $relation->type() !== BelongsTo::class)
+            ->flatMap(fn (Relation $relation) => [
                 Helpers::getColumnName($relation->localKey()),
                 Helpers::getColumnName($relation->morphType() ?? ''),
             ])
@@ -85,16 +85,16 @@ class Er implements Template
 
         $result = sprintf("[%s] {}\n", $table->name());
         $result .= $table->columns()
-                ->map(fn(Column $column) => $this->renderColumn($column, $primaryKeys, $indexes))
-                ->implode("\n") . "\n";
+                ->map(fn (Column $column) => $this->renderColumn($column, $primaryKeys, $indexes))
+                ->implode("\n")."\n";
 
         return $result;
     }
 
     /**
-     * @param Column $column
-     * @param array<int, string> $primaryKeys
-     * @param array<int, string> $indexes
+     * @param  Column  $column
+     * @param  array<int, string>  $primaryKeys
+     * @param  array<int, string>  $indexes
      * @return string
      */
     private function renderColumn(Column $column, array $primaryKeys, array $indexes): string

@@ -10,5 +10,4 @@ class LaravelErdInitCommandTest extends TestCase
     {
         $this->artisan('laravel-erd:init')->assertSuccessful();
     }
-
 }

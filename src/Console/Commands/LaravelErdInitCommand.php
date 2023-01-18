@@ -27,7 +27,6 @@ class LaravelErdInitCommand extends Command
 
             return self::FAILURE;
         }
-
     }
 
     /**
@@ -49,7 +48,6 @@ class LaravelErdInitCommand extends Command
         $this->download($url, $path);
     }
 
-
     /**
      * @throws RequestException
      */
@@ -59,7 +57,7 @@ class LaravelErdInitCommand extends Command
             return;
         }
 
-        $this->line('download: ' . $url);
+        $this->line('download: '.$url);
         File::ensureDirectoryExists(dirname($path));
         File::put($path, Http::timeout(300)->get($url)->throw()->body());
         File::chmod($path, 0777);
@@ -67,9 +65,9 @@ class LaravelErdInitCommand extends Command
 
     private function arch(): string
     {
-        $name = php_uname("m");
+        $name = php_uname('m');
 
-        if (false !== stripos($name, "aarch64") || false !== stripos($name, "arm64")) {
+        if (false !== stripos($name, 'aarch64') || false !== stripos($name, 'arm64')) {
             return 'arm';
         }
 
@@ -93,5 +91,4 @@ class LaravelErdInitCommand extends Command
 
         return 'linux';
     }
-
 }

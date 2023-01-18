@@ -17,6 +17,4 @@ class Mechanic extends Model
     {
         return $this->hasOneThrough(Owner::class, Car::class);
     }
-
 }
-
