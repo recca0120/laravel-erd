@@ -2,20 +2,20 @@
 
 namespace Recca0120\LaravelErd;
 
-use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\Table as TableAdapter;
+use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
+use Recca0120\LaravelErd\Adapter\Contracts\Table as TableContract;
 
 class Table
 {
-    private TableAdapter $table;
+    private TableContract $table;
 
     /**
      * @var Collection<int|string, Relation>
      */
     private Collection $relations;
 
-    public function __construct(TableAdapter $table, Collection $relations)
+    public function __construct(TableContract $table, Collection $relations)
     {
         $this->table = $table;
         $this->relations = $relations;
@@ -27,7 +27,7 @@ class Table
     }
 
     /**
-     * @return Collection<int, DBALColumn>
+     * @return Collection<int, ColumnContract>
      */
     public function columns(): Collection
     {

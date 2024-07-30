@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd\Tests;
 
-use Doctrine\DBAL\Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ErdFinder;
@@ -24,9 +23,6 @@ class ErdFinderTest extends TestCase
         $this->template = new Er();
     }
 
-    /**
-     * @throws Exception
-     */
     public function test_find_er_model_in_directory(): void
     {
         $finder = $this->givenFinder();
@@ -36,9 +32,6 @@ class ErdFinderTest extends TestCase
         );
     }
 
-    /**
-     * @throws Exception
-     */
     public function test_find_er_model_by_file(): void
     {
         $finder = $this->givenFinder();
@@ -48,9 +41,6 @@ class ErdFinderTest extends TestCase
         );
     }
 
-    /**
-     * @throws Exception
-     */
     public function test_find_er_model_by_model(): void
     {
         $finder = $this->givenFinder();
@@ -60,9 +50,6 @@ class ErdFinderTest extends TestCase
         );
     }
 
-    /**
-     * @throws Exception
-     */
     public function test_find_er_model_exclude_owner(): void
     {
         $finder = $this->givenFinder();

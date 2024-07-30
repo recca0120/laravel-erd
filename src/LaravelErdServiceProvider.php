@@ -3,6 +3,9 @@
 namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\ServiceProvider;
+use Recca0120\LaravelErd\Adapter\Contracts\SchemaManager as SchemaManagerContract;
+use Recca0120\LaravelErd\Adapter\DBAL\SchemaManager as DBALSchemaManager;
+use Recca0120\LaravelErd\Adapter\Laravel\SchemaManager as LaravelSchemaManager;
 use Recca0120\LaravelErd\Console\Commands\LaravelErdCommand;
 use Recca0120\LaravelErd\Console\Commands\LaravelErdInitCommand;
 use Recca0120\LaravelErd\Templates\Factory;
@@ -35,9 +38,14 @@ class LaravelErdServiceProvider extends ServiceProvider
         $this->app->singleton(Factory::class, Factory::class);
         $this->app->singleton(ErdFinder::class, ErdFinder::class);
 
-        $this->commands([
-            LaravelErdInitCommand::class,
-            LaravelErdCommand::class,
-        ]);
+        $this->app->singleton(SchemaManagerContract::class, function () {
+            $connection = $this->app['db']->connection();
+
+            return method_exists($connection, 'getDoctrineSchemaManager')
+                ? new DBALSchemaManager($connection)
+                : new LaravelSchemaManager($connection);
+        });
+
+        $this->commands([LaravelErdInitCommand::class, LaravelErdCommand::class]);
     }
 }

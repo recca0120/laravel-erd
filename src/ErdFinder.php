@@ -3,11 +3,11 @@
 namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\SchemaManager as SchemaManagerAdapter;
+use Recca0120\LaravelErd\Adapter\Contracts\SchemaManager as SchemaManagerContract;
 
 class ErdFinder
 {
-    private SchemaManagerAdapter $schemaManager;
+    private SchemaManagerContract $schemaManager;
 
     private ModelFinder $modelFinder;
 
@@ -16,7 +16,7 @@ class ErdFinder
     private string $directory;
 
     public function __construct(
-        SchemaManagerAdapter $schemaManager,
+        SchemaManagerContract $schemaManager,
         ModelFinder $modelFinder,
         RelationFinder $relationFinder
     ) {
@@ -86,7 +86,7 @@ class ErdFinder
             ->unique(fn (Relation $relation) => $this->uniqueRelation($relation))
             ->groupBy(fn (Relation $relation) => $relation->table())
             ->sortBy(fn (Collection $relations, string $table) => $table)
-            ->map(function (Collection $relations, $table) {
+            ->map(function (Collection $relations, string $table) {
                 return new Table($this->schemaManager->introspectTable($table), $relations);
             });
     }

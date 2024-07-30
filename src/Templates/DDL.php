@@ -4,7 +4,7 @@ namespace Recca0120\LaravelErd\Templates;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use Recca0120\LaravelErd\Adapter\Column;
+use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
@@ -31,7 +31,7 @@ class DDL implements Template
     private function renderColumn(Table $table): string
     {
         return $table->columns()
-            ->map(function (Column $column) {
+            ->map(function (ColumnContract $column) {
                 $type = $this->getColumnType($column);
                 $precision = $column->getPrecision();
                 $default = $column->getDefault();
@@ -92,7 +92,7 @@ class DDL implements Template
         );
     }
 
-    private function getColumnType(Column $column): string
+    private function getColumnType(ColumnContract $column): string
     {
         $type = $column->getColumnType();
 

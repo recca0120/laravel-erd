@@ -1,12 +1,13 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter;
+namespace Recca0120\LaravelErd\Adapter\DBAL;
 
 use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Schema\Table as DBALTable;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErd\Adapter\Contracts\Table as TableContract;
 
-class Table
+class Table implements TableContract
 {
     private DBALTable $table;
 
@@ -30,9 +31,6 @@ class Table
         });
     }
 
-    /**
-     * @return Collection<int, string>
-     */
     public function getPrimaryKey(): Collection
     {
         $primaryKey = $this->table->getPrimaryKey();

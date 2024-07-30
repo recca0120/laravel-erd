@@ -1,12 +1,13 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter;
+namespace Recca0120\LaravelErd\Adapter\DBAL;
 
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Types\Type;
+use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
 
-class Column
+class Column implements ColumnContract
 {
     private DBALColumn $column;
 
@@ -30,15 +31,6 @@ class Column
         return $this->column->getPrecision();
     }
 
-    public function getColumnType(): string
-    {
-        try {
-            return Type::getTypeRegistry()->lookupName($this->column->getType());
-        } catch (Exception $e) {
-            return 'unknown';
-        }
-    }
-
     public function getDefault()
     {
         return $this->column->getDefault();
@@ -52,5 +44,14 @@ class Column
     public function getAutoincrement(): bool
     {
         return $this->column->getAutoincrement();
+    }
+
+    public function getColumnType(): string
+    {
+        try {
+            return Type::getTypeRegistry()->lookupName($this->column->getType());
+        } catch (Exception $e) {
+            return 'unknown';
+        }
     }
 }

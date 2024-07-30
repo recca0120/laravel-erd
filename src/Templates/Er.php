@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\Column;
+use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
@@ -85,13 +85,13 @@ class Er implements Template
 
         $result = sprintf("[%s] {}\n", $table->name());
         $result .= $table->columns()
-                ->map(fn (Column $column) => $this->renderColumn($column, $primaryKeys, $indexes))
-                ->implode("\n")."\n";
+            ->map(fn (ColumnContract $column) => $this->renderColumn($column, $primaryKeys, $indexes))
+            ->implode("\n")."\n";
 
         return $result;
     }
 
-    private function renderColumn(Column $column, Collection $primaryKeys, array $indexes): string
+    private function renderColumn(ColumnContract $column, Collection $primaryKeys, array $indexes): string
     {
         return sprintf(
             '%s%s%s {label: "%s, %s"}',
