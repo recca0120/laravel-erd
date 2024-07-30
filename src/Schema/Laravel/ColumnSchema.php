@@ -1,10 +1,10 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter\Laravel;
+namespace Recca0120\LaravelErd\Schema\Laravel;
 
-use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
+use Recca0120\LaravelErd\Contracts\ColumnSchema as ColumnSchemaContract;
 
-class Column implements ColumnContract
+class ColumnSchema implements ColumnSchemaContract
 {
     private array $column;
 
@@ -18,9 +18,9 @@ class Column implements ColumnContract
         return $this->column['name'];
     }
 
-    public function getNotnull(): bool
+    public function isNullable(): bool
     {
-        return ! $this->column['nullable'];
+        return $this->column['nullable'];
     }
 
     public function getPrecision(): int
@@ -28,7 +28,7 @@ class Column implements ColumnContract
         return $this->column['precision'] ?? 10;
     }
 
-    public function getColumnType(): string
+    public function getType(): string
     {
         $type = $this->column['type'];
 
@@ -47,7 +47,7 @@ class Column implements ColumnContract
         return $this->column['comment'] ?? null;
     }
 
-    public function getAutoincrement(): bool
+    public function isAutoIncrement(): bool
     {
         return $this->column['auto_increment'];
     }

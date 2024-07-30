@@ -1,15 +1,15 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter\Contracts;
+namespace Recca0120\LaravelErd\Contracts;
 
 use Illuminate\Support\Collection;
 
-interface Table
+interface TableSchema
 {
     public function getName(): string;
 
     /**
-     * @return Collection<int, Column>
+     * @return Collection<int, ColumnSchema>
      */
     public function getColumns(): Collection;
 

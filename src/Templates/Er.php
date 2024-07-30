@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
+use Recca0120\LaravelErd\Contracts\ColumnSchema;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
 use RuntimeException;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 class Er implements Template
@@ -29,6 +30,13 @@ class Er implements Template
         BelongsToMany::class => '*--*',
         MorphToMany::class => '*--*',
     ];
+
+    private ExecutableFinder $finder;
+
+    public function __construct()
+    {
+        $this->finder = new ExecutableFinder();
+    }
 
     public function render(Collection $tables): string
     {
@@ -45,14 +53,14 @@ class Er implements Template
 
     public function save(string $output, string $path, array $options = []): int
     {
-        $fp = tmpfile();
+        $fp = fopen(str_replace('.svg', '.er', $path), 'wb');
         fwrite($fp, $output);
 
         $meta = stream_get_meta_data($fp);
         $tempFile = $meta['uri'];
 
-        $erdGoBinary = $options['binary']['erd-go'] ?? '/usr/local/bin/erd-go';
-        $dotBinary = $options['binary']['dot'] ?? '/usr/local/bin/dot';
+        $erdGoBinary = $options['binary']['erd-go'] ?? $this->finder->find('erd-go');
+        $dotBinary = $options['binary']['dot'] ?? $this->finder->find('dot');
 
         $command = sprintf('cat %s | %s | %s -T svg > "%s"', $tempFile, $erdGoBinary, $dotBinary, $path);
         $process = Process::fromShellCommandline($command);
@@ -80,36 +88,35 @@ class Er implements Template
                 Helpers::getColumnName($relation->localKey()),
                 Helpers::getColumnName($relation->morphType() ?? ''),
             ])
-            ->filter()
-            ->toArray();
+            ->filter();
 
         $result = sprintf("[%s] {}\n", $table->name());
         $result .= $table->columns()
-            ->map(fn (ColumnContract $column) => $this->renderColumn($column, $primaryKeys, $indexes))
+            ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))
             ->implode("\n")."\n";
 
         return $result;
     }
 
-    private function renderColumn(ColumnContract $column, Collection $primaryKeys, array $indexes): string
+    private function renderColumn(ColumnSchema $column, Collection $primaryKeys, Collection $indexes): string
     {
         return sprintf(
             '%s%s%s {label: "%s, %s"}',
             $primaryKeys->containsStrict($column->getName()) ? '*' : '',
-            in_array($column->getName(), $indexes, true) ? '+' : '',
+            $indexes->containsStrict($column->getName()) ? '+' : '',
             $column->getName(),
-            $column->getColumnType(),
-            $column->getNotnull() ? 'not null' : 'null'
+            $column->getType(),
+            $column->isNullable() ? 'null' : 'not null'
         );
     }
 
-    private function renderRelations(Relation $relations): string
+    private function renderRelations(Relation $relation): string
     {
         return sprintf(
             '%s %s %s',
-            Helpers::getTableName($relations->localKey()),
-            self::$relations[$relations->type()],
-            Helpers::getTableName($relations->foreignKey())
+            Helpers::getTableName($relation->localKey()),
+            self::$relations[$relation->type()],
+            Helpers::getTableName($relation->foreignKey())
         );
     }
 }

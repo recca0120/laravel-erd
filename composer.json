@@ -22,10 +22,10 @@
   "require": {
     "illuminate/collections": "^8.0|^9.0|^10.0|^11.0",
     "illuminate/database": "^8.0|^9.0|^10.0|^11.0",
-    "nikic/php-parser": "^4.15"
+    "nikic/php-parser": "^5.1.0"
   },
   "require-dev": {
-    "doctrine/dbal": "^3.5|^4.0",
+    "doctrine/dbal": "^3.5",
     "guzzlehttp/guzzle": "^7.5",
     "mockery/mockery": "^1.5",
     "orchestra/testbench": "^6.25|^7.13|^8.0|^9.0",

@@ -1,13 +1,13 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter\DBAL;
+namespace Recca0120\LaravelErd\Schema\DBAL;
 
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Types\Type;
-use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
+use Recca0120\LaravelErd\Contracts\ColumnSchema as ColumnContract;
 
-class Column implements ColumnContract
+class ColumnSchema implements ColumnContract
 {
     private DBALColumn $column;
 
@@ -21,9 +21,9 @@ class Column implements ColumnContract
         return $this->column->getName();
     }
 
-    public function getNotnull(): bool
+    public function isNullable(): bool
     {
-        return $this->column->getNotnull();
+        return ! $this->column->getNotnull();
     }
 
     public function getPrecision(): int
@@ -41,12 +41,12 @@ class Column implements ColumnContract
         return $this->column->getComment();
     }
 
-    public function getAutoincrement(): bool
+    public function isAutoIncrement(): bool
     {
         return $this->column->getAutoincrement();
     }
 
-    public function getColumnType(): string
+    public function getType(): string
     {
         try {
             return Type::getTypeRegistry()->lookupName($this->column->getType());

@@ -33,8 +33,11 @@ class RelationFinder
 
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
             ->merge($this->getTraitMethods($class))
-            ->reject(fn (ReflectionMethod $method) => $method->class !== $className || $method->getNumberOfParameters() > 0)
-            ->mapWithKeys(fn (ReflectionMethod $method) => [$method->getName() => $this->findRelations($method, $model)])
+            ->reject(fn (ReflectionMethod $method
+            ) => $method->class !== $className || $method->getNumberOfParameters() > 0)
+            ->mapWithKeys(fn (ReflectionMethod $method) => [
+                $method->getName() => $this->findRelations($method, $model),
+            ])
             ->filter();
     }
 
@@ -65,8 +68,8 @@ class RelationFinder
                 return $this->hasOneOrMany($return, $type, $related);
             }
         } catch (RuntimeException|ReflectionException|Throwable $e) {
-            //            dump($method->getName());
-            //            dump($e->getMessage());
+            // dump($method->getName());
+            // dump($e->getMessage());
         }
 
         return null;
@@ -77,20 +80,20 @@ class RelationFinder
      */
     private function belongsToMany(BelongsToMany $return, string $type, string $related): Collection
     {
-        //        dump([
-        //            'getExistenceCompareKey' => $return->getExistenceCompareKey(),
-        //            'getForeignPivotKeyName' => $return->getForeignPivotKeyName(),
-        //            'getQualifiedForeignPivotKeyName' => $return->getQualifiedForeignPivotKeyName(),
-        //            'getRelatedPivotKeyName' => $return->getRelatedPivotKeyName(),
-        //            'getQualifiedRelatedPivotKeyName' => $return->getQualifiedRelatedPivotKeyName(),
-        //            'getParentKeyName' => $return->getParentKeyName(),
-        //            'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
-        //            'getRelatedKeyName' => $return->getRelatedKeyName(),
-        //            'getQualifiedRelatedKeyName' => $return->getQualifiedRelatedKeyName(),
-        //            'getRelationName' => $return->getRelationName(),
-        //            'getPivotAccessor' => $return->getPivotAccessor(),
-        //            'getPivotColumns' => $return->getPivotColumns(),
-        //        ]);
+        // dump([
+        //     'getExistenceCompareKey' => $return->getExistenceCompareKey(),
+        //     'getForeignPivotKeyName' => $return->getForeignPivotKeyName(),
+        //     'getQualifiedForeignPivotKeyName' => $return->getQualifiedForeignPivotKeyName(),
+        //     'getRelatedPivotKeyName' => $return->getRelatedPivotKeyName(),
+        //     'getQualifiedRelatedPivotKeyName' => $return->getQualifiedRelatedPivotKeyName(),
+        //     'getParentKeyName' => $return->getParentKeyName(),
+        //     'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
+        //     'getRelatedKeyName' => $return->getRelatedKeyName(),
+        //     'getQualifiedRelatedKeyName' => $return->getQualifiedRelatedKeyName(),
+        //     'getRelationName' => $return->getRelationName(),
+        //     'getPivotAccessor' => $return->getPivotAccessor(),
+        //     'getPivotColumns' => $return->getPivotColumns(),
+        // ]);
 
         $pivot = [
             'type' => $type,
@@ -99,10 +102,10 @@ class RelationFinder
         ];
 
         if ($return instanceof MorphToMany) {
-            //            dump([
-            //                'getMorphType' => $return->getMorphType(),
-            //                'getMorphClass' => $return->getMorphClass(),
-            //            ]);
+            // dump([
+            //     'getMorphType' => $return->getMorphType(),
+            //     'getMorphClass' => $return->getMorphClass(),
+            // ]);
 
             $pivot = array_merge([
                 'morph_class' => $return->getMorphClass(),
@@ -124,20 +127,20 @@ class RelationFinder
      */
     private function belongsTo(BelongsTo $return, string $type, string $related): ?Collection
     {
-        //        dump([
-        //            'getForeignKeyName' => $return->getForeignKeyName(),
-        //            'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
-        //            'getParentKey' => $return->getParentKey(),
-        //            'getOwnerKeyName' => $return->getOwnerKeyName(),
-        //            'getQualifiedOwnerKeyName' => $return->getQualifiedOwnerKeyName(),
-        //            'getRelationName' => $return->getRelationName(),
-        //        ]);
+        // dump([
+        //     'getForeignKeyName' => $return->getForeignKeyName(),
+        //     'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
+        //     'getParentKey' => $return->getParentKey(),
+        //     'getOwnerKeyName' => $return->getOwnerKeyName(),
+        //     'getQualifiedOwnerKeyName' => $return->getQualifiedOwnerKeyName(),
+        //     'getRelationName' => $return->getRelationName(),
+        // ]);
 
         if ($return instanceof MorphTo) {
-            //            dump([
-            //                'getMorphType' => $return->getMorphType(),
-            //                'getDictionary' => $return->getDictionary(),
-            //            ]);
+            // dump([
+            //     'getMorphType' => $return->getMorphType(),
+            //     'getDictionary' => $return->getDictionary(),
+            // ]);
             return null;
         }
 
@@ -158,10 +161,10 @@ class RelationFinder
             return null;
         }
 
-        //        dump([
-        //            'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
-        //            'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
-        //        ]);
+        // dump([
+        //     'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
+        //     'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
+        // ]);
         $attributes = [
             'type' => $type,
             'related' => $related,
@@ -170,10 +173,10 @@ class RelationFinder
         ];
 
         if ($return instanceof MorphOneOrMany) {
-            //            dump([
-            //                'getQualifiedMorphType' => $return->getQualifiedMorphType(),
-            //                'getMorphClass' => $return->getMorphClass(),
-            //            ]);
+            // dump([
+            //     'getQualifiedMorphType' => $return->getQualifiedMorphType(),
+            //     'getMorphClass' => $return->getMorphClass(),
+            // ]);
             $attributes = array_merge($attributes, [
                 'morph_type' => $return->getQualifiedMorphType(),
                 'morph_class' => $return->getMorphClass(),

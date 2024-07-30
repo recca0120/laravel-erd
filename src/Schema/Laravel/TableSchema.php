@@ -1,12 +1,12 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter\Laravel;
+namespace Recca0120\LaravelErd\Schema\Laravel;
 
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\Contracts\Table as TableContract;
+use Recca0120\LaravelErd\Contracts\TableSchema as TableSchemaContract;
 
-class Table implements TableContract
+class TableSchema implements TableSchemaContract
 {
     private Builder $builder;
 
@@ -24,12 +24,12 @@ class Table implements TableContract
     }
 
     /**
-     * @return Collection<int, Column>
+     * @return Collection<int, ColumnSchema>
      */
     public function getColumns(): Collection
     {
         return collect($this->builder->getColumns($this->name))->map(function (array $column) {
-            return new Column($column);
+            return new ColumnSchema($column);
         });
     }
 

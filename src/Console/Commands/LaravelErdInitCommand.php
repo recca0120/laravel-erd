@@ -78,17 +78,17 @@ class LaravelErdInitCommand extends Command
             return self::ARM;
         }
 
-        return strpos($name, '64') !== false ? '64' : '32';
+        return str_contains($name, '64') ? '64' : '32';
     }
 
     private function os(): string
     {
         $os = strtolower(PHP_OS);
-        if (strpos($os, self::DARWIN) !== false) {
+        if (str_contains($os, self::DARWIN)) {
             return $os;
         }
 
-        if (strpos($os, 'win') !== false) {
+        if (str_contains($os, 'win')) {
             return 'windows';
         }
 

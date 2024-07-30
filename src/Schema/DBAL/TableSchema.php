@@ -1,13 +1,13 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter\DBAL;
+namespace Recca0120\LaravelErd\Schema\DBAL;
 
 use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Schema\Table as DBALTable;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\Contracts\Table as TableContract;
+use Recca0120\LaravelErd\Contracts\TableSchema as TableSchemaContract;
 
-class Table implements TableContract
+class TableSchema implements TableSchemaContract
 {
     private DBALTable $table;
 
@@ -22,12 +22,12 @@ class Table implements TableContract
     }
 
     /**
-     * @return Collection<int, Column>
+     * @return Collection<int, ColumnSchema>
      */
     public function getColumns(): Collection
     {
         return collect($this->table->getColumns())->map(function (DBALColumn $column) {
-            return new Column($column);
+            return new ColumnSchema($column);
         });
     }
 

@@ -8,4 +8,5 @@ composer.lock
 database/migrations/2022_12_07_000004_add_teams_fields.php
 database/migrations/2022_12_07_000005_create_permission_tables.php
 tests/fixtures/bin
+tests/fixtures/actual_artisan.er
 tests/fixtures/actual_artisan.svg

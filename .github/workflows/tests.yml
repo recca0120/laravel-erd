@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
 
     name: PHP ${{ matrix.php }}
     env:
@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup cache environment
         id: extcache
@@ -29,7 +29,7 @@ jobs:
           key: ${{ env.key }}
 
       - name: Cache extensions
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.extcache.outputs.dir }}
           key: ${{ steps.extcache.outputs.key }}
@@ -47,7 +47,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -60,7 +60,7 @@ jobs:
         run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
 
       - name: Send to codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           flags: unittests

@@ -3,40 +3,40 @@
 namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
-use Recca0120\LaravelErd\Adapter\Contracts\Table as TableContract;
+use Recca0120\LaravelErd\Contracts\ColumnSchema;
+use Recca0120\LaravelErd\Contracts\TableSchema;
 
 class Table
 {
-    private TableContract $table;
+    private TableSchema $tableSchema;
 
     /**
      * @var Collection<int|string, Relation>
      */
     private Collection $relations;
 
-    public function __construct(TableContract $table, Collection $relations)
+    public function __construct(TableSchema $table, Collection $relations)
     {
-        $this->table = $table;
+        $this->tableSchema = $table;
         $this->relations = $relations;
     }
 
     public function name(): string
     {
-        return $this->table->getName();
+        return $this->tableSchema->getName();
     }
 
     /**
-     * @return Collection<int, ColumnContract>
+     * @return Collection<int, ColumnSchema>
      */
     public function columns(): Collection
     {
-        return $this->table->getColumns();
+        return $this->tableSchema->getColumns();
     }
 
     public function primaryKeys(): Collection
     {
-        return $this->table->getPrimaryKey();
+        return $this->tableSchema->getPrimaryKey();
     }
 
     /**

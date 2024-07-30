@@ -4,7 +4,7 @@ namespace Recca0120\LaravelErd\Templates;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use Recca0120\LaravelErd\Adapter\Contracts\Column as ColumnContract;
+use Recca0120\LaravelErd\Contracts\ColumnSchema;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
@@ -31,8 +31,9 @@ class DDL implements Template
     private function renderColumn(Table $table): string
     {
         return $table->columns()
-            ->map(function (ColumnContract $column) {
-                $type = $this->getColumnType($column);
+            ->map(function (ColumnSchema $column) {
+                $type = $column->getType();
+                $type = $type === 'string' ? 'varchar' : $type;
                 $precision = $column->getPrecision();
                 $default = $column->getDefault();
                 $comment = $column->getComment();
@@ -40,10 +41,10 @@ class DDL implements Template
                 return implode(' ', array_filter([
                     $column->getName(),
                     $type.($precision ? "({$precision})" : ''),
-                    $column->getNotnull() ? 'NOT NULL' : '',
+                    $column->isNullable() ? '' : 'NOT NULL',
                     $default ? "DEFAULT {$default}" : '',
                     $comment ? "COMMENT {$comment}" : '',
-                    $column->getAutoincrement() ? 'AUTO_INCREMENT' : '',
+                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : '',
                 ]));
             })
             ->merge($this->renderPrimaryKeys($table))
@@ -90,12 +91,5 @@ class DDL implements Template
             $foreignTable,
             $foreignColumn
         );
-    }
-
-    private function getColumnType(ColumnContract $column): string
-    {
-        $type = $column->getColumnType();
-
-        return $type === 'string' ? 'varchar' : $type;
     }
 }
