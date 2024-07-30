@@ -2,9 +2,9 @@
 
 namespace Recca0120\LaravelErd\Templates;
 
-use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Recca0120\LaravelErd\Adapter\Column;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
@@ -53,12 +53,11 @@ class DDL implements Template
     }
 
     /**
-     * @param  Table  $table
      * @return string[]
      */
     private function renderPrimaryKeys(Table $table): array
     {
-        $primaryKeys = (implode(', ', $table->primaryKeys()));
+        $primaryKeys = $table->primaryKeys()->implode(', ');
 
         return $primaryKeys ? ["PRIMARY KEY({$primaryKeys})"] : [];
     }
@@ -95,7 +94,7 @@ class DDL implements Template
 
     private function getColumnType(Column $column): string
     {
-        $type = Helpers::getColumnType($column);
+        $type = $column->getColumnType();
 
         return $type === 'string' ? 'varchar' : $type;
     }

@@ -28,9 +28,7 @@ class ModelFinder
     }
 
     /**
-     * @param  string  $directory
      * @param  string|string[]  $patterns
-     * @return Collection
      */
     public function find(string $directory, $patterns = '*.php'): Collection
     {

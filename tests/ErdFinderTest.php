@@ -13,8 +13,8 @@ use Spatie\Snapshots\MatchesSnapshots;
 
 class ErdFinderTest extends TestCase
 {
-    use RefreshDatabase;
     use MatchesSnapshots;
+    use RefreshDatabase;
 
     private Template $template;
 

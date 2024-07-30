@@ -59,7 +59,6 @@ class Relation
 
     /**
      * @param  string[]  $tables
-     * @return bool
      */
     public function includes(array $tables): bool
     {

@@ -2,12 +2,12 @@
 
 namespace Recca0120\LaravelErd;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErd\Adapter\SchemaManager as SchemaManagerAdapter;
 
 class ErdFinder
 {
-    private AbstractSchemaManager $schemaManager;
+    private SchemaManagerAdapter $schemaManager;
 
     private ModelFinder $modelFinder;
 
@@ -16,7 +16,7 @@ class ErdFinder
     private string $directory;
 
     public function __construct(
-        AbstractSchemaManager $schemaManager,
+        SchemaManagerAdapter $schemaManager,
         ModelFinder $modelFinder,
         RelationFinder $relationFinder
     ) {
@@ -57,7 +57,6 @@ class ErdFinder
     }
 
     /**
-     * @param  string  $className
      * @param  string[]  $excludes
      * @return Collection<int|string, Table>
      */
@@ -67,7 +66,6 @@ class ErdFinder
     }
 
     /**
-     * @param  Collection  $models
      * @param  string[]  $excludes
      * @return Collection<int|string, Table>
      */
@@ -94,7 +92,6 @@ class ErdFinder
     }
 
     /**
-     * @param  Relation  $relation
      * @return string[]
      */
     private function uniqueRelation(Relation $relation): array

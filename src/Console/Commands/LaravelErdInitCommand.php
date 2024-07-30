@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Http;
 class LaravelErdInitCommand extends Command
 {
     private const DARWIN = 'darwin';
+
     private const ARM = 'arm';
+
     protected $signature = 'laravel-erd:init';
 
     public function handle(): int
@@ -72,7 +74,7 @@ class LaravelErdInitCommand extends Command
     {
         $name = php_uname('m');
 
-        if (false !== stripos($name, 'aarch64') || false !== stripos($name, 'arm64')) {
+        if (stripos($name, 'aarch64') !== false || stripos($name, 'arm64') !== false) {
             return self::ARM;
         }
 

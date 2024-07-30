@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\ServiceProvider;
 use Recca0120\LaravelErd\Console\Commands\LaravelErdCommand;
 use Recca0120\LaravelErd\Console\Commands\LaravelErdInitCommand;
@@ -32,10 +31,6 @@ class LaravelErdServiceProvider extends ServiceProvider
                 __DIR__.'/../resources/views' => resource_path('views/vendor/laravel-erd'),
             ], 'laravel-erd');
         }
-
-        $this->app->singleton(AbstractSchemaManager::class, function () {
-            return $this->app['db']->getDoctrineSchemaManager();
-        });
 
         $this->app->singleton(Factory::class, Factory::class);
         $this->app->singleton(ErdFinder::class, ErdFinder::class);
