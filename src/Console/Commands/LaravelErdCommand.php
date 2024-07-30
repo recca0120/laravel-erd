@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Recca0120\LaravelErd\ErdFinder;
 use Recca0120\LaravelErd\Templates\Factory;
-use RuntimeException;
+use Throwable;
 
 class LaravelErdCommand extends Command
 {
@@ -19,7 +19,7 @@ class LaravelErdCommand extends Command
     {
         $this->setConnection($this->option('database'));
 
-        if (Artisan::call('migrate') !== 0) {
+        if (Artisan::call('migrate') === self::FAILURE) {
             $this->error(Artisan::output());
 
             return self::FAILURE;
@@ -41,7 +41,7 @@ class LaravelErdCommand extends Command
             $template->save($output, $storagePath.'/'.$file, $options);
 
             return self::SUCCESS;
-        } catch (RuntimeException $e) {
+        } catch (Throwable $e) {
             $this->error($e->getMessage());
 
             return self::FAILURE;

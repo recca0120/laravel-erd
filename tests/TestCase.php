@@ -18,7 +18,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function defineEnvironment($app): void
     {
-        $app['config']->set('laravel-erd.er', [
+        $app['config']->set('laravel-erd.binary', [
             'erd-go' => __DIR__.'/fixtures/bin/erd-go',
             'dot' => __DIR__.'/fixtures/bin/dot',
         ]);
@@ -27,11 +27,11 @@ abstract class TestCase extends BaseTestCase
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
-            //            'driver' => 'mysql',
-            //            'database' => 'test',
-            //            'host' => '127.0.0.1',
-            //            'username' => 'root',
-            //            'prefix' => '',
+            // 'driver' => 'mysql',
+            // 'database' => 'test',
+            // 'host' => '127.0.0.1',
+            // 'username' => 'root',
+            // 'prefix' => '',
         ]);
     }
 

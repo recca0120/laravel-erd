@@ -9,13 +9,15 @@ use Illuminate\Support\Facades\Http;
 
 class LaravelErdInitCommand extends Command
 {
+    private const DARWIN = 'darwin';
+    private const ARM = 'arm';
     protected $signature = 'laravel-erd:init';
 
     public function handle(): int
     {
         $os = $this->os();
         $arch = $this->arch();
-        $config = config('laravel-erd.er');
+        $config = config('laravel-erd.binary');
 
         try {
             $this->downloadErdGo($os, $arch, $config['erd-go']);
@@ -34,7 +36,9 @@ class LaravelErdInitCommand extends Command
      */
     private function downloadErdGo(string $os, string $arch, string $path): void
     {
-        $url = "https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/{$os}_amd{$arch}_erd-go";
+        $os = $os === self::DARWIN && $arch === self::ARM ? 'linux' : $os;
+        $arch = $arch === self::ARM ? $arch : 'amd'.$arch;
+        $url = "https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/{$os}_{$arch}_erd-go";
         $this->download($url, $path);
     }
 
@@ -43,7 +47,8 @@ class LaravelErdInitCommand extends Command
      */
     private function downloadDot(string $os, string $arch, string $path): void
     {
-        $os = $os === 'darwin' ? 'macos' : $os;
+        $os = $os === self::DARWIN ? 'macos' : $os;
+        $arch = $arch === self::ARM ? '64' : $arch;
         $url = "https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/graphviz-dot-{$os}-x{$arch}";
         $this->download($url, $path);
     }
@@ -68,7 +73,7 @@ class LaravelErdInitCommand extends Command
         $name = php_uname('m');
 
         if (false !== stripos($name, 'aarch64') || false !== stripos($name, 'arm64')) {
-            return 'arm';
+            return self::ARM;
         }
 
         return strpos($name, '64') !== false ? '64' : '32';
@@ -76,12 +81,8 @@ class LaravelErdInitCommand extends Command
 
     private function os(): string
     {
-        if ($this->arch() === 'arm') {
-            return 'arm';
-        }
-
         $os = strtolower(PHP_OS);
-        if (strpos($os, 'darwin') !== false) {
+        if (strpos($os, self::DARWIN) !== false) {
             return $os;
         }
 

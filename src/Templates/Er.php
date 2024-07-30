@@ -51,8 +51,8 @@ class Er implements Template
         $meta = stream_get_meta_data($fp);
         $tempFile = $meta['uri'];
 
-        $erdGoBinary = $options['er']['erd-go'] ?? '/usr/local/bin/erd-go';
-        $dotBinary = $options['er']['dot'] ?? '/usr/local/bin/dot';
+        $erdGoBinary = $options['binary']['erd-go'] ?? '/usr/local/bin/erd-go';
+        $dotBinary = $options['binary']['dot'] ?? '/usr/local/bin/dot';
 
         $command = sprintf('cat %s | %s | %s -T svg > "%s"', $tempFile, $erdGoBinary, $dotBinary, $path);
         $process = Process::fromShellCommandline($command);
