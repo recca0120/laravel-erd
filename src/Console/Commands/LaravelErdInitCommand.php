@@ -3,27 +3,28 @@
 namespace Recca0120\LaravelErd\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Recca0120\LaravelErd\OS;
 
 class LaravelErdInitCommand extends Command
 {
-    private const DARWIN = 'darwin';
-
-    private const ARM = 'arm';
-
     protected $signature = 'laravel-erd:init';
 
-    public function handle(): int
+    /**
+     * @throws ConnectionException
+     */
+    public function handle(OS $os): int
     {
-        $os = $this->os();
-        $arch = $this->arch();
         $config = config('laravel-erd.binary');
 
         try {
-            $this->downloadErdGo($os, $arch, $config['erd-go']);
-            $this->downloadDot($os, $arch, $config['dot']);
+            $platform = $os->platform();
+            $arch = $os->arch();
+            $this->downloadErdGo($platform, $arch, $config['erd-go']);
+            $this->downloadDot($platform, $arch, $config['dot']);
 
             return self::SUCCESS;
         } catch (RequestException $e) {
@@ -35,28 +36,34 @@ class LaravelErdInitCommand extends Command
 
     /**
      * @throws RequestException
+     * @throws ConnectionException
      */
-    private function downloadErdGo(string $os, string $arch, string $path): void
+    private function downloadErdGo(string $platform, string $arch, string $path): void
     {
-        $os = $os === self::DARWIN && $arch === self::ARM ? 'linux' : $os;
-        $arch = $arch === self::ARM ? $arch : 'amd'.$arch;
-        $url = "https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/{$os}_{$arch}_erd-go";
-        $this->download($url, $path);
+        $extension = $platform === OS::WINDOWS ? '.exe' : '';
+        $arch = $platform === OS::LINUX && $arch === OS::ARM ? OS::ARM : 'amd64';
+
+        $url = 'https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/%s_%s_erd-go%s';
+        $this->download(sprintf($url, $platform, $arch, $extension), $path);
     }
 
     /**
      * @throws RequestException
+     * @throws ConnectionException
      */
-    private function downloadDot(string $os, string $arch, string $path): void
+    private function downloadDot(string $platform, string $arch, string $path): void
     {
-        $os = $os === self::DARWIN ? 'macos' : $os;
-        $arch = $arch === self::ARM ? '64' : $arch;
-        $url = "https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/graphviz-dot-{$os}-x{$arch}";
-        $this->download($url, $path);
+        $extension = $platform === OS::WINDOWS ? '.exe' : '';
+        $arch = $arch === OS::ARM ? '64' : $arch;
+        $lookup = [OS::DARWIN => 'macos', OS::WINDOWS => 'win'];
+
+        $url = 'https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/graphviz-dot-%s-x%s%s';
+        $this->download(sprintf($url, $lookup[$platform] ?? $platform, $arch, $extension), $path);
     }
 
     /**
      * @throws RequestException
+     * @throws ConnectionException
      */
     private function download(string $url, string $path): void
     {
@@ -68,30 +75,5 @@ class LaravelErdInitCommand extends Command
         File::ensureDirectoryExists(dirname($path));
         File::put($path, Http::timeout(300)->get($url)->throw()->body());
         File::chmod($path, 0777);
-    }
-
-    private function arch(): string
-    {
-        $name = php_uname('m');
-
-        if (stripos($name, 'aarch64') !== false || stripos($name, 'arm64') !== false) {
-            return self::ARM;
-        }
-
-        return str_contains($name, '64') ? '64' : '32';
-    }
-
-    private function os(): string
-    {
-        $os = strtolower(PHP_OS);
-        if (str_contains($os, self::DARWIN)) {
-            return $os;
-        }
-
-        if (str_contains($os, 'win')) {
-            return 'windows';
-        }
-
-        return 'linux';
     }
 }

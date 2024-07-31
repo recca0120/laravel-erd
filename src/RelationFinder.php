@@ -33,8 +33,9 @@ class RelationFinder
 
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
             ->merge($this->getTraitMethods($class))
-            ->reject(fn (ReflectionMethod $method
-            ) => $method->class !== $className || $method->getNumberOfParameters() > 0)
+            ->reject(function (ReflectionMethod $method) use ($className) {
+                return $method->class !== $className || $method->getNumberOfParameters() > 0;
+            })
             ->mapWithKeys(fn (ReflectionMethod $method) => [
                 $method->getName() => $this->findRelations($method, $model),
             ])
