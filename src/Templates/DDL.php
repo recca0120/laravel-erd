@@ -33,7 +33,6 @@ class DDL implements Template
         return $table->getColumns()
             ->map(function (ColumnSchema $column) {
                 $type = $column->getType();
-                $type = $type === 'string' ? 'varchar' : $type;
                 $precision = $column->getPrecision();
                 $default = $column->getDefault();
                 $comment = $column->getComment();

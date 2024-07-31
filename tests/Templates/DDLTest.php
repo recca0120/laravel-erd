@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd\Tests\Templates;
 
-use Doctrine\DBAL\Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ErdFinder;
@@ -24,9 +23,6 @@ class DDLTest extends TestCase
         $this->template = new DDL();
     }
 
-    /**
-     * @throws Exception
-     */
     public function test_find_er_model_in_directory(): void
     {
         $finder = $this->givenFinder();

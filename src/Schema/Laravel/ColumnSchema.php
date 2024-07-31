@@ -25,14 +25,14 @@ class ColumnSchema implements ColumnSchemaContract
 
     public function getPrecision(): int
     {
-        return $this->column['precision'] ?? 10;
+        $lookup = ['varchar' => 255, 'datetime' => 0, 'integer' => 11];
+
+        return $lookup[$this->getType()] ?? 0;
     }
 
     public function getType(): string
     {
-        $type = $this->column['type'];
-
-        return $type === 'varchar' ? 'string' : $type;
+        return $this->column['type'];
     }
 
     public function getDefault()

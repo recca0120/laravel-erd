@@ -28,7 +28,10 @@ class ColumnSchema implements ColumnContract
 
     public function getPrecision(): int
     {
-        return $this->column->getPrecision();
+        // return $this->column->getPrecision();
+        $lookup = ['varchar' => 255, 'datetime' => 0, 'integer' => 11];
+
+        return $lookup[$this->getType()] ?? 0;
     }
 
     public function getDefault()
@@ -49,7 +52,9 @@ class ColumnSchema implements ColumnContract
     public function getType(): string
     {
         try {
-            return Type::getTypeRegistry()->lookupName($this->column->getType());
+            $type = Type::getTypeRegistry()->lookupName($this->column->getType());
+
+            return $type === 'string' ? 'varchar' : $type;
         } catch (Exception $e) {
             return 'unknown';
         }

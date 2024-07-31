@@ -100,12 +100,14 @@ class Er implements Template
 
     private function renderColumn(ColumnSchema $column, Collection $primaryKeys, Collection $indexes): string
     {
+        $type = $column->getType();
+
         return sprintf(
             '%s%s%s {label: "%s, %s"}',
             $primaryKeys->containsStrict($column->getName()) ? '*' : '',
             $indexes->containsStrict($column->getName()) ? '+' : '',
             $column->getName(),
-            $column->getType(),
+            $type === 'varchar' ? 'string' : $type,
             $column->isNullable() ? 'null' : 'not null'
         );
     }
