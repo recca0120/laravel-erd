@@ -13,7 +13,7 @@ use Throwable;
 
 class LaravelErdCommand extends Command
 {
-    protected $signature = 'laravel-erd {file=laravel-erd.sql} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--database=laravel-erd}';
+    protected $signature = 'laravel-erd {file=laravel-erd} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--database=laravel-erd}';
 
     public function handle(ErdFinder $finder, Factory $factory): int
     {
@@ -25,10 +25,12 @@ class LaravelErdCommand extends Command
             return self::FAILURE;
         }
 
+        $config = config('laravel-erd');
         $directory = $this->option('directory') ?? app_path();
         $patterns = trim($this->option('patterns'), "\"'");
         $exclude = preg_split('/\s*,\s*/', $this->option('exclude') ?? '');
         $file = $this->argument('file');
+        $file = ! File::extension($file) ? $file.'.'.($config['extension'] ?? 'sql') : $file;
 
         try {
             $template = $factory->create($file);
