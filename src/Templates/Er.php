@@ -46,7 +46,7 @@ class Er implements Template
         return $results->merge(
             $relations
                 ->unique(fn (Relation $relation) => $relation->uniqueId())
-                ->map(fn (Relation $relationship) => $this->renderRelations($relationship))
+                ->map(fn (Relation $relationship) => $this->renderRelation($relationship))
                 ->sort()
         )->implode("\n");
     }
@@ -112,7 +112,7 @@ class Er implements Template
         );
     }
 
-    private function renderRelations(Relation $relation): string
+    private function renderRelation(Relation $relation): string
     {
         return sprintf(
             '%s %s %s',

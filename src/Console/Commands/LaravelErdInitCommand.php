@@ -11,6 +11,10 @@ use Recca0120\LaravelErd\OS;
 
 class LaravelErdInitCommand extends Command
 {
+    public const ERD_GO_DOWNLOAD_URL = 'https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/';
+
+    public const DOT_DOWNLOAD_URL = 'https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/';
+
     protected $signature = 'laravel-erd:init';
 
     /**
@@ -43,7 +47,7 @@ class LaravelErdInitCommand extends Command
         $extension = $platform === OS::WINDOWS ? '.exe' : '';
         $arch = $platform === OS::LINUX && $arch === OS::ARM ? OS::ARM : 'amd64';
 
-        $url = 'https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/%s_%s_erd-go%s';
+        $url = self::ERD_GO_DOWNLOAD_URL.'%s_%s_erd-go%s';
         $this->download(sprintf($url, $platform, $arch, $extension), $path);
     }
 
@@ -57,7 +61,7 @@ class LaravelErdInitCommand extends Command
         $arch = $arch === OS::ARM ? '64' : $arch;
         $lookup = [OS::DARWIN => 'macos', OS::WINDOWS => 'win'];
 
-        $url = 'https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/graphviz-dot-%s-x%s%s';
+        $url = self::DOT_DOWNLOAD_URL.'graphviz-dot-%s-x%s%s';
         $this->download(sprintf($url, $lookup[$platform] ?? $platform, $arch, $extension), $path);
     }
 
