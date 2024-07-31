@@ -80,7 +80,7 @@ class Er implements Template
 
     private function renderTable(Table $table): string
     {
-        $primaryKeys = $table->primaryKeys();
+        $primaryKeys = $table->getPrimaryKey();
         $indexes = $table
             ->relations()
             ->filter(fn (Relation $relation) => $relation->type() !== BelongsTo::class)
@@ -90,8 +90,8 @@ class Er implements Template
             ])
             ->filter();
 
-        $result = sprintf("[%s] {}\n", $table->name());
-        $result .= $table->columns()
+        $result = sprintf("[%s] {}\n", $table->getName());
+        $result .= $table->getColumns()
             ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))
             ->implode("\n")."\n";
 

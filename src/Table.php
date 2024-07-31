@@ -8,35 +8,35 @@ use Recca0120\LaravelErd\Contracts\TableSchema;
 
 class Table
 {
-    private TableSchema $tableSchema;
+    private TableSchema $schema;
 
     /**
      * @var Collection<int|string, Relation>
      */
     private Collection $relations;
 
-    public function __construct(TableSchema $table, Collection $relations)
+    public function __construct(TableSchema $schema, Collection $relations)
     {
-        $this->tableSchema = $table;
+        $this->schema = $schema;
         $this->relations = $relations;
     }
 
-    public function name(): string
+    public function getName(): string
     {
-        return $this->tableSchema->getName();
+        return $this->schema->getName();
     }
 
     /**
      * @return Collection<int, ColumnSchema>
      */
-    public function columns(): Collection
+    public function getColumns(): Collection
     {
-        return $this->tableSchema->getColumns();
+        return $this->schema->getColumns();
     }
 
-    public function primaryKeys(): Collection
+    public function getPrimaryKey(): Collection
     {
-        return $this->tableSchema->getPrimaryKey();
+        return $this->schema->getPrimaryKey();
     }
 
     /**

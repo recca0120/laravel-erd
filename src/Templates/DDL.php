@@ -16,7 +16,7 @@ class DDL implements Template
         return $tables
             ->map(fn (Table $table) => sprintf(
                 "CREATE TABLE %s (\n%s\n)",
-                $table->name(),
+                $table->getName(),
                 $this->renderColumn($table)
             ))
             ->merge($this->renderRelations($tables))
@@ -30,7 +30,7 @@ class DDL implements Template
 
     private function renderColumn(Table $table): string
     {
-        return $table->columns()
+        return $table->getColumns()
             ->map(function (ColumnSchema $column) {
                 $type = $column->getType();
                 $type = $type === 'string' ? 'varchar' : $type;
@@ -58,7 +58,7 @@ class DDL implements Template
      */
     private function renderPrimaryKeys(Table $table): array
     {
-        $primaryKeys = $table->primaryKeys()->implode(', ');
+        $primaryKeys = $table->getPrimaryKey()->implode(', ');
 
         return $primaryKeys ? ["PRIMARY KEY({$primaryKeys})"] : [];
     }
