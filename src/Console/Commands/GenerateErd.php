@@ -11,9 +11,9 @@ use Recca0120\LaravelErd\ErdFinder;
 use Recca0120\LaravelErd\Templates\Factory;
 use Throwable;
 
-class LaravelErdCommand extends Command
+class GenerateErd extends Command
 {
-    protected $signature = 'laravel-erd {file=laravel-erd} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--database=laravel-erd}';
+    protected $signature = 'erd:generate {file=laravel-erd} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--database=laravel-erd}';
 
     public function handle(ErdFinder $finder, Factory $factory): int
     {

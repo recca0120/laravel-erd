@@ -3,8 +3,8 @@
 namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\ServiceProvider;
-use Recca0120\LaravelErd\Console\Commands\LaravelErdCommand;
-use Recca0120\LaravelErd\Console\Commands\LaravelErdInitCommand;
+use Recca0120\LaravelErd\Console\Commands\DownloadBinary;
+use Recca0120\LaravelErd\Console\Commands\GenerateErd;
 use Recca0120\LaravelErd\Contracts\SchemaBuilder as SchemaBuilderContract;
 use Recca0120\LaravelErd\Schema\DBAL\SchemaBuilder as DBALSchemaBuilder;
 use Recca0120\LaravelErd\Schema\Laravel\SchemaBuilder as LaravelSchemaBuilder;
@@ -46,6 +46,6 @@ class LaravelErdServiceProvider extends ServiceProvider
                 : new LaravelSchemaBuilder($connection->getSchemaBuilder());
         });
 
-        $this->commands([LaravelErdInitCommand::class, LaravelErdCommand::class]);
+        $this->commands([DownloadBinary::class, GenerateErd::class]);
     }
 }

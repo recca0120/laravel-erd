@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Recca0120\LaravelErd\Console\Commands\LaravelErdInitCommand;
+use Recca0120\LaravelErd\Console\Commands\DownloadBinary;
 use Recca0120\LaravelErd\OS;
 use Recca0120\LaravelErd\Tests\TestCase;
 
-class LaravelErdInitCommandTest extends TestCase
+class DownloadBinaryTest extends TestCase
 {
     /**
      * @dataProvider osProvider
@@ -24,17 +24,17 @@ class LaravelErdInitCommandTest extends TestCase
 
         $this->givenOs($platform, $arch);
 
-        $this->artisan('laravel-erd:init')
+        $this->artisan('erd:download')
             ->assertSuccessful()
             ->execute();
 
         $recorded = Http::recorded();
 
         [$request] = $recorded[0];
-        self::assertEquals(LaravelErdInitCommand::ERD_GO_DOWNLOAD_URL.$expected['erd-go'], $request->url());
+        self::assertEquals(DownloadBinary::ERD_GO_DOWNLOAD_URL.$expected['erd-go'], $request->url());
 
         [$request] = $recorded[1];
-        self::assertEquals(LaravelErdInitCommand::DOT_DOWNLOAD_URL.$expected['dot'], $request->url());
+        self::assertEquals(DownloadBinary::DOT_DOWNLOAD_URL.$expected['dot'], $request->url());
     }
 
     public static function osProvider(): array

@@ -51,6 +51,6 @@ abstract class TestCase extends BaseTestCase
     protected function refreshApplication(): void
     {
         parent::refreshApplication();
-        $this->artisan('laravel-erd:init');
+        $this->artisan('erd:download');
     }
 }

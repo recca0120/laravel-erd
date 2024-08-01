@@ -44,7 +44,7 @@ class LaravelErdCommandTest extends TestCase
 
     public function test_generate_svg(): void
     {
-        $this->artisan('laravel-erd', $this->givenParameters($this->file))->assertSuccessful();
+        $this->artisan('erd:generate', $this->givenParameters($this->file))->assertSuccessful();
 
         $contents = file_get_contents($this->storagePath.'/'.$this->file);
         self::assertStringContainsString('<!-- cars -->', $contents);
@@ -55,7 +55,7 @@ class LaravelErdCommandTest extends TestCase
     {
         $this->app['config']->set('laravel-erd.binary.erd-go', '/bin/erd-go');
 
-        $this->artisan('laravel-erd', $this->givenParameters($this->file))->assertFailed();
+        $this->artisan('erd:generate', $this->givenParameters($this->file))->assertFailed();
     }
 
     private function givenParameters(string $file): array

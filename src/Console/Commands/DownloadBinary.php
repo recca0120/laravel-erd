@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Recca0120\LaravelErd\OS;
 
-class LaravelErdInitCommand extends Command
+class DownloadBinary extends Command
 {
     public const ERD_GO_DOWNLOAD_URL = 'https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/';
 
     public const DOT_DOWNLOAD_URL = 'https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/';
 
-    protected $signature = 'laravel-erd:init';
+    protected $signature = 'erd:download';
 
     /**
      * @throws ConnectionException
