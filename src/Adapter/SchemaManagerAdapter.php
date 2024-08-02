@@ -14,8 +14,8 @@ class SchemaManagerAdapter
         $this->schemaManager = $schemaManager;
     }
 
-    public function introspectTable(string $table)
+    public function introspectTable(string $table): TableAdapter
     {
-        return $this->schemaManager->introspectTable($table);
+        return new TableAdapter($this->schemaManager->introspectTable($table));
     }
 }

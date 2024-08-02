@@ -3,12 +3,12 @@
 namespace Recca0120\LaravelErd;
 
 use Doctrine\DBAL\Schema\Column as DBALColumn;
-use Doctrine\DBAL\Schema\Table as DBALTable;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErd\Adapter\TableAdapter;
 
 class Table
 {
-    private DBALTable $table;
+    private TableAdapter $table;
 
     /**
      * @var Collection<int|string, Relation>
@@ -16,16 +16,16 @@ class Table
     private Collection $relations;
 
     /**
-     * @param  DBALTable  $table
+     * @param  TableAdapter  $table
      * @param  Collection<int|string, Relation>  $relations
      */
-    public function __construct(DBALTable $table, Collection $relations)
+    public function __construct(TableAdapter $table, Collection $relations)
     {
         $this->table = $table;
         $this->relations = $relations;
     }
 
-    public function name(): string
+    public function getName(): string
     {
         return $this->table->getName();
     }
@@ -33,19 +33,17 @@ class Table
     /**
      * @return Collection<int, DBALColumn>
      */
-    public function columns(): Collection
+    public function getColumns(): Collection
     {
-        return collect($this->table->getColumns());
+        return $this->table->getColumns();
     }
 
     /**
      * @return string[]
      */
-    public function primaryKeys(): array
+    public function getPrimaryKeys(): array
     {
-        $primaryKey = $this->table->getPrimaryKey();
-
-        return $primaryKey ? $primaryKey->getColumns() : [];
+        return $this->table->getPrimaryKeys();
     }
 
     /**
