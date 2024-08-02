@@ -2,6 +2,7 @@
 
 namespace Recca0120\LaravelErd\Adapter;
 
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 
@@ -20,9 +21,14 @@ class TableAdapter
         return $this->table->getName();
     }
 
+    /**
+     * @return Collection<int, ColumnAdapter>
+     */
     public function getColumns(): Collection
     {
-        return collect($this->table->getColumns());
+        return collect($this->table->getColumns())->map(function (Column $column) {
+            return new ColumnAdapter($column);
+        });
     }
 
     public function getPrimaryKeys()

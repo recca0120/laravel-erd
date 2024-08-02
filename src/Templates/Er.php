@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd\Templates;
 
-use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErd\Adapter\ColumnAdapter;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
@@ -85,26 +85,20 @@ class Er implements Template
 
         $result = sprintf("[%s] {}\n", $table->getName());
         $result .= $table->getColumns()
-                ->map(fn (Column $column) => $this->renderColumn($column, $primaryKeys, $indexes))
+                ->map(fn (ColumnAdapter $column) => $this->renderColumn($column, $primaryKeys, $indexes))
                 ->implode("\n")."\n";
 
         return $result;
     }
 
-    /**
-     * @param  Column  $column
-     * @param  array<int, string>  $primaryKeys
-     * @param  array<int, string>  $indexes
-     * @return string
-     */
-    private function renderColumn(Column $column, array $primaryKeys, array $indexes): string
+    private function renderColumn(ColumnAdapter $column, array $primaryKeys, array $indexes): string
     {
         return sprintf(
             '%s%s%s {label: "%s, %s"}',
             in_array($column->getName(), $primaryKeys, true) ? '*' : '',
             in_array($column->getName(), $indexes, true) ? '+' : '',
             $column->getName(),
-            Helpers::getColumnType($column),
+            $column->getType(),
             $column->getNotnull() ? 'not null' : 'null'
         );
     }

@@ -2,9 +2,9 @@
 
 namespace Recca0120\LaravelErd\Templates;
 
-use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Recca0120\LaravelErd\Adapter\ColumnAdapter;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
@@ -31,8 +31,9 @@ class DDL implements Template
     private function renderColumn(Table $table): string
     {
         return $table->getColumns()
-            ->map(function (Column $column) {
-                $type = $this->getColumnType($column);
+            ->map(function (ColumnAdapter $column) {
+                $type = $column->getType();
+                $type = $type === 'string' ? 'varchar' : $type;
                 $precision = $column->getPrecision();
                 $default = $column->getDefault();
                 $comment = $column->getComment();
@@ -91,12 +92,5 @@ class DDL implements Template
             $foreignTable,
             $foreignColumn
         );
-    }
-
-    private function getColumnType(Column $column): string
-    {
-        $type = Helpers::getColumnType($column);
-
-        return $type === 'string' ? 'varchar' : $type;
     }
 }

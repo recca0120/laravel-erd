@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd;
 
-use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\Adapter\TableAdapter;
 
@@ -30,9 +29,6 @@ class Table
         return $this->table->getName();
     }
 
-    /**
-     * @return Collection<int, DBALColumn>
-     */
     public function getColumns(): Collection
     {
         return $this->table->getColumns();
