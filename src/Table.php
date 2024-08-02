@@ -42,7 +42,7 @@ class Table
     /**
      * @return Collection<int|string, Relation>
      */
-    public function relations(): Collection
+    public function getRelations(): Collection
     {
         return $this->relations;
     }

@@ -41,7 +41,7 @@ class Er implements Template
     public function render(Collection $tables): string
     {
         $results = $tables->map(fn (Table $table): string => $this->renderTable($table));
-        $relations = $tables->flatMap(fn (Table $table) => $table->relations());
+        $relations = $tables->flatMap(fn (Table $table) => $table->getRelations());
 
         return $results->merge(
             $relations
@@ -82,7 +82,7 @@ class Er implements Template
     {
         $primaryKeys = $table->getPrimaryKey();
         $indexes = $table
-            ->relations()
+            ->getRelations()
             ->filter(fn (Relation $relation) => $relation->type() !== BelongsTo::class)
             ->flatMap(fn (Relation $relation) => [
                 Helpers::getColumnName($relation->localKey()),

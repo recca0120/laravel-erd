@@ -3,7 +3,6 @@
 namespace Recca0120\LaravelErd\Templates;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Recca0120\LaravelErd\Contracts\ColumnSchema;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
@@ -25,7 +24,7 @@ class DDL implements Template
 
     public function save(string $output, string $path, array $options = []): int
     {
-        return (int) File::put($path, $output);
+        return (int) file_put_contents($path, $output);
     }
 
     private function renderColumn(Table $table): string
@@ -69,7 +68,7 @@ class DDL implements Template
     private function renderRelations(Collection $tables): Collection
     {
         return $tables
-            ->map(fn (Table $table) => $table->relations())
+            ->map(fn (Table $table) => $table->getRelations())
             ->collapse()
             ->unique(fn (Relation $relation) => $relation->uniqueId())
             ->map(fn (Relation $relation) => $this->renderRelation($relation))
