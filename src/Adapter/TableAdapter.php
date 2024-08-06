@@ -16,7 +16,7 @@ class TableAdapter
         $this->table = $table;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->table->getName();
     }
@@ -31,10 +31,10 @@ class TableAdapter
         });
     }
 
-    public function getPrimaryKeys()
+    public function getPrimaryKeys(): Collection
     {
         $primaryKey = $this->table->getPrimaryKey();
 
-        return $primaryKey ? $primaryKey->getColumns() : [];
+        return collect($primaryKey ? $primaryKey->getColumns() : []);
     }
 }

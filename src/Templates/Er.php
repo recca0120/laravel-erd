@@ -80,8 +80,7 @@ class Er implements Template
                 Helpers::getColumnName($relation->localKey()),
                 Helpers::getColumnName($relation->morphType() ?? ''),
             ])
-            ->filter()
-            ->toArray();
+            ->filter();
 
         $result = sprintf("[%s] {}\n", $table->getName());
         $result .= $table->getColumns()
@@ -91,12 +90,12 @@ class Er implements Template
         return $result;
     }
 
-    private function renderColumn(ColumnAdapter $column, array $primaryKeys, array $indexes): string
+    private function renderColumn(ColumnAdapter $column, Collection $primaryKeys, Collection $indexes): string
     {
         return sprintf(
             '%s%s%s {label: "%s, %s"}',
-            in_array($column->getName(), $primaryKeys, true) ? '*' : '',
-            in_array($column->getName(), $indexes, true) ? '+' : '',
+            $primaryKeys->contains($column->getName()) ? '*' : '',
+            $indexes->contains($column->getName()) ? '+' : '',
             $column->getName(),
             $column->getType(),
             $column->getNotnull() ? 'not null' : 'null'

@@ -35,9 +35,9 @@ class Table
     }
 
     /**
-     * @return string[]
+     * @return Collection<int, string>
      */
-    public function getPrimaryKeys(): array
+    public function getPrimaryKeys(): Collection
     {
         return $this->table->getPrimaryKeys();
     }
