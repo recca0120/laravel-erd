@@ -19,10 +19,13 @@ use Throwable;
 
 class ModelFinder
 {
+    private ?string $connection;
+
     private Parser $parser;
 
-    public function __construct()
+    public function __construct(?string $connection = null)
     {
+        $this->connection = $connection;
         $parserFactory = new ParserFactory();
         $this->parser = $parserFactory->createForNewestSupportedVersion();
     }
@@ -36,12 +39,12 @@ class ModelFinder
 
         return collect($files)
             ->map(fn (SplFileInfo $file) => $this->getFullyQualifiedClassName($file))
-            ->filter(fn ($className) => ! empty($className))
-            ->filter(fn (string $className) => $this->isEloquentModel($className))
+            ->filter(fn (?string $className) => $className && self::isEloquentModel($className))
+            ->filter(fn (string $className) => (new $className())->getConnectionName() === $this->connection)
             ->values();
     }
 
-    private function isEloquentModel(string $className): bool
+    private static function isEloquentModel(string $className): bool
     {
         try {
             return $className &&
@@ -54,21 +57,18 @@ class ModelFinder
 
     private function getFullyQualifiedClassName(SplFileInfo $file): ?string
     {
-        $parser = $this->parser;
         $nodeTraverser = new NodeTraverser();
         $nodeTraverser->addVisitor(new NameResolver());
-        $nodes = $nodeTraverser->traverse($parser->parse($file->getContents()));
+        $nodes = $nodeTraverser->traverse($this->parser->parse($file->getContents()));
 
         /** @var ?Namespace_ $rootNode */
         $rootNode = collect($nodes)->first(fn (Node $node) => $node instanceof Namespace_);
 
-        if (! $rootNode) {
-            return null;
-        }
-
-        return collect($rootNode->stmts)
-            ->filter(static fn (Stmt $stmt) => $stmt instanceof Class_)
-            ->map(static fn (Class_ $stmt) => $stmt->namespacedName->toString())
-            ->first();
+        return ! $rootNode
+            ? null
+            : collect($rootNode->stmts)
+                ->filter(static fn (Stmt $stmt) => $stmt instanceof Class_)
+                ->map(static fn (Class_ $stmt) => $stmt->namespacedName->toString())
+                ->first();
     }
 }

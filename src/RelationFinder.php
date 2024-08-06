@@ -26,18 +26,18 @@ class RelationFinder
      *
      * @throws ReflectionException
      */
-    public function generate(string $className): Collection
+    public static function generate(string $className): Collection
     {
         $class = new ReflectionClass($className);
         $model = new $className;
 
         return collect($class->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->merge($this->getTraitMethods($class))
+            ->merge(self::getTraitMethods($class))
             ->reject(function (ReflectionMethod $method) use ($className) {
                 return $method->class !== $className || $method->getNumberOfParameters() > 0;
             })
             ->mapWithKeys(fn (ReflectionMethod $method) => [
-                $method->getName() => $this->findRelations($method, $model),
+                $method->getName() => self::findRelations($method, $model),
             ])
             ->filter();
     }
@@ -45,7 +45,7 @@ class RelationFinder
     /**
      * @return ?Collection<int, Relation>
      */
-    private function findRelations(ReflectionMethod $method, Model $model): ?Collection
+    private static function findRelations(ReflectionMethod $method, Model $model): ?Collection
     {
         try {
             $return = $method->invoke($model);
@@ -58,15 +58,15 @@ class RelationFinder
             $related = (new ReflectionClass($return->getRelated()))->getName();
 
             if ($return instanceof BelongsToMany) {
-                return $this->belongsToMany($return, $type, $related);
+                return self::belongsToMany($return, $type, $related);
             }
 
             if ($return instanceof BelongsTo) {
-                return $this->belongsTo($return, $type, $related);
+                return self::belongsTo($return, $type, $related);
             }
 
             if ($return instanceof HasOneOrMany) {
-                return $this->hasOneOrMany($return, $type, $related);
+                return self::hasOneOrMany($return, $type, $related);
             }
         } catch (RuntimeException|ReflectionException|Throwable $e) {
             // dump($method->getName());
@@ -79,7 +79,7 @@ class RelationFinder
     /**
      * @return Collection<int, Relation>
      */
-    private function belongsToMany(BelongsToMany $return, string $type, string $related): Collection
+    private static function belongsToMany(BelongsToMany $return, string $type, string $related): Collection
     {
         // dump([
         //     'getExistenceCompareKey' => $return->getExistenceCompareKey(),
@@ -114,7 +114,7 @@ class RelationFinder
             ], $pivot);
         }
 
-        return $this->makeRelation([
+        return self::makeRelation([
             'type' => $type,
             'related' => $related,
             'local_key' => $return->getQualifiedParentKeyName(),
@@ -126,7 +126,7 @@ class RelationFinder
     /**
      * @return ?Collection<int, Relation>
      */
-    private function belongsTo(BelongsTo $return, string $type, string $related): ?Collection
+    private static function belongsTo(BelongsTo $return, string $type, string $related): ?Collection
     {
         // dump([
         //     'getForeignKeyName' => $return->getForeignKeyName(),
@@ -145,7 +145,7 @@ class RelationFinder
             return null;
         }
 
-        return $this->makeRelation([
+        return self::makeRelation([
             'type' => $type,
             'related' => $related,
             'local_key' => $return->getQualifiedForeignKeyName(),
@@ -156,7 +156,7 @@ class RelationFinder
     /**
      * @return ?Collection<int, Relation>
      */
-    private function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Collection
+    private static function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Collection
     {
         if ($return instanceof HasOne && $return->isOneOfMany()) {
             return null;
@@ -184,14 +184,14 @@ class RelationFinder
             ]);
         }
 
-        return $this->makeRelation($attributes);
+        return self::makeRelation($attributes);
     }
 
     /**
      * @param  ReflectionClass<Model>  $class
      * @return Collection<int, ReflectionMethod>
      */
-    private function getTraitMethods(ReflectionClass $class): Collection
+    private static function getTraitMethods(ReflectionClass $class): Collection
     {
         return collect($class->getTraits())->flatMap(
             static fn (ReflectionClass $trait) => $trait->getMethods(ReflectionMethod::IS_PUBLIC)
@@ -202,7 +202,7 @@ class RelationFinder
      * @param  string[]  $attributes
      * @return Collection<int, Relation>
      */
-    private function makeRelation(array $attributes): Collection
+    private static function makeRelation(array $attributes): Collection
     {
         $relation = new Relation($attributes);
         $relations = collect([$relation]);

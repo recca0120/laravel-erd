@@ -15,5 +15,5 @@ interface Template
     /**
      * @param  array<string, string>  $options
      */
-    public function save(string $output, string $path, array $options = []): int;
+    public function save(Collection $tables, string $path, array $options = []): int;
 }

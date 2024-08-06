@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\Contracts\ColumnSchema;
-use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
 use RuntimeException;
@@ -51,24 +50,21 @@ class Er implements Template
         )->implode("\n");
     }
 
-    public function save(string $output, string $path, array $options = []): int
+    public function save(Collection $tables, string $path, array $options = []): int
     {
         $fp = fopen(str_replace('.svg', '.er', $path), 'wb');
-        fwrite($fp, $output);
-
+        fwrite($fp, $this->render($tables));
         $meta = stream_get_meta_data($fp);
-        $tempFile = $meta['uri'];
+        fclose($fp);
 
         $erdGoBinary = $options['binary']['erd-go'] ?? $this->finder->find('erd-go');
         $dotBinary = $options['binary']['dot'] ?? $this->finder->find('dot');
 
-        $command = sprintf('cat %s | %s | %s -T svg > "%s"', $tempFile, $erdGoBinary, $dotBinary, $path);
+        $command = sprintf('cat %s | %s | %s -T svg > "%s"', $meta['uri'], $erdGoBinary, $dotBinary, $path);
         $process = Process::fromShellCommandline($command);
 
         $process->run();
         $exitCode = $process->wait();
-
-        fclose($fp);
 
         $errorOutput = $process->getErrorOutput();
         if (! empty($errorOutput)) {
@@ -84,18 +80,13 @@ class Er implements Template
         $indexes = $table
             ->getRelations()
             ->filter(fn (Relation $relation) => $relation->type() !== BelongsTo::class)
-            ->flatMap(fn (Relation $relation) => [
-                Helpers::getColumnName($relation->localKey()),
-                Helpers::getColumnName($relation->morphType() ?? ''),
-            ])
+            ->flatMap(fn (Relation $relation) => [$relation->localColumn(), $relation->morphColumn()])
             ->filter();
 
-        $result = sprintf("[%s] {}\n", $table->getName());
-        $result .= $table->getColumns()
+        return $table->getColumns()
             ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))
+            ->prepend(sprintf('[%s] {}', $table->getName()))
             ->implode("\n")."\n";
-
-        return $result;
     }
 
     private function renderColumn(ColumnSchema $column, Collection $primaryKeys, Collection $indexes): string
@@ -116,9 +107,9 @@ class Er implements Template
     {
         return sprintf(
             '%s %s %s',
-            Helpers::getTableName($relation->localKey()),
+            $relation->localTable(),
             self::$relations[$relation->type()],
-            Helpers::getTableName($relation->foreignKey())
+            $relation->foreignTable()
         );
     }
 }

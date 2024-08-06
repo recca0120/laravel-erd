@@ -10,15 +10,6 @@ class LaravelErdServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        config([
-            'database.connections.laravel-erd' => [
-                'driver' => 'sqlite',
-                'database' => ':memory:',
-                'prefix' => '',
-                'foreign_key_constraints' => true,
-            ],
-        ]);
-
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-erd.php', 'laravel-erd');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-erd');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');

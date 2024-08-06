@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\File;
 
 class LaravelErdController extends Controller
 {
-    public function index(string $file = 'laravel-erd'): View
+    public function index(?string $file = null): View
     {
         $config = config('laravel-erd');
         $storagePath = $config['storage_path'];
+        $file = $file ?? config('database.default');
         $file = ! File::extension($file) ? $file.'.'.($config['extension'] ?? 'sql') : $file;
         $extension = File::extension($file);
 

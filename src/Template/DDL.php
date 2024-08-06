@@ -4,7 +4,6 @@ namespace Recca0120\LaravelErd\Template;
 
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\Contracts\ColumnSchema;
-use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
 
@@ -22,9 +21,9 @@ class DDL implements Template
             ->implode("\n");
     }
 
-    public function save(string $output, string $path, array $options = []): int
+    public function save(Collection $tables, string $path, array $options = []): int
     {
-        return (int) file_put_contents($path, $output);
+        return (int) file_put_contents($path, $this->render($tables));
     }
 
     private function renderColumn(Table $table): string
@@ -77,17 +76,12 @@ class DDL implements Template
 
     private function renderRelation(Relation $relation): string
     {
-        $localTable = Helpers::getTableName($relation->localKey());
-        $foreignTable = Helpers::getTableName($relation->foreignKey());
-        $localColumn = Helpers::getColumnName($relation->localKey());
-        $foreignColumn = Helpers::getColumnName($relation->foreignKey());
-
         return sprintf(
             'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s (%s)',
-            $localTable,
-            $localColumn,
-            $foreignTable,
-            $foreignColumn
+            $relation->localTable(),
+            $relation->localColumn(),
+            $relation->foreignTable(),
+            $relation->foreignColumn()
         );
     }
 }

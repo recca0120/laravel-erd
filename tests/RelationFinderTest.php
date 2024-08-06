@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\RelationFinder;
 use Recca0120\LaravelErd\Tests\fixtures\Models\Car;
@@ -39,14 +38,6 @@ class RelationFinderTest extends TestCase
         BelongsToMany::class => '*--*',
         MorphToMany::class => '*--*',
     ];
-
-    private RelationFinder $finder;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->finder = new RelationFinder();
-    }
 
     /**
      * @throws ReflectionException
@@ -318,7 +309,7 @@ class RelationFinderTest extends TestCase
      */
     private function givenRelations(string $model): Collection
     {
-        return $this->finder->generate($model);
+        return RelationFinder::generate($model);
     }
 
     private function draw(Collection $relations, $method): array
@@ -332,9 +323,9 @@ class RelationFinderTest extends TestCase
     {
         return sprintf(
             '%s %s %s',
-            Helpers::getTableName($relation->localKey()),
+            $relation->localTable(),
             self::$relationships[$relation->type()],
-            Helpers::getTableName($relation->foreignKey())
+            $relation->foreignTable()
         );
     }
 }

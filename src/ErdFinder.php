@@ -11,15 +11,12 @@ class ErdFinder
 
     private ModelFinder $modelFinder;
 
-    private RelationFinder $relationFinder;
-
     private string $directory;
 
-    public function __construct(SchemaBuilder $schemaBuilder, ModelFinder $modelFinder, RelationFinder $relationFinder)
+    public function __construct(SchemaBuilder $schemaBuilder, ModelFinder $modelFinder)
     {
         $this->schemaBuilder = $schemaBuilder;
         $this->modelFinder = $modelFinder;
-        $this->relationFinder = $relationFinder;
     }
 
     public function in(string $directory): ErdFinder
@@ -30,13 +27,13 @@ class ErdFinder
     }
 
     /**
-     * @param  string|string[]  $patterns
+     * @param  string|string[]  $regex
      * @param  string[]  $excludes
      * @return Collection<int|string, Table>
      */
-    public function find($patterns = '*.php', array $excludes = []): Collection
+    public function find($regex = '*.php', array $excludes = []): Collection
     {
-        $models = $this->modelFinder->find($this->directory ?? __DIR__, $patterns);
+        $models = $this->modelFinder->find($this->directory ?? __DIR__, $regex);
 
         return $this->findByModels($models, $excludes);
     }
@@ -69,30 +66,22 @@ class ErdFinder
     private function findByModels(Collection $models, array $excludes = []): Collection
     {
         $missing = $models
-            ->flatMap(fn (string $model) => $this->relationFinder->generate($model)->collapse())
+            ->flatMap(fn (string $model) => RelationFinder::generate($model)->collapse())
             ->map(fn (Relation $relation) => $relation->related())
             ->filter()
             ->diff($models);
 
         return $models
             ->merge($missing)
-            ->flatMap(fn (string $model) => $this->relationFinder->generate($model)->collapse())
+            ->flatMap(fn (string $model) => RelationFinder::generate($model)->collapse())
             ->flatMap(fn (Relation $relation) => [$relation, $relation->relatedRelation()])
             ->reject(fn (Relation $relation) => $relation->includes($excludes))
-            ->sortBy(fn (Relation $relation) => $this->uniqueRelation($relation))
-            ->unique(fn (Relation $relation) => $this->uniqueRelation($relation))
+            ->sortBy(fn (Relation $relation) => $relation->unique())
+            ->unique(fn (Relation $relation) => $relation->unique())
             ->groupBy(fn (Relation $relation) => $relation->table())
             ->sortBy(fn (Collection $relations, string $table) => $table)
             ->map(function (Collection $relations, string $table) {
                 return new Table($this->schemaBuilder->getTableSchema($table), $relations);
             });
-    }
-
-    /**
-     * @return string[]
-     */
-    private function uniqueRelation(Relation $relation): array
-    {
-        return [$relation->type(), $relation->localKey(), $relation->foreignKey()];
     }
 }

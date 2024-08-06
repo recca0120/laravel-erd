@@ -9,9 +9,9 @@ class Helpers
         return substr($qualifiedKeyName, 0, strpos($qualifiedKeyName, '.'));
     }
 
-    public static function getColumnName(string $qualifiedKeyName): string
+    public static function getColumnName(?string $qualifiedKeyName): ?string
     {
-        return str_contains($qualifiedKeyName, '.')
+        return $qualifiedKeyName && str_contains($qualifiedKeyName, '.')
             ? substr($qualifiedKeyName, strpos($qualifiedKeyName, '.') + 1)
             : $qualifiedKeyName;
     }

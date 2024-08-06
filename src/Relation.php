@@ -37,9 +37,29 @@ class Relation
         return $this->attributes['local_key'];
     }
 
+    public function localTable(): string
+    {
+        return Helpers::getTableName($this->localKey());
+    }
+
+    public function localColumn(): string
+    {
+        return Helpers::getColumnName($this->localKey());
+    }
+
     public function foreignKey(): string
     {
         return $this->attributes['foreign_key'];
+    }
+
+    public function foreignTable(): string
+    {
+        return Helpers::getTableName($this->foreignKey());
+    }
+
+    public function foreignColumn(): string
+    {
+        return Helpers::getColumnName($this->foreignKey());
     }
 
     public function morphClass(): ?string
@@ -52,6 +72,11 @@ class Relation
         return $this->attributes['morph_type'] ?? null;
     }
 
+    public function morphColumn(): ?string
+    {
+        return Helpers::getColumnName($this->morphType());
+    }
+
     public function pivot(): ?Pivot
     {
         return $this->attributes['pivot'] ?? null;
@@ -62,8 +87,8 @@ class Relation
      */
     public function includes(array $tables): bool
     {
-        $localTable = Helpers::getTableName($this->localKey());
-        $foreignTable = Helpers::getTableName($this->foreignKey());
+        $localTable = $this->localTable();
+        $foreignTable = $this->foreignTable();
 
         return in_array($localTable, $tables, true) || in_array($foreignTable, $tables, true);
     }
@@ -77,17 +102,6 @@ class Relation
         ]);
     }
 
-    public function uniqueId(): string
-    {
-        $localKey = Helpers::getTableName($this->localKey());
-        $foreignKey = Helpers::getTableName($this->foreignKey());
-
-        $sortBy = [$localKey, $foreignKey];
-        sort($sortBy);
-
-        return implode('::', $sortBy);
-    }
-
     public function order(): int
     {
         if (in_array($this->type(), [BelongsTo::class, HasOne::class, MorphOne::class])) {
@@ -99,5 +113,24 @@ class Relation
         }
 
         return 3;
+    }
+
+    public function uniqueId(): string
+    {
+        $localKey = Helpers::getTableName($this->localKey());
+        $foreignKey = Helpers::getTableName($this->foreignKey());
+
+        $sortBy = [$localKey, $foreignKey];
+        sort($sortBy);
+
+        return implode('::', $sortBy);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function unique(): array
+    {
+        return [$this->type(), $this->localKey(), $this->foreignKey()];
     }
 }

@@ -4,62 +4,118 @@ namespace Recca0120\LaravelErd\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Recca0120\LaravelErd\Factory;
 use Recca0120\LaravelErd\Template\Factory as TemplateFactory;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Throwable;
 
 class GenerateErd extends Command
 {
-    protected $signature = 'erd:generate {file=laravel-erd} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--database=laravel-erd}';
+    protected $signature = 'erd:generate {database? : The database connection to use}
+        {--directory=} 
+        {--file=} 
+        {--path=} 
+        {--regex=\'*.php\'} 
+        {--excludes=}
+        {--graceful : Return a successful exit code even if an error occurs}';
 
+    private array $backup = [];
+
+    /**
+     * @throws Throwable
+     */
     public function handle(Factory $factory, TemplateFactory $templateFactory): int
     {
-        $this->setConnection($this->option('database'));
-
-        if (Artisan::call('migrate') === self::FAILURE) {
-            $this->error(Artisan::output());
-
-            return self::FAILURE;
-        }
-
         $config = config('laravel-erd');
-        $directory = $this->option('directory') ?? app_path();
-        $patterns = trim($this->option('patterns'), "\"'");
-        $exclude = preg_split('/\s*,\s*/', $this->option('exclude') ?? '');
-        $file = $this->argument('file');
-        $file = ! File::extension($file) ? $file.'.'.($config['extension'] ?? 'sql') : $file;
+        $database = $this->argument('database');
+        $directory = $this->option('directory') ?: app_path();
+        $regex = trim($this->option('regex'), "\"'");
+        $excludes = preg_split('/\s*,\s*/', $this->option('excludes') ?? '');
+        $file = $this->getFile($config, $database);
 
         try {
-            $erdFinder = $factory->create();
-            $output = $templateFactory->create($file)->render(
-                $erdFinder->in($directory)->find($patterns, $exclude)
-            );
+            $this->setupFakeDatabase($database);
 
-            $options = config('laravel-erd');
-            $storagePath = $options['storage_path'] ?? storage_path('framework/cache/laravel-erd');
-            File::ensureDirectoryExists($storagePath);
+            if ($this->runMigrate($database) === self::FAILURE) {
+                return self::FAILURE;
+            }
 
-            $templateFactory->create($file)->save($output, $storagePath.'/'.$file, $options);
+            $erdFinder = $factory->create($database)->in($directory);
+
+            $templateFactory
+                ->create($file)
+                ->save($erdFinder->find($regex, $excludes), $file, $config);
 
             return self::SUCCESS;
         } catch (Throwable $e) {
+            if (! $this->option('graceful')) {
+                throw $e;
+            }
+
             $this->error($e->getMessage());
 
             return self::FAILURE;
+        } finally {
+            $this->restoreDatabase($database);
         }
     }
 
-    private function setConnection(string $connection): void
+    private function runMigrate(?string $database): int
     {
-        config(
-            collect(Arr::dot(config()->all()))
-                ->filter(fn ($value, $key) => $value && Str::endsWith($key, 'database.connection'))
-                ->map(fn () => $connection)
-                ->merge(['database.default' => $connection])
-                ->toArray()
-        );
+        $arguments = array_filter([
+            '--database' => $database,
+            '--path' => $this->option('path'),
+        ]);
+
+        $output = new BufferedOutput();
+        if ($this->runCommand('migrate', $arguments, $output) === self::FAILURE) {
+            $this->error($output->fetch());
+
+            return self::FAILURE;
+        }
+
+        return self::SUCCESS;
+    }
+
+    private function setupFakeDatabase(?string $database): void
+    {
+        $this->backup['cache.default'] = config('cache.default');
+        $this->backup['database.connections'] = config('database.connections');
+
+        config(['cache.default' => 'array']);
+        config(Arr::dot(array_map(static fn (array $config) => [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => $config['prefix'] ?? '',
+            'foreign_key_constraints' => true,
+            'busy_timeout' => null,
+            'journal_mode' => null,
+            'synchronous' => null,
+        ], $this->backup['database.connections']), 'database.connections.'));
+
+        DB::purge($database ?? config('database.default'));
+    }
+
+    private function restoreDatabase(?string $database): void
+    {
+        DB::purge($database ?? config('database.default'));
+
+        config(['cache.default' => $this->backup['cache.default']]);
+        config(['database.connections' => $this->backup['database.connections']]);
+        $this->backup = [];
+    }
+
+    private function getFile(array $config, ?string $database): string
+    {
+        $path = $config['storage_path'] ?? storage_path('framework/cache/laravel-erd');
+        File::ensureDirectoryExists($path);
+
+        $file = $this->option('file') ?? $database;
+        $file = $file ?? config('database.default');
+        $file = ! File::extension($file) ? $file.'.'.($config['extension'] ?? 'sql') : $file;
+
+        return $path.'/'.$file;
     }
 }
