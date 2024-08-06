@@ -5,10 +5,6 @@ namespace Recca0120\LaravelErd;
 use Illuminate\Support\ServiceProvider;
 use Recca0120\LaravelErd\Console\Commands\DownloadBinary;
 use Recca0120\LaravelErd\Console\Commands\GenerateErd;
-use Recca0120\LaravelErd\Contracts\SchemaBuilder as SchemaBuilderContract;
-use Recca0120\LaravelErd\Schema\DBAL\SchemaBuilder as DBALSchemaBuilder;
-use Recca0120\LaravelErd\Schema\Laravel\SchemaBuilder as LaravelSchemaBuilder;
-use Recca0120\LaravelErd\Templates\Factory;
 
 class LaravelErdServiceProvider extends ServiceProvider
 {
@@ -36,15 +32,6 @@ class LaravelErdServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(Factory::class, Factory::class);
-        $this->app->singleton(ErdFinder::class, ErdFinder::class);
-
-        $this->app->singleton(SchemaBuilderContract::class, function () {
-            $connection = $this->app['db']->connection();
-
-            return method_exists($connection, 'getDoctrineSchemaManager')
-                ? new DBALSchemaBuilder($connection->getDoctrineSchemaManager())
-                : new LaravelSchemaBuilder($connection->getSchemaBuilder());
-        });
 
         $this->commands([DownloadBinary::class, GenerateErd::class]);
     }

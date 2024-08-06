@@ -7,15 +7,15 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Recca0120\LaravelErd\ErdFinder;
-use Recca0120\LaravelErd\Templates\Factory;
+use Recca0120\LaravelErd\Factory;
+use Recca0120\LaravelErd\Template\Factory as TemplateFactory;
 use Throwable;
 
 class GenerateErd extends Command
 {
     protected $signature = 'erd:generate {file=laravel-erd} {--patterns=\'*.php\'} {--exclude=} {--directory=} {--database=laravel-erd}';
 
-    public function handle(ErdFinder $finder, Factory $factory): int
+    public function handle(Factory $factory, TemplateFactory $templateFactory): int
     {
         $this->setConnection($this->option('database'));
 
@@ -33,14 +33,16 @@ class GenerateErd extends Command
         $file = ! File::extension($file) ? $file.'.'.($config['extension'] ?? 'sql') : $file;
 
         try {
-            $template = $factory->create($file);
-            $output = $template->render($finder->in($directory)->find($patterns, $exclude));
+            $erdFinder = $factory->create();
+            $output = $templateFactory->create($file)->render(
+                $erdFinder->in($directory)->find($patterns, $exclude)
+            );
 
             $options = config('laravel-erd');
             $storagePath = $options['storage_path'] ?? storage_path('framework/cache/laravel-erd');
             File::ensureDirectoryExists($storagePath);
 
-            $template->save($output, $storagePath.'/'.$file, $options);
+            $templateFactory->create($file)->save($output, $storagePath.'/'.$file, $options);
 
             return self::SUCCESS;
         } catch (Throwable $e) {

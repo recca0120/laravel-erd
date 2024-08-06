@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErd\Templates;
+namespace Recca0120\LaravelErd\Template;
 
 use RuntimeException;
 
