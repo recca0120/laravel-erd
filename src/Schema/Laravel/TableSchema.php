@@ -23,9 +23,6 @@ class TableSchema implements TableSchemaContract
         return $this->name;
     }
 
-    /**
-     * @return Collection<int, ColumnSchema>
-     */
     public function getColumns(): Collection
     {
         return collect($this->builder->getColumns($this->name))->map(function (array $column) {
@@ -33,9 +30,6 @@ class TableSchema implements TableSchemaContract
         });
     }
 
-    /**
-     * @return Collection<int, string>
-     */
     public function getPrimaryKey(): Collection
     {
         return collect($this->builder->getIndexes($this->name))
