@@ -1,17 +1,17 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter;
+namespace Recca0120\LaravelErd\Adapter\DBAL;
 
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\Column as DBALColumn;
+use Doctrine\DBAL\Schema\Table as DBALTable;
 use Illuminate\Support\Collection;
+use Recca0120\LaravelErd\Contracts\TableAdapterInterface;
 
-class TableAdapter
+class TableAdapter implements TableAdapterInterface
 {
+    private DBALTable $table;
 
-    private Table $table;
-
-    public function __construct(Table $table)
+    public function __construct(DBALTable $table)
     {
         $this->table = $table;
     }
@@ -21,12 +21,9 @@ class TableAdapter
         return $this->table->getName();
     }
 
-    /**
-     * @return Collection<int, ColumnAdapter>
-     */
     public function getColumns(): Collection
     {
-        return collect($this->table->getColumns())->map(function (Column $column) {
+        return collect($this->table->getColumns())->map(function (DBALColumn $column) {
             return new ColumnAdapter($column);
         });
     }

@@ -3,7 +3,8 @@
 namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\SchemaManagerAdapter;
+use Recca0120\LaravelErd\Adapter\DBAL\SchemaManagerAdapter;
+use Recca0120\LaravelErd\Contracts\SchemaManagerAdapterInterface;
 
 class ErdFinder
 {
@@ -16,7 +17,7 @@ class ErdFinder
     private string $directory;
 
     public function __construct(
-        SchemaManagerAdapter $schemaManager,
+        SchemaManagerAdapterInterface $schemaManager,
         ModelFinder $modelFinder,
         RelationFinder $relationFinder
     ) {

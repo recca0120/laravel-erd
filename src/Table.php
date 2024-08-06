@@ -3,7 +3,9 @@
 namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\Collection;
-use Recca0120\LaravelErd\Adapter\TableAdapter;
+use Recca0120\LaravelErd\Adapter\DBAL\TableAdapter;
+use Recca0120\LaravelErd\Contracts\ColumnAdapterInterface;
+use Recca0120\LaravelErd\Contracts\TableAdapterInterface;
 
 class Table
 {
@@ -15,10 +17,10 @@ class Table
     private Collection $relations;
 
     /**
-     * @param  TableAdapter  $table
+     * @param  TableAdapterInterface  $table
      * @param  Collection<int|string, Relation>  $relations
      */
-    public function __construct(TableAdapter $table, Collection $relations)
+    public function __construct(TableAdapterInterface $table, Collection $relations)
     {
         $this->table = $table;
         $this->relations = $relations;
@@ -29,6 +31,9 @@ class Table
         return $this->table->getName();
     }
 
+    /**
+     * @return Collection<int, ColumnAdapterInterface>
+     */
     public function getColumns(): Collection
     {
         return $this->table->getColumns();

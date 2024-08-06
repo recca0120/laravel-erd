@@ -3,9 +3,10 @@
 namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\ServiceProvider;
-use Recca0120\LaravelErd\Adapter\SchemaManagerAdapter;
+use Recca0120\LaravelErd\Adapter\DBAL\SchemaManagerAdapter;
 use Recca0120\LaravelErd\Console\Commands\LaravelErdCommand;
 use Recca0120\LaravelErd\Console\Commands\LaravelErdInitCommand;
+use Recca0120\LaravelErd\Contracts\SchemaManagerAdapterInterface;
 use Recca0120\LaravelErd\Templates\Factory;
 
 class LaravelErdServiceProvider extends ServiceProvider
@@ -33,7 +34,7 @@ class LaravelErdServiceProvider extends ServiceProvider
             ], 'laravel-erd');
         }
 
-        $this->app->singleton(SchemaManagerAdapter::class, function () {
+        $this->app->singleton(SchemaManagerAdapterInterface::class, function () {
             return new SchemaManagerAdapter($this->app['db']->getDoctrineSchemaManager());
         });
 

@@ -4,7 +4,7 @@ namespace Recca0120\LaravelErd\Templates;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use Recca0120\LaravelErd\Adapter\ColumnAdapter;
+use Recca0120\LaravelErd\Contracts\ColumnAdapterInterface;
 use Recca0120\LaravelErd\Helpers;
 use Recca0120\LaravelErd\Relation;
 use Recca0120\LaravelErd\Table;
@@ -31,7 +31,7 @@ class DDL implements Template
     private function renderColumn(Table $table): string
     {
         return $table->getColumns()
-            ->map(function (ColumnAdapter $column) {
+            ->map(function (ColumnAdapterInterface $column) {
                 $type = $column->getType();
                 $type = $type === 'string' ? 'varchar' : $type;
                 $precision = $column->getPrecision();

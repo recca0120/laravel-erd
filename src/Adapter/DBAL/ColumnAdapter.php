@@ -1,16 +1,17 @@
 <?php
 
-namespace Recca0120\LaravelErd\Adapter;
+namespace Recca0120\LaravelErd\Adapter\DBAL;
 
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Column as DBALColumn;
 use Doctrine\DBAL\Types\Type;
+use Recca0120\LaravelErd\Contracts\ColumnAdapterInterface;
 
-class ColumnAdapter
+class ColumnAdapter implements ColumnAdapterInterface
 {
-    private Column $column;
+    private DBALColumn $column;
 
-    public function __construct(Column $column)
+    public function __construct(DBALColumn $column)
     {
         $this->column = $column;
     }
