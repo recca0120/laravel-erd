@@ -27,17 +27,17 @@ abstract class TestCase extends BaseTestCase
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
-            // 'driver' => 'mysql',
-            // 'database' => 'test',
-            // 'host' => '127.0.0.1',
-            // 'username' => 'root',
-            // 'prefix' => '',
+        ]);
+        $app['config']->set('database.connections.other', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
         ]);
     }
 
     protected function defineDatabaseMigrations(): void
     {
-        foreach ([4 => 'add_teams_fields', 5 => 'create_permission_tables'] as $index => $migrationFile) {
+        foreach ([5 => 'add_teams_fields', 6 => 'create_permission_tables'] as $index => $migrationFile) {
             copy(
                 __DIR__.'/../vendor/spatie/laravel-permission/database/migrations/'.$migrationFile.'.php.stub',
                 __DIR__.'/../database/migrations/2022_12_07_00000'.$index.'_'.$migrationFile.'.php'

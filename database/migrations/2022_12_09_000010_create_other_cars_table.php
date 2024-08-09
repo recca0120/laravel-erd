@@ -13,9 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('other_connections', function (Blueprint $table) {
+        if (Schema::connection('other')->hasTable('other_cars')) {
+            return;
+        }
+
+        Schema::connection('other')->create('other_cars', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('model');
+            $table->foreignId('mechanic_id');
         });
     }
 
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('other_connections');
+        Schema::connection('other')->dropIfExists('other_cars');
     }
 };

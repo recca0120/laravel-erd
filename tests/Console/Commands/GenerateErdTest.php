@@ -51,7 +51,6 @@ class GenerateErdTest extends TestCase
     protected function tearDown(): void
     {
         $this->cachedTestMigratorProcessors = [];
-        File::delete($this->storagePath.'/'.$this->file);
         self::assertEquals([
             'driver' => 'mysql',
             'url' => '',
@@ -75,16 +74,27 @@ class GenerateErdTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_generate_svg(): void
+    public function test_generate_default_svg(): void
     {
-        $this->artisan(
-            'erd:generate',
-            $this->givenParameters(['--file' => $this->file])
-        )->execute();
+        $file = 'testbench.svg';
 
-        $contents = file_get_contents($this->storagePath.'/'.$this->file);
+        $parameters = $this->givenParameters(['--file' => $file]);
+        $this->artisan('erd:generate', $parameters)->execute();
+
+        $contents = file_get_contents($this->storagePath.'/'.$file);
         self::assertStringContainsString('<!-- cars -->', $contents);
         self::assertStringContainsString('<!-- phones&#45;&#45;users -->', $contents);
+    }
+
+    public function test_generate_other_svg(): void
+    {
+        $file = 'other.svg';
+
+        $parameters = $this->givenParameters(['database' => File::name($file), '--file' => $file]);
+        $this->artisan('erd:generate', $parameters)->execute();
+
+        $contents = file_get_contents($this->storagePath.'/'.$file);
+        self::assertStringContainsString('<!-- other_cars -->', $contents);
     }
 
     public function test_command_not_exists(): void
@@ -93,13 +103,14 @@ class GenerateErdTest extends TestCase
 
         $this->artisan(
             'erd:generate',
-            $this->givenParameters(['--file' => $this->file, '--graceful' => true])
+            $this->givenParameters(['--graceful' => true])
         )->assertFailed();
     }
 
     private function givenParameters(array $attributes = []): array
     {
         return array_merge([
+            '--file' => 'default.svg',
             '--directory' => $this->storagePath,
             '--path' => '../../../../database/migrations',
         ], $attributes);

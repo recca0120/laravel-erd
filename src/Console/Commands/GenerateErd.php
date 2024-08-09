@@ -42,11 +42,14 @@ class GenerateErd extends Command
                 return self::FAILURE;
             }
 
-            $erdFinder = $factory->create($database)->in($directory);
+            $tables = $factory
+                ->create($database)
+                ->in($directory)
+                ->find($regex, $excludes);
 
             $templateFactory
                 ->create($file)
-                ->save($erdFinder->find($regex, $excludes), $file, $config);
+                ->save($tables, $file, $config);
 
             return self::SUCCESS;
         } catch (Throwable $e) {

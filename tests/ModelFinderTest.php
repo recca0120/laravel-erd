@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ModelFinder;
 use Recca0120\LaravelErd\Tests\fixtures\Models\BaseModel;
-use Recca0120\LaravelErd\Tests\fixtures\Models\OtherConnection;
+use Recca0120\LaravelErd\Tests\fixtures\Models\Other\OtherConnection;
 use Recca0120\LaravelErd\Tests\fixtures\Models\Phone;
 use Recca0120\LaravelErd\Tests\fixtures\Models\User;
 use Recca0120\LaravelErd\Tests\fixtures\NonModel;
