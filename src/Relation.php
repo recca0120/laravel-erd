@@ -22,9 +22,14 @@ class Relation
         return $this->attributes['type'];
     }
 
-    public function related(): ?string
+    public function related(): string
     {
-        return $this->attributes['related'] ?? null;
+        return $this->attributes['related'];
+    }
+
+    public function parent(): string
+    {
+        return $this->attributes['parent'];
     }
 
     public function table(): string
@@ -77,6 +82,13 @@ class Relation
         return Helpers::getColumnName($this->morphType());
     }
 
+    public function connection(): ?string
+    {
+        $model = $this->type() === BelongsTo::class ? $this->parent() : $this->related();
+
+        return (new $model)->getConnectionName();
+    }
+
     public function pivot(): ?Pivot
     {
         return array_key_exists('pivot', $this->attributes)
@@ -101,7 +113,8 @@ class Relation
             'type' => $this->type(),
             'local_key' => $this->foreignKey(),
             'foreign_key' => $this->localKey(),
-            'related' => $this->related(),
+            'related' => $this->attributes['parent'],
+            'parent' => $this->attributes['related'],
         ]);
     }
 

@@ -58,6 +58,7 @@ class RelationFinderTest extends TestCase
         $car = $relations->get('car')->firstOrFail();
         self::assertEquals(HasOne::class, $car->type());
         self::assertEquals(Car::class, $car->related());
+        self::assertEquals(Mechanic::class, $car->parent());
         self::assertEquals('mechanics.id', $car->localKey());
         self::assertEquals('cars.mechanic_id', $car->foreignKey());
     }
@@ -73,6 +74,7 @@ class RelationFinderTest extends TestCase
         $mechanic = $relations->get('mechanic')->firstOrFail();
         self::assertEquals(BelongsTo::class, $mechanic->type());
         self::assertEquals(Mechanic::class, $mechanic->related());
+        self::assertEquals(Car::class, $mechanic->parent());
         self::assertEquals('cars.mechanic_id', $mechanic->localKey());
         self::assertEquals('mechanics.id', $mechanic->foreignKey());
 
@@ -80,6 +82,7 @@ class RelationFinderTest extends TestCase
         $owner = $relations->get('owner')->firstOrFail();
         self::assertEquals(HasOne::class, $owner->type());
         self::assertEquals(Owner::class, $owner->related());
+        self::assertEquals(Car::class, $owner->parent());
         self::assertEquals('cars.id', $owner->localKey());
         self::assertEquals('owners.car_id', $owner->foreignKey());
     }
@@ -95,6 +98,7 @@ class RelationFinderTest extends TestCase
         $car = $relations->get('car')->firstOrFail();
         self::assertEquals(BelongsTo::class, $car->type());
         self::assertEquals(Car::class, $car->related());
+        self::assertEquals(Owner::class, $car->parent());
         self::assertEquals('owners.car_id', $car->localKey());
         self::assertEquals('cars.id', $car->foreignKey());
     }
@@ -110,6 +114,7 @@ class RelationFinderTest extends TestCase
         $comments = $relations->get('comments')->firstOrFail();
         self::assertEquals(HasMany::class, $comments->type());
         self::assertEquals(Comment::class, $comments->related());
+        self::assertEquals(Post::class, $comments->parent());
         self::assertEquals('posts.id', $comments->localKey());
         self::assertEquals('comments.post_id', $comments->foreignKey());
 
@@ -117,6 +122,7 @@ class RelationFinderTest extends TestCase
         $user = $relations->get('user')->firstOrFail();
         self::assertEquals(BelongsTo::class, $user->type());
         self::assertEquals(User::class, $user->related());
+        self::assertEquals(Post::class, $user->parent());
         self::assertEquals('posts.user_id', $user->localKey());
         self::assertEquals('users.id', $user->foreignKey());
     }
@@ -143,6 +149,7 @@ class RelationFinderTest extends TestCase
         $roles = $relations->get('roles')->firstOrFail();
         self::assertEquals(MorphToMany::class, $roles->type());
         self::assertEquals(Role::class, $roles->related());
+        self::assertEquals(User::class, $roles->parent());
         self::assertEquals('users.id', $roles->localKey());
         self::assertEquals('model_has_roles.model_id', $roles->foreignKey());
         self::assertEquals('model_has_roles', $roles->pivot()->table());
@@ -163,6 +170,7 @@ class RelationFinderTest extends TestCase
         $permissions = $relations->get('permissions')->firstOrFail();
         self::assertEquals(MorphToMany::class, $permissions->type());
         self::assertEquals(Permission::class, $permissions->related());
+        self::assertEquals(User::class, $permissions->parent());
         self::assertEquals('users.id', $permissions->localKey());
         self::assertEquals('model_has_permissions.model_id', $permissions->foreignKey());
         self::assertEquals('model_has_permissions', $permissions->pivot()->table());
@@ -183,6 +191,7 @@ class RelationFinderTest extends TestCase
         $users = $relations->get('users')->firstOrFail();
         self::assertEquals(MorphToMany::class, $users->type());
         self::assertEquals(AuthUser::class, $users->related());
+        self::assertEquals(Role::class, $users->parent());
         self::assertEquals('roles.id', $users->localKey());
         self::assertEquals('model_has_roles.role_id', $users->foreignKey());
         self::assertEquals('model_has_roles', $users->pivot()->table());
@@ -203,6 +212,7 @@ class RelationFinderTest extends TestCase
         $permissions = $relations->get('permissions')->firstOrFail();
         self::assertEquals(BelongsToMany::class, $permissions->type());
         self::assertEquals(Permission::class, $permissions->related());
+        self::assertEquals(Role::class, $permissions->parent());
         self::assertEquals('roles.id', $permissions->localKey());
         self::assertEquals('role_has_permissions.role_id', $permissions->foreignKey());
         self::assertEquals('role_has_permissions', $permissions->pivot()->table());
@@ -221,6 +231,7 @@ class RelationFinderTest extends TestCase
         $image = $relations->get('image')->firstOrFail();
         self::assertEquals(MorphOne::class, $image->type());
         self::assertEquals(Image::class, $image->related());
+        self::assertEquals(User::class, $image->parent());
         self::assertEquals('users.id', $image->localKey());
         self::assertEquals('images.imageable_id', $image->foreignKey());
         self::assertEquals('images.imageable_type', $image->morphType());
