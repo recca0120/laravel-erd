@@ -79,7 +79,9 @@ class Relation
 
     public function pivot(): ?Pivot
     {
-        return $this->attributes['pivot'] ?? null;
+        return array_key_exists('pivot', $this->attributes)
+            ? new Pivot($this->attributes['pivot'])
+            : null;
     }
 
     /**
@@ -99,6 +101,7 @@ class Relation
             'type' => $this->type(),
             'local_key' => $this->foreignKey(),
             'foreign_key' => $this->localKey(),
+            'related' => $this->related(),
         ]);
     }
 

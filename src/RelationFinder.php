@@ -37,7 +37,7 @@ class RelationFinder
                 return $method->class !== $className || $method->getNumberOfParameters() > 0;
             })
             ->mapWithKeys(fn (ReflectionMethod $method) => [
-                $method->getName() => self::findRelations($method, $model),
+                $method->getName() => self::findRelations($model, $method),
             ])
             ->filter();
     }
@@ -45,7 +45,14 @@ class RelationFinder
     /**
      * @return ?Collection<int, Relation>
      */
-    private static function findRelations(ReflectionMethod $method, Model $model): ?Collection
+    private static function findRelations(Model $model, ReflectionMethod $method): ?Collection
+    {
+        $attributes = self::getRelationAttributes($model, $method);
+
+        return $attributes ? self::makeRelation($attributes) : null;
+    }
+
+    private static function getRelationAttributes(Model $model, ReflectionMethod $method): ?array
     {
         try {
             $return = $method->invoke($model);
@@ -76,10 +83,7 @@ class RelationFinder
         return null;
     }
 
-    /**
-     * @return Collection<int, Relation>
-     */
-    private static function belongsToMany(BelongsToMany $return, string $type, string $related): Collection
+    private static function belongsToMany(BelongsToMany $return, string $type, string $related): array
     {
         // dump([
         //     'getExistenceCompareKey' => $return->getExistenceCompareKey(),
@@ -98,6 +102,7 @@ class RelationFinder
 
         $pivot = [
             'type' => $type,
+            'related' => $related,
             'local_key' => $return->getQualifiedRelatedPivotKeyName(),
             'foreign_key' => $return->getQualifiedRelatedKeyName(),
         ];
@@ -114,19 +119,16 @@ class RelationFinder
             ], $pivot);
         }
 
-        return self::makeRelation([
+        return [
             'type' => $type,
             'related' => $related,
             'local_key' => $return->getQualifiedParentKeyName(),
             'foreign_key' => $return->getQualifiedForeignPivotKeyName(),
-            'pivot' => new Pivot($pivot),
-        ]);
+            'pivot' => $pivot,
+        ];
     }
 
-    /**
-     * @return ?Collection<int, Relation>
-     */
-    private static function belongsTo(BelongsTo $return, string $type, string $related): ?Collection
+    private static function belongsTo(BelongsTo $return, string $type, string $related): ?array
     {
         // dump([
         //     'getForeignKeyName' => $return->getForeignKeyName(),
@@ -145,18 +147,15 @@ class RelationFinder
             return null;
         }
 
-        return self::makeRelation([
+        return [
             'type' => $type,
             'related' => $related,
             'local_key' => $return->getQualifiedForeignKeyName(),
             'foreign_key' => $return->getQualifiedOwnerKeyName(),
-        ]);
+        ];
     }
 
-    /**
-     * @return ?Collection<int, Relation>
-     */
-    private static function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?Collection
+    private static function hasOneOrMany(HasOneOrMany $return, string $type, string $related): ?array
     {
         if ($return instanceof HasOne && $return->isOneOfMany()) {
             return null;
@@ -184,7 +183,7 @@ class RelationFinder
             ]);
         }
 
-        return self::makeRelation($attributes);
+        return $attributes;
     }
 
     /**
@@ -208,7 +207,6 @@ class RelationFinder
         $relations = collect([$relation]);
 
         $pivot = $relation->pivot();
-
         if ($pivot) {
             $relations->add(new Relation($pivot->toArray()));
         }

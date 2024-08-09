@@ -17,6 +17,16 @@ class Pivot
         $this->attributes = $pivot;
     }
 
+    public function model(): string
+    {
+        return $this->attributes['model'];
+    }
+
+    public function connection(): ?string
+    {
+        return $this->attributes['connection'];
+    }
+
     public function table(): string
     {
         return Helpers::getTableName($this->attributes['local_key']);
