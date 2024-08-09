@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd\Tests;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ErdFinder;
@@ -27,7 +26,6 @@ class ErdFinderTest extends TestCase
     }
 
     /**
-     * @throws BindingResolutionException
      * @throws ReflectionException
      */
     public function test_find_er_model_in_directory(): void
@@ -35,12 +33,11 @@ class ErdFinderTest extends TestCase
         $finder = $this->givenFinder();
 
         $this->assertMatchesSnapshot(
-            $this->render($finder->find())
+            $this->render($finder->find('*.php', ['user_device', 'devices']))
         );
     }
 
     /**
-     * @throws BindingResolutionException
      * @throws ReflectionException
      */
     public function test_find_er_model_by_file(): void
@@ -53,7 +50,7 @@ class ErdFinderTest extends TestCase
     }
 
     /**
-     * @throws BindingResolutionException
+     * @throws ReflectionException
      */
     public function test_find_er_model_by_model(): void
     {
@@ -65,7 +62,6 @@ class ErdFinderTest extends TestCase
     }
 
     /**
-     * @throws BindingResolutionException
      * @throws ReflectionException
      */
     public function test_find_er_model_exclude_owner(): void
@@ -77,9 +73,6 @@ class ErdFinderTest extends TestCase
         );
     }
 
-    /**
-     * @throws BindingResolutionException
-     */
     private function givenFinder(): ErdFinder
     {
         return $this->app->make(Factory::class)->create()->in(__DIR__.'/fixtures');

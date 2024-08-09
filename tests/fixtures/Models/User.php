@@ -3,6 +3,7 @@
 namespace Recca0120\LaravelErd\Tests\fixtures\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -12,6 +13,8 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Model
 {
     use HasRoles;
+
+    protected $fillable = ['name', 'email', 'password'];
 
     /**
      * Get the phone associated with the user.
@@ -50,5 +53,10 @@ class User extends Model
     public function images(): MorphMany
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function devices(): BelongsToMany
+    {
+        return $this->belongsToMany(Device::class, 'user_device');
     }
 }

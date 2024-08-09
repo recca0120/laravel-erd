@@ -2,7 +2,6 @@
 
 namespace Recca0120\LaravelErd\Tests\Templates;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ErdFinder;
@@ -10,6 +9,7 @@ use Recca0120\LaravelErd\Factory;
 use Recca0120\LaravelErd\Template\DDL;
 use Recca0120\LaravelErd\Template\Template;
 use Recca0120\LaravelErd\Tests\TestCase;
+use ReflectionException;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class DDLTest extends TestCase
@@ -26,20 +26,17 @@ class DDLTest extends TestCase
     }
 
     /**
-     * @throws BindingResolutionException
+     * @throws ReflectionException
      */
     public function test_find_er_model_in_directory(): void
     {
         $finder = $this->givenFinder();
 
         $this->assertMatchesSnapshot(
-            $this->render($finder->find())
+            $this->render($finder->find('*.php', ['user_device', 'devices']))
         );
     }
 
-    /**
-     * @throws BindingResolutionException
-     */
     private function givenFinder(): ErdFinder
     {
         return $this->app->make(Factory::class)->create()->in(__DIR__.'/../fixtures');

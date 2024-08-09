@@ -44,6 +44,14 @@ class RelationFinderTest extends TestCase
      */
     public function test_find_mechanic_relations(): void
     {
+        // /** @var User $user */
+        // $user = User::create(['name' => 'foo', 'email' => 'foo@bar.com', 'password' => bcrypt('password')]);
+        // $device = Device::create(['name' => 'device']);
+        // $user->devices()->save($device);
+        // DB::enableQueryLog();
+        // dump($user->devices);
+        // dump(DB::getQueryLog());
+
         $relations = $this->givenRelations(Mechanic::class);
 
         /** @var Relation $car */
