@@ -4,6 +4,7 @@ namespace Recca0120\LaravelErd;
 
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\Contracts\SchemaBuilder;
+use ReflectionException;
 
 class ErdFinder
 {
@@ -30,6 +31,8 @@ class ErdFinder
      * @param  string|string[]  $regex
      * @param  string[]  $excludes
      * @return Collection<int|string, Table>
+     *
+     * @throws ReflectionException
      */
     public function find($regex = '*.php', array $excludes = []): Collection
     {
@@ -42,6 +45,8 @@ class ErdFinder
      * @param  string|string[]  $file
      * @param  string[]  $excludes
      * @return Collection<int|string, Table>
+     *
+     * @throws ReflectionException
      */
     public function findByFile($file, array $excludes = []): Collection
     {
@@ -53,6 +58,8 @@ class ErdFinder
     /**
      * @param  string[]  $excludes
      * @return Collection<int|string, Table>
+     *
+     * @throws ReflectionException
      */
     public function findByModel(string $className, array $excludes = []): Collection
     {
@@ -62,6 +69,8 @@ class ErdFinder
     /**
      * @param  string[]  $excludes
      * @return Collection<int|string, Table>
+     *
+     * @throws ReflectionException
      */
     private function findByModels(Collection $models, array $excludes = []): Collection
     {
@@ -71,15 +80,28 @@ class ErdFinder
             ->filter()
             ->diff($models);
 
-        return $models
-            ->merge($missing)
+        $models = $models->merge($missing);
+
+        $relations = $models
             ->flatMap(fn (string $model) => RelationFinder::generate($model)->collapse())
             ->flatMap(fn (Relation $relation) => [$relation, $relation->relatedRelation()])
-            ->reject(fn (Relation $relation) => $relation->includes($excludes))
+            ->reject(fn (Relation $relation) => $relation->excludes($excludes))
             ->sortBy(fn (Relation $relation) => $relation->unique())
             ->unique(fn (Relation $relation) => $relation->unique())
             ->groupBy(fn (Relation $relation) => $relation->table())
-            ->sortBy(fn (Collection $relations, string $table) => $table)
+            ->sortBy(fn (Collection $relations, string $table) => $table);
+
+        $tables = $models
+            ->map(fn (string $model) => (new $model())->getTable())
+            ->merge($relations->collapse()->flatMap(fn (Relation $relation) => [
+                $relation->table(), $relation->localTable(), $relation->foreignTable(),
+            ]))
+            ->unique()
+            ->reject(fn (string $table) => in_array($table, $excludes))
+            ->sort();
+
+        return $tables
+            ->mapWithKeys(fn (string $table) => [$table => $relations->get($table, collect())])
             ->map(function (Collection $relations, string $table) {
                 return new Table($this->schemaBuilder->getTableSchema($table), $relations);
             });

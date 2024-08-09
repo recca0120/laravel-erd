@@ -85,7 +85,7 @@ class Relation
     /**
      * @param  string[]  $tables
      */
-    public function includes(array $tables): bool
+    public function excludes(array $tables): bool
     {
         $localTable = $this->localTable();
         $foreignTable = $this->foreignTable();

@@ -10,6 +10,7 @@ use Recca0120\LaravelErd\Factory;
 use Recca0120\LaravelErd\Template\Er;
 use Recca0120\LaravelErd\Template\Template;
 use Recca0120\LaravelErd\Tests\fixtures\Models\Car;
+use ReflectionException;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class ErdFinderTest extends TestCase
@@ -27,6 +28,7 @@ class ErdFinderTest extends TestCase
 
     /**
      * @throws BindingResolutionException
+     * @throws ReflectionException
      */
     public function test_find_er_model_in_directory(): void
     {
@@ -39,6 +41,7 @@ class ErdFinderTest extends TestCase
 
     /**
      * @throws BindingResolutionException
+     * @throws ReflectionException
      */
     public function test_find_er_model_by_file(): void
     {
@@ -63,6 +66,7 @@ class ErdFinderTest extends TestCase
 
     /**
      * @throws BindingResolutionException
+     * @throws ReflectionException
      */
     public function test_find_er_model_exclude_owner(): void
     {
