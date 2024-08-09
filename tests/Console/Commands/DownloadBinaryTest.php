@@ -9,7 +9,7 @@ use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Client\ClientInterface;
 use Recca0120\LaravelErd\Console\Commands\DownloadBinary;
-use Recca0120\LaravelErd\OS;
+use Recca0120\LaravelErd\Platform;
 use Recca0120\LaravelErd\Tests\TestCase;
 
 class DownloadBinaryTest extends TestCase
@@ -45,15 +45,15 @@ class DownloadBinaryTest extends TestCase
     {
         return [
             [
-                'platform' => OS::DARWIN,
-                'arch' => OS::ARM,
+                'platform' => Platform::DARWIN,
+                'arch' => Platform::ARM,
                 'expected' => [
                     'erd-go' => 'darwin_amd64_erd-go',
                     'dot' => 'graphviz-dot-macos-x64',
                 ],
             ],
             [
-                'platform' => OS::DARWIN,
+                'platform' => Platform::DARWIN,
                 'arch' => '64',
                 'expected' => [
                     'erd-go' => 'darwin_amd64_erd-go',
@@ -61,15 +61,15 @@ class DownloadBinaryTest extends TestCase
                 ],
             ],
             [
-                'platform' => OS::LINUX,
-                'arch' => OS::ARM,
+                'platform' => Platform::LINUX,
+                'arch' => Platform::ARM,
                 'expected' => [
                     'erd-go' => 'linux_arm_erd-go',
                     'dot' => 'graphviz-dot-linux-x64',
                 ],
             ],
             [
-                'platform' => OS::LINUX,
+                'platform' => Platform::LINUX,
                 'arch' => '64',
                 'expected' => [
                     'erd-go' => 'linux_amd64_erd-go',
@@ -77,7 +77,7 @@ class DownloadBinaryTest extends TestCase
                 ],
             ],
             [
-                'platform' => OS::WINDOWS,
+                'platform' => Platform::WINDOWS,
                 'arch' => '64',
                 'expected' => [
                     'erd-go' => 'windows_amd64_erd-go.exe',
@@ -89,10 +89,10 @@ class DownloadBinaryTest extends TestCase
 
     private function givenOs(string $platform, string $arch): void
     {
-        $os = Mockery::mock(OS::class);
+        $os = Mockery::mock(Platform::class);
         $os->expects('platform')->andReturn($platform);
         $os->expects('arch')->andReturn($arch);
-        $this->swap(OS::class, $os);
+        $this->swap(Platform::class, $os);
     }
 
     private function givenClient(): Client

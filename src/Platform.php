@@ -2,7 +2,7 @@
 
 namespace Recca0120\LaravelErd;
 
-class OS
+class Platform
 {
     public const DARWIN = 'darwin';
 

@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Recca0120\LaravelErd\OS;
+use Recca0120\LaravelErd\Platform;
 
 class DownloadBinary extends Command
 {
@@ -23,13 +23,13 @@ class DownloadBinary extends Command
 
     private ClientInterface $client;
 
-    private OS $os;
+    private Platform $platform;
 
-    public function __construct(ClientInterface $client, OS $os)
+    public function __construct(ClientInterface $client, Platform $platform)
     {
         parent::__construct();
         $this->client = $client;
-        $this->os = $os;
+        $this->platform = $platform;
     }
 
     public function handle(): int
@@ -37,8 +37,8 @@ class DownloadBinary extends Command
         $config = config('laravel-erd.binary');
 
         try {
-            $platform = $this->os->platform();
-            $arch = $this->os->arch();
+            $platform = $this->platform->platform();
+            $arch = $this->platform->arch();
             $this->downloadErdGo($platform, $arch, $config['erd-go']);
             $this->downloadDot($platform, $arch, $config['dot']);
 
@@ -55,8 +55,8 @@ class DownloadBinary extends Command
      */
     private function downloadErdGo(string $platform, string $arch, string $path): void
     {
-        $extension = $platform === OS::WINDOWS ? '.exe' : '';
-        $arch = $platform === OS::LINUX && $arch === OS::ARM ? OS::ARM : 'amd64';
+        $extension = $platform === Platform::WINDOWS ? '.exe' : '';
+        $arch = $platform === Platform::LINUX && $arch === Platform::ARM ? Platform::ARM : 'amd64';
 
         $url = self::ERD_GO_DOWNLOAD_URL.'%s_%s_erd-go%s';
         $this->download(sprintf($url, $platform, $arch, $extension), $path);
@@ -68,9 +68,9 @@ class DownloadBinary extends Command
      */
     private function downloadDot(string $platform, string $arch, string $path): void
     {
-        $extension = $platform === OS::WINDOWS ? '.exe' : '';
-        $arch = $arch === OS::ARM ? '64' : $arch;
-        $lookup = [OS::DARWIN => 'macos', OS::WINDOWS => 'win'];
+        $extension = $platform === Platform::WINDOWS ? '.exe' : '';
+        $arch = $arch === Platform::ARM ? '64' : $arch;
+        $lookup = [Platform::DARWIN => 'macos', Platform::WINDOWS => 'win'];
 
         $url = self::DOT_DOWNLOAD_URL.'graphviz-dot-%s-x%s%s';
         $this->download(sprintf($url, $lookup[$platform] ?? $platform, $arch, $extension), $path);
