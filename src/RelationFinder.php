@@ -100,9 +100,11 @@ class RelationFinder
         //     'getPivotColumns' => $return->getPivotColumns(),
         // ]);
 
+        $parent = get_class($return->getParent());
         $pivot = [
             'type' => $type,
             'related' => $related,
+            'parent' => $parent,
             'local_key' => $return->getQualifiedRelatedPivotKeyName(),
             'foreign_key' => $return->getQualifiedRelatedKeyName(),
         ];
@@ -122,6 +124,7 @@ class RelationFinder
         return [
             'type' => $type,
             'related' => $related,
+            'parent' => $parent,
             'local_key' => $return->getQualifiedParentKeyName(),
             'foreign_key' => $return->getQualifiedForeignPivotKeyName(),
             'pivot' => $pivot,
@@ -150,6 +153,7 @@ class RelationFinder
         return [
             'type' => $type,
             'related' => $related,
+            'parent' => get_class($return->getParent()),
             'local_key' => $return->getQualifiedForeignKeyName(),
             'foreign_key' => $return->getQualifiedOwnerKeyName(),
         ];
@@ -165,9 +169,11 @@ class RelationFinder
         //     'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
         //     'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
         // ]);
+
         $attributes = [
             'type' => $type,
             'related' => $related,
+            'parent' => get_class($return->getParent()),
             'local_key' => $return->getQualifiedParentKeyName(),
             'foreign_key' => $return->getQualifiedForeignKeyName(),
         ];
