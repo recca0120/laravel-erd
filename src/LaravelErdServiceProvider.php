@@ -2,7 +2,9 @@
 
 namespace Recca0120\LaravelErd;
 
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
+use Psr\Http\Client\ClientInterface;
 use Recca0120\LaravelErd\Console\Commands\DownloadBinary;
 use Recca0120\LaravelErd\Console\Commands\GenerateErd;
 
@@ -23,6 +25,9 @@ class LaravelErdServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(Factory::class, Factory::class);
+        $this->app->when(DownloadBinary::class)
+            ->needs(ClientInterface::class)
+            ->give(Client::class);
 
         $this->commands([DownloadBinary::class, GenerateErd::class]);
     }

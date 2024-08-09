@@ -77,7 +77,10 @@ class GenerateErdTest extends TestCase
 
     public function test_generate_svg(): void
     {
-        $this->artisan('erd:generate', $this->givenParameters($this->file))->assertSuccessful();
+        $this->artisan(
+            'erd:generate',
+            $this->givenParameters(['--file' => $this->file])
+        )->execute();
 
         $contents = file_get_contents($this->storagePath.'/'.$this->file);
         self::assertStringContainsString('<!-- cars -->', $contents);
@@ -88,16 +91,17 @@ class GenerateErdTest extends TestCase
     {
         $this->app['config']->set('laravel-erd.binary.erd-go', '/bin/erd-go');
 
-        $this->artisan('erd:generate', $this->givenParameters($this->file))->assertFailed();
+        $this->artisan(
+            'erd:generate',
+            $this->givenParameters(['--file' => $this->file, '--graceful' => true])
+        )->assertFailed();
     }
 
-    private function givenParameters(string $file): array
+    private function givenParameters(array $attributes = []): array
     {
-        return [
-            '--file' => $file,
+        return array_merge([
             '--directory' => $this->storagePath,
             '--path' => '../../../../database/migrations',
-            '--graceful' => true,
-        ];
+        ], $attributes);
     }
 }

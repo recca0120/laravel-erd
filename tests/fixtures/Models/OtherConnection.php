@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class OtherConnection extends Model
 {
-    protected $connection = 'mysql';
+    protected $connection = 'sqlite';
 }

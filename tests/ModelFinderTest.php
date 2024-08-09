@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ModelFinder;
 use Recca0120\LaravelErd\Tests\fixtures\Models\BaseModel;
+use Recca0120\LaravelErd\Tests\fixtures\Models\OtherConnection;
 use Recca0120\LaravelErd\Tests\fixtures\Models\Phone;
 use Recca0120\LaravelErd\Tests\fixtures\Models\User;
 use Recca0120\LaravelErd\Tests\fixtures\NonModel;
@@ -41,5 +42,10 @@ class ModelFinderTest extends TestCase
     public function test_it_should_not_find_not_eloquent_model(): void
     {
         self::assertNotContains(NonModel::class, $this->files);
+    }
+
+    public function test_it_should_not_find_other_connection_model(): void
+    {
+        self::assertNotContains(OtherConnection::class, $this->files);
     }
 }

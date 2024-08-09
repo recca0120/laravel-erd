@@ -31,11 +31,11 @@ class ModelFinder
     }
 
     /**
-     * @param  string|string[]  $patterns
+     * @param  string|string[]  $regex
      */
-    public function find(string $directory, $patterns = '*.php'): Collection
+    public function find(string $directory, $regex = '*.php'): Collection
     {
-        $files = Finder::create()->files()->name($patterns)->in($directory);
+        $files = Finder::create()->files()->name($regex)->in($directory);
 
         return collect($files)
             ->map(fn (SplFileInfo $file) => $this->getFullyQualifiedClassName($file))

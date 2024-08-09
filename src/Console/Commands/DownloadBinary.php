@@ -2,11 +2,15 @@
 
 namespace Recca0120\LaravelErd\Console\Commands;
 
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
+use Http\Client\Common\Plugin\ErrorPlugin;
+use Http\Client\Common\Plugin\RedirectPlugin;
+use Http\Client\Common\PluginClient;
 use Illuminate\Console\Command;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
 use Recca0120\LaravelErd\OS;
 
 class DownloadBinary extends Command
@@ -17,21 +21,29 @@ class DownloadBinary extends Command
 
     protected $signature = 'erd:download';
 
-    /**
-     * @throws ConnectionException
-     */
-    public function handle(OS $os): int
+    private ClientInterface $client;
+
+    private OS $os;
+
+    public function __construct(ClientInterface $client, OS $os)
+    {
+        parent::__construct();
+        $this->client = $client;
+        $this->os = $os;
+    }
+
+    public function handle(): int
     {
         $config = config('laravel-erd.binary');
 
         try {
-            $platform = $os->platform();
-            $arch = $os->arch();
+            $platform = $this->os->platform();
+            $arch = $this->os->arch();
             $this->downloadErdGo($platform, $arch, $config['erd-go']);
             $this->downloadDot($platform, $arch, $config['dot']);
 
             return self::SUCCESS;
-        } catch (RequestException $e) {
+        } catch (ClientExceptionInterface $e) {
             $this->error($e->getMessage());
 
             return self::FAILURE;
@@ -39,8 +51,7 @@ class DownloadBinary extends Command
     }
 
     /**
-     * @throws RequestException
-     * @throws ConnectionException
+     * @throws ClientExceptionInterface
      */
     private function downloadErdGo(string $platform, string $arch, string $path): void
     {
@@ -53,7 +64,7 @@ class DownloadBinary extends Command
 
     /**
      * @throws RequestException
-     * @throws ConnectionException
+     * @throws ClientExceptionInterface
      */
     private function downloadDot(string $platform, string $arch, string $path): void
     {
@@ -66,8 +77,7 @@ class DownloadBinary extends Command
     }
 
     /**
-     * @throws RequestException
-     * @throws ConnectionException
+     * @throws ClientExceptionInterface
      */
     private function download(string $url, string $path): void
     {
@@ -77,7 +87,14 @@ class DownloadBinary extends Command
 
         $this->line('download: '.$url);
         File::ensureDirectoryExists(dirname($path));
-        File::put($path, Http::timeout(300)->get($url)->throw()->body());
+
+        $request = new Request('GET', $url);
+        $response = (new PluginClient($this->client, [
+            new ErrorPlugin(),
+            new RedirectPlugin(),
+        ]))->sendRequest($request);
+
+        File::put($path, (string) $response->getBody());
         File::chmod($path, 0777);
     }
 }

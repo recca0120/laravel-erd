@@ -2,10 +2,12 @@
 
 namespace Recca0120\LaravelErd\Tests\Console\Commands;
 
+use GuzzleHttp\Psr7\Response;
+use Http\Mock\Client;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Http\Client\ClientInterface;
 use Recca0120\LaravelErd\Console\Commands\DownloadBinary;
 use Recca0120\LaravelErd\OS;
 use Recca0120\LaravelErd\Tests\TestCase;
@@ -20,21 +22,23 @@ class DownloadBinaryTest extends TestCase
     {
         File::spy();
         File::expects('exists')->andReturn(false)->twice();
-        Http::fake(['*' => Http::response('ok')]);
 
         $this->givenOs($platform, $arch);
+        $client = $this->givenClient();
 
         $this->artisan('erd:download')
             ->assertSuccessful()
             ->execute();
 
-        $recorded = Http::recorded();
+        self::assertEquals(
+            DownloadBinary::ERD_GO_DOWNLOAD_URL.$expected['erd-go'],
+            (string) $client->getRequests()[0]->getUri()
+        );
 
-        [$request] = $recorded[0];
-        self::assertEquals(DownloadBinary::ERD_GO_DOWNLOAD_URL.$expected['erd-go'], $request->url());
-
-        [$request] = $recorded[1];
-        self::assertEquals(DownloadBinary::DOT_DOWNLOAD_URL.$expected['dot'], $request->url());
+        self::assertEquals(
+            DownloadBinary::DOT_DOWNLOAD_URL.$expected['dot'],
+            (string) $client->getRequests()[1]->getUri()
+        );
     }
 
     public static function osProvider(): array
@@ -89,5 +93,14 @@ class DownloadBinaryTest extends TestCase
         $os->expects('platform')->andReturn($platform);
         $os->expects('arch')->andReturn($arch);
         $this->swap(OS::class, $os);
+    }
+
+    private function givenClient(): Client
+    {
+        $client = new Client();
+        $client->addResponse(new Response(200, [], 'ok'));
+        $this->app->addContextualBinding(DownloadBinary::class, ClientInterface::class, fn () => $client);
+
+        return $client;
     }
 }
