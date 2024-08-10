@@ -12,5 +12,5 @@ name {label: "string, not null"}
 name {label: "string, not null"}
 +car_id {label: "integer, not null"}
 
-cars 1--1 mechanics
-cars 1--1 owners
+cars 1--* mechanics
+cars 1--* owners

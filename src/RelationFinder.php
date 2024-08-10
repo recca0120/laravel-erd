@@ -102,7 +102,8 @@ class RelationFinder
 
         $parent = get_class($return->getParent());
         $pivot = [
-            'type' => $type,
+            'type' => BelongsTo::class,
+            // 'type' => $type,
             'related' => $related,
             'parent' => $parent,
             'local_key' => $return->getQualifiedRelatedPivotKeyName(),
@@ -115,10 +116,11 @@ class RelationFinder
             //     'getMorphClass' => $return->getMorphClass(),
             // ]);
 
-            $pivot = array_merge([
+            $pivot = array_merge($pivot, [
+                'type' => MorphTo::class,
                 'morph_class' => $return->getMorphClass(),
                 'morph_type' => $return->getMorphType(),
-            ], $pivot);
+            ]);
         }
 
         return [

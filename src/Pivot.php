@@ -2,8 +2,6 @@
 
 namespace Recca0120\LaravelErd;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
 class Pivot
 {
     /**
@@ -34,19 +32,24 @@ class Pivot
         return $this->attributes['parent'];
     }
 
-    public function table(): string
-    {
-        return Helpers::getTableName($this->attributes['local_key']);
-    }
-
     public function localKey(): string
     {
         return $this->attributes['local_key'];
     }
 
+    public function localTable(): string
+    {
+        return Helpers::getTableName($this->attributes['local_key']);
+    }
+
     public function foreignKey(): string
     {
         return $this->attributes['foreign_key'];
+    }
+
+    public function foreignTable(): string
+    {
+        return Helpers::getTableName($this->attributes['foreign_key']);
     }
 
     public function morphClass(): string
@@ -61,9 +64,9 @@ class Pivot
 
     public function connection(): ?string
     {
-        $model = $this->type() === BelongsTo::class ? $this->parent() : $this->related();
+        $model = $this->related();
 
-        return (new $model)->getConnectionName();
+        return (new $model())->getConnectionName();
     }
 
     /**

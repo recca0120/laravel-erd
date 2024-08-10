@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Relation
 {
@@ -30,11 +31,6 @@ class Relation
     public function parent(): string
     {
         return $this->attributes['parent'];
-    }
-
-    public function table(): string
-    {
-        return Helpers::getTableName($this->localKey());
     }
 
     public function localKey(): string
@@ -84,9 +80,9 @@ class Relation
 
     public function connection(): ?string
     {
-        $model = $this->type() === BelongsTo::class ? $this->parent() : $this->related();
+        $model = $this->related();
 
-        return (new $model)->getConnectionName();
+        return (new $model())->getConnectionName();
     }
 
     public function pivot(): ?Pivot
@@ -109,26 +105,43 @@ class Relation
 
     public function relatedRelation(): Relation
     {
-        return new Relation([
-            'type' => $this->type(),
+        $reverseLookup = [
+            BelongsTo::class => HasMany::class,
+            HasOne::class => BelongsTo::class,
+            MorphOne::class => MorphTo::class,
+            HasMany::class => BelongsTo::class,
+            MorphMany::class => MorphTo::class,
+        ];
+
+        $type = $this->type();
+
+        return new Relation(array_filter([
+            'type' => $reverseLookup[$type] ?? $type,
+            'related' => $this->parent(),
+            'parent' => $this->related(),
             'local_key' => $this->foreignKey(),
             'foreign_key' => $this->localKey(),
-            'related' => $this->attributes['parent'],
-            'parent' => $this->attributes['related'],
-        ]);
+            'pivot' => $this->attributes['pivot'] ?? null,
+            'morph_class' => $this->morphClass(),
+            'morph_type' => $this->morphType(),
+        ]));
     }
 
     public function order(): int
     {
-        if (in_array($this->type(), [BelongsTo::class, HasOne::class, MorphOne::class])) {
-            return 1;
+        $orders = [
+            [BelongsTo::class, HasOne::class, MorphOne::class],
+            [HasMany::class, MorphMany::class],
+        ];
+
+        $type = $this->type();
+        foreach ($orders as $index => $order) {
+            if (in_array($type, $order, true)) {
+                return $index + 1;
+            }
         }
 
-        if (in_array($this->type(), [HasMany::class, MorphMany::class])) {
-            return 2;
-        }
-
-        return 3;
+        return count($orders);
     }
 
     public function uniqueId(): string

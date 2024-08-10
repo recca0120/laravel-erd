@@ -81,13 +81,13 @@ class ErdFinder
             ->flatMap(fn (Relation $relation) => [$relation, $relation->relatedRelation()]);
 
         $relationGroupByConnection = $relations
-            ->groupBy('connection')
+            ->groupBy(fn (Relation $relation) => $relation->connection())
             ->map(function (Collection $relations) use ($excludes) {
                 return $relations
                     ->reject(fn (Relation $relation) => $relation->excludes($excludes))
                     ->sortBy(fn (Relation $relation) => $relation->unique())
                     ->unique(fn (Relation $relation) => $relation->unique())
-                    ->groupBy(fn (Relation $relation) => $relation->table());
+                    ->groupBy(fn (Relation $relation) => $relation->localTable());
             });
 
         return $models
@@ -105,7 +105,7 @@ class ErdFinder
                     'connection' => $connection,
                     'table' => $table,
                     'related' => $related,
-                ], [$relation->table(), $relation->localTable(), $relation->foreignTable()]);
+                ], [$relation->foreignTable()]);
             }))
             ->unique(fn (array $data) => [$data['connection'], $data['table']])
             ->reject(fn (array $data) => in_array($data['table'], $excludes, true))

@@ -13,7 +13,7 @@ updated_at {label: "datetime, null"}
 [images] {}
 *id {label: "integer, not null"}
 url {label: "string, not null"}
-imageable_type {label: "string, not null"}
++imageable_type {label: "string, not null"}
 +imageable_id {label: "integer, not null"}
 created_at {label: "datetime, null"}
 updated_at {label: "datetime, null"}
@@ -77,16 +77,16 @@ remember_token {label: "string, null"}
 created_at {label: "datetime, null"}
 updated_at {label: "datetime, null"}
 
-cars 1--1 mechanics
-cars 1--1 owners
-comments 1--1 posts
+cars 1--* mechanics
+cars 1--* owners
+comments 1--* posts
+images 1--* posts
 images 1--* users
-images 1--1 posts
-model_has_permissions *--* permissions
-model_has_permissions *--* users
-model_has_roles *--* roles
-model_has_roles *--* users
-permissions *--* role_has_permissions
-phones 1--1 users
-posts 1--1 users
-role_has_permissions *--* roles
+model_has_permissions 1--* permissions
+model_has_permissions 1--* users
+model_has_roles 1--* roles
+model_has_roles 1--* users
+permissions 1--* role_has_permissions
+phones 1--* users
+posts 1--* users
+role_has_permissions 1--* roles

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\Contracts\ColumnSchema;
@@ -21,13 +22,14 @@ class Er implements Template
 {
     /** @var string[] */
     private static array $relations = [
-        BelongsTo::class => '1--1',
+        BelongsTo::class => '1--*',
+        MorphTo::class => '1--*',
         HasOne::class => '1--1',
         MorphOne::class => '1--1',
         HasMany::class => '1--*',
         MorphMany::class => '1--*',
-        BelongsToMany::class => '*--*',
-        MorphToMany::class => '*--*',
+        BelongsToMany::class => '1--*',
+        MorphToMany::class => '1--*',
     ];
 
     private ExecutableFinder $finder;
@@ -79,7 +81,6 @@ class Er implements Template
         $primaryKeys = $table->getPrimaryKey();
         $indexes = $table
             ->getRelations()
-            ->filter(fn (Relation $relation) => $relation->type() !== BelongsTo::class)
             ->flatMap(fn (Relation $relation) => [$relation->localColumn(), $relation->morphColumn()])
             ->filter();
 

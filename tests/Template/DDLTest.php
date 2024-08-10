@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\LaravelErd\Tests\Templates;
+namespace Recca0120\LaravelErd\Tests\Template;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
