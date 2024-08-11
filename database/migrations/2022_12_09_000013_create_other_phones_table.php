@@ -13,7 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('phones', function (Blueprint $table) {
+        if (Schema::connection('other')->hasTable('other_phones')) {
+            return;
+        }
+
+        Schema::connection('other')->create('other_phones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
             $table->string('phone_numbers');
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mechanics');
+        Schema::dropIfExists('other_phones');
     }
 };

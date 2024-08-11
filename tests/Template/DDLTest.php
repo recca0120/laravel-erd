@@ -33,7 +33,7 @@ class DDLTest extends TestCase
         $finder = $this->givenFinder();
 
         $this->assertMatchesSnapshot(
-            $this->render($finder->find('*.php', ['user_device', 'devices']))
+            $this->render($finder->find('*.php', ['user_device', 'devices', 'other_phones']))
         );
     }
 

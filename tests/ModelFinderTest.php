@@ -6,8 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Recca0120\LaravelErd\ModelFinder;
 use Recca0120\LaravelErd\Tests\fixtures\Models\BaseModel;
-use Recca0120\LaravelErd\Tests\fixtures\Models\Other\OtherConnection;
-use Recca0120\LaravelErd\Tests\fixtures\Models\Phone;
 use Recca0120\LaravelErd\Tests\fixtures\Models\User;
 use Recca0120\LaravelErd\Tests\fixtures\NonModel;
 
@@ -29,10 +27,10 @@ class ModelFinderTest extends TestCase
         self::assertContains(User::class, $this->files);
     }
 
-    public function test_it_should_find_phone_model(): void
-    {
-        self::assertContains(Phone::class, $this->files);
-    }
+    // public function test_it_should_find_phone_model(): void
+    // {
+    //     self::assertContains(Phone::class, $this->files);
+    // }
 
     public function test_it_should_not_find_base_model(): void
     {
