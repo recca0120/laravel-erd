@@ -17,7 +17,7 @@ class LaravelErdController extends Controller
         $extension = File::extension($file);
 
         $path = $storagePath.'/'.$file;
-        $view = $extension === 'svg' ? 'svg' : 'vuerd';
+        $view = $extension === 'svg' ? 'svg' : 'erd-editor';
 
         abort_unless(File::exists($path), 404);
 

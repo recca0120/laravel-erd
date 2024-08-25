@@ -5,16 +5,16 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/recca0120/laravel-erd.svg?style=flat-square)](https://packagist.org/packages/recca0120/laravel-erd)
 
 Laravel ERD automatically generates Entity-Relationship Diagrams from your Laravel models and displays them
-using [Vuerd](https://github.com/dineug/erd-editor).
+using [erd-editor](https://github.com/dineug/erd-editor).
 
 ## Preview
 
 Here's a sample of what you can expect, generated from [migrations](database/migrations)
 and [models](tests/Fixtures/Models):
 
-> [View Live Demo](https://previewhtml.github.io/?url=https%3A%2F%2Fgithub.com%2Frecca0120%2Flaravel-erd%2Fblob%2Fmain%2Fdemo%2Findex.html)
+> [View Live Demo](https://rawcdn.githack.com/recca0120/laravel-erd/73c9b5189b3a27ade665d70895c4acdbb39064aa/demo/index.html)
 
-![Vuerd](demo/vuerd.jpg)
+![erd-editor](demo/erd-editor.png)
 
 ## Requirements
 
