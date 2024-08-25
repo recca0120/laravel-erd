@@ -19,8 +19,8 @@ abstract class TestCase extends BaseTestCase
     protected function defineEnvironment($app): void
     {
         $app['config']->set('laravel-erd.binary', [
-            'erd-go' => __DIR__.'/fixtures/bin/erd-go',
-            'dot' => __DIR__.'/fixtures/bin/dot',
+            'erd-go' => __DIR__.'/Fixtures/bin/erd-go',
+            'dot' => __DIR__.'/Fixtures/bin/dot',
         ]);
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [

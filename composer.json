@@ -1,6 +1,6 @@
 {
   "name": "recca0120/laravel-erd",
-  "description": "",
+  "description": "Laravel ERD automatically generates Entity-Relationship Diagrams from your Laravel models and displays them using Vuerd.",
   "type": "library",
   "license": "MIT",
   "authors": [

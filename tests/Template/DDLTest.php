@@ -39,7 +39,7 @@ class DDLTest extends TestCase
 
     private function givenFinder(): ErdFinder
     {
-        return $this->app->make(Factory::class)->create()->in(__DIR__.'/../fixtures');
+        return $this->app->make(Factory::class)->create()->in(__DIR__.'/../Fixtures');
     }
 
     private function render(Collection $results): string

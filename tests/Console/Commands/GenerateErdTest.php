@@ -15,7 +15,7 @@ class GenerateErdTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->storagePath = realpath(__DIR__.'/../../fixtures');
+        $this->storagePath = realpath(__DIR__.'/../../Fixtures');
         $this->app['config']->set('laravel-erd.binary', [
             'erd-go' => $this->storagePath.'/bin/erd-go',
             'dot' => $this->storagePath.'/bin/dot',

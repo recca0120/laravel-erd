@@ -1,12 +1,11 @@
 <?php
 
-namespace Recca0120\LaravelErd\Tests\fixtures\Models;
+namespace Recca0120\LaravelErd\Tests\Fixtures\Models\Other;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-class Mechanic extends Model
+class Mechanic extends BaseModel
 {
     public function car(): HasOne
     {

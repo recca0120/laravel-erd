@@ -8,7 +8,7 @@ use Recca0120\LaravelErd\ErdFinder;
 use Recca0120\LaravelErd\Factory;
 use Recca0120\LaravelErd\Template\Er;
 use Recca0120\LaravelErd\Template\Template;
-use Recca0120\LaravelErd\Tests\fixtures\Models\Car;
+use Recca0120\LaravelErd\Tests\Fixtures\Models\Car;
 use ReflectionException;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -75,7 +75,7 @@ class ErdFinderTest extends TestCase
 
     private function givenFinder(): ErdFinder
     {
-        return $this->app->make(Factory::class)->create()->in(__DIR__.'/fixtures');
+        return $this->app->make(Factory::class)->create()->in(__DIR__.'/Fixtures');
     }
 
     private function render(Collection $results): string

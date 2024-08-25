@@ -1,11 +1,12 @@
 <?php
 
-namespace Recca0120\LaravelErd\Tests\fixtures\Models\Other;
+namespace Recca0120\LaravelErd\Tests\Fixtures\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Car extends BaseModel
+class Car extends Model
 {
     public function mechanic(): BelongsTo
     {

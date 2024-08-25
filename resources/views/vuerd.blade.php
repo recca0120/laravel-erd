@@ -17,33 +17,25 @@
 <erd-editor automatic-layout></erd-editor>
 <script>
     function loadScript(src, fallback, callback) {
-        var script = document.createElement('script');
-        script.onload = function () {
-            if (callback) {
-                callback();
-            }
+        const script = document.createElement('script');
+        if (callback) {
+            script.onload = () => callback();
         }
 
         if (fallback) {
-            script.onerror = function () {
-                loadScript(fallback, undefined, callback);
-            }
+            script.onerror = () => loadScript(fallback, undefined, callback);
         }
 
-        script.src = src
+        script.src = src;
         document.body.appendChild(script);
     }
 
     function init() {
-        var editor = document.querySelector('erd-editor');
+        const editor = document.querySelector('erd-editor');
         editor.loadSQLDDL(atob('{{ base64_encode(File::get($path)) }}'));
     }
 
-    loadScript(
-        "{{ asset('vendor/laravel-erd/vuerd.min.js') }}",
-        "https://cdn.jsdelivr.net/npm/vuerd/dist/vuerd.min.js",
-        init
-    );
+    loadScript("{{ asset('vendor/laravel-erd/vuerd.min.js') }}", 'https://cdn.jsdelivr.net/npm/vuerd/dist/vuerd.min.js', init);
 </script>
 </body>
 </html>
