@@ -13,13 +13,13 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Recca0120\LaravelErd\Platform;
 
-class DownloadBinary extends Command
+class InstallBinary extends Command
 {
     public const ERD_GO_DOWNLOAD_URL = 'https://github.com/kaishuu0123/erd-go/releases/download/v2.0.0/';
 
     public const DOT_DOWNLOAD_URL = 'https://github.com/kaishuu0123/graphviz-dot.js/releases/download/v0.3.1/';
 
-    protected $signature = 'erd:download';
+    protected $signature = 'erd:install';
 
     private ClientInterface $client;
 
@@ -89,10 +89,8 @@ class DownloadBinary extends Command
         File::ensureDirectoryExists(dirname($path));
 
         $request = new Request('GET', $url);
-        $response = (new PluginClient($this->client, [
-            new ErrorPlugin(),
-            new RedirectPlugin(),
-        ]))->sendRequest($request);
+        $plugins = [new ErrorPlugin(), new RedirectPlugin()];
+        $response = (new PluginClient($this->client, $plugins))->sendRequest($request);
 
         File::put($path, (string) $response->getBody());
         File::chmod($path, 0777);

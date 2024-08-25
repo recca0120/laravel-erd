@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\File;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Client\ClientInterface;
-use Recca0120\LaravelErd\Console\Commands\DownloadBinary;
+use Recca0120\LaravelErd\Console\Commands\InstallBinary;
 use Recca0120\LaravelErd\Platform;
 use Recca0120\LaravelErd\Tests\TestCase;
 
-class DownloadBinaryTest extends TestCase
+class InstallBinaryTest extends TestCase
 {
     /**
      * @dataProvider osProvider
@@ -26,17 +26,17 @@ class DownloadBinaryTest extends TestCase
         $this->givenOs($platform, $arch);
         $client = $this->givenClient();
 
-        $this->artisan('erd:download')
+        $this->artisan('erd:install')
             ->assertSuccessful()
             ->execute();
 
         self::assertEquals(
-            DownloadBinary::ERD_GO_DOWNLOAD_URL.$expected['erd-go'],
+            InstallBinary::ERD_GO_DOWNLOAD_URL.$expected['erd-go'],
             (string) $client->getRequests()[0]->getUri()
         );
 
         self::assertEquals(
-            DownloadBinary::DOT_DOWNLOAD_URL.$expected['dot'],
+            InstallBinary::DOT_DOWNLOAD_URL.$expected['dot'],
             (string) $client->getRequests()[1]->getUri()
         );
     }
@@ -99,7 +99,7 @@ class DownloadBinaryTest extends TestCase
     {
         $client = new Client();
         $client->addResponse(new Response(200, [], 'ok'));
-        $this->app->addContextualBinding(DownloadBinary::class, ClientInterface::class, fn () => $client);
+        $this->app->addContextualBinding(InstallBinary::class, ClientInterface::class, fn () => $client);
 
         return $client;
     }
