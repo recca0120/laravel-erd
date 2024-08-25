@@ -12,7 +12,7 @@ using [erd-editor](https://github.com/dineug/erd-editor).
 Here's a sample of what you can expect, generated from [migrations](database/migrations)
 and [models](tests/Fixtures/Models):
 
-> [View Live Demo](https://rawcdn.githack.com/recca0120/laravel-erd/73c9b5189b3a27ade665d70895c4acdbb39064aa/demo/index.html)
+> [View Live Demo](https://rawcdn.githack.com/recca0120/laravel-erd/c936d64543139b70615333c833077a0076949dc8/demo/index.html)
 
 ![erd-editor](demo/erd-editor.png)
 
