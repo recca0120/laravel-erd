@@ -59,8 +59,8 @@ class Er implements Template
         $meta = stream_get_meta_data($fp);
         fclose($fp);
 
-        $erdGoBinary = $options['binary']['erd-go'] ?? $this->finder->find('erd-go');
-        $dotBinary = $options['binary']['dot'] ?? $this->finder->find('dot');
+        $erdGoBinary = $this->finder->find('erd-go') ?? $options['binary']['erd-go'];
+        $dotBinary = $this->finder->find('dot') ?? $options['binary']['dot'];
 
         $command = sprintf('cat %s | %s | %s -T svg > "%s"', $meta['uri'], $erdGoBinary, $dotBinary, $path);
         $process = Process::fromShellCommandline($command);
@@ -85,9 +85,9 @@ class Er implements Template
             ->filter();
 
         return $table->getColumns()
-            ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))
-            ->prepend(sprintf('[%s] {}', $table->getName()))
-            ->implode("\n")."\n";
+                ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))
+                ->prepend(sprintf('[%s] {}', $table->getName()))
+                ->implode("\n")."\n";
     }
 
     private function renderColumn(ColumnSchema $column, Collection $primaryKeys, Collection $indexes): string

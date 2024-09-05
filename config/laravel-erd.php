@@ -6,7 +6,7 @@ return [
     'extension' => env('LARAVEL_ERD_EXTENSION', 'sql'),
     'middleware' => [],
     'binary' => [
-        'erd-go' => env('LARAVEL_ERD_GO', resource_path('erd-go')),
-        'dot' => env('LARAVEL_ERD_DOT', resource_path('dot')),
+        'erd-go' => env('LARAVEL_ERD_GO', '/usr/local/bin/erd-go'),
+        'dot' => env('LARAVEL_ERD_DOT', '/usr/local/bin/dot'),
     ],
 ];
