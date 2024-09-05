@@ -59,11 +59,7 @@ class Er implements Template
         $meta = stream_get_meta_data($fp);
         fclose($fp);
 
-        $erdGoBinary = $this->finder->find('erd-go') ?? $options['binary']['erd-go'];
-        $dotBinary = $this->finder->find('dot') ?? $options['binary']['dot'];
-
-        $command = sprintf('cat %s | %s | %s -T svg > "%s"', $meta['uri'], $erdGoBinary, $dotBinary, $path);
-        $process = Process::fromShellCommandline($command);
+        $process = Process::fromShellCommandline($this->getCommand($options, $meta['uri'], $path));
 
         $process->run();
         $exitCode = $process->wait();
@@ -112,5 +108,14 @@ class Er implements Template
             self::$relations[$relation->type()],
             $relation->foreignTable()
         );
+    }
+
+    private function getCommand($option, string $uri, string $path): string
+    {
+        $binary = $option['binary'];
+        $erdGo = is_executable($binary['erd-go']) ? $binary['erd-go'] : $this->finder->find('erd-go');
+        $dot = is_executable($binary['dot']) ? $binary['dot'] : $this->finder->find('dot');
+
+        return sprintf('cat %s | %s | %s -T svg > "%s"', $uri, $erdGo, $dot, $path);
     }
 }
