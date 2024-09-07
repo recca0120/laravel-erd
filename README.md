@@ -56,7 +56,7 @@ http://localhost/laravel-erd
 Run the command:
 
 ```bash
-php artisan erd:generate --file=exclude-users.sql --exclude=users
+php artisan erd:generate --file=exclude-users.sql --excludes=users
 ```
 
 #### step 2.
