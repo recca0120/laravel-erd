@@ -81,7 +81,7 @@ php artisan erd:install
 Generate the SVG file:
 
 ```php
-php artisan generate --file=laravel-erd.svg
+php artisan erd:generate --file=laravel-erd.svg
 ```
 
 #### step 3.
