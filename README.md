@@ -56,7 +56,7 @@ http://localhost/laravel-erd
 Run the command:
 
 ```bash
-php artisan erd:generate --file=exclude-users.sql --exclude=users
+php artisan erd:generate --file=exclude-users.sql --excludes=users
 ```
 
 #### step 2.
@@ -81,7 +81,7 @@ php artisan erd:install
 Generate the SVG file:
 
 ```php
-php artisan generate --file=laravel-erd.svg
+php artisan erd:generate --file=laravel-erd.svg
 ```
 
 #### step 3.
