@@ -48,7 +48,7 @@ class Relation
         return Helpers::getColumnName($this->localKey());
     }
 
-    public function foreignKey(): string
+    public function foreignKey(): string|array
     {
         return $this->attributes['foreign_key'];
     }
@@ -93,7 +93,7 @@ class Relation
     }
 
     /**
-     * @param  string[]  $tables
+     * @param string[] $tables
      */
     public function excludes(array $tables): bool
     {
