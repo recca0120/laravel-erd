@@ -55,11 +55,11 @@ class RelationFinder
     private static function getRelationAttributes(Model $model, ReflectionMethod $method): ?array
     {
         try {
-            $return = $method->invoke($model);
-
-            if (! $return instanceof EloquentRelation) {
+            if (! is_subclass_of($method->getReturnType()->getName(), EloquentRelation::class)) {
                 return null;
             }
+            
+            $return = $method->invoke($model);
 
             $type = (new ReflectionClass($return))->getName();
             $related = (new ReflectionClass($return->getRelated()))->getName();
