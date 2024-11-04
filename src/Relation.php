@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Relation
 {
+    private static array $relationMap = [
+        \Awobaz\Compoships\Database\Eloquent\Relations\BelongsTo::class => BelongsTo::class,
+        \Awobaz\Compoships\Database\Eloquent\Relations\HasOne::class => HasOne::class,
+        \Awobaz\Compoships\Database\Eloquent\Relations\HasMany::class => HasMany::class,
+    ];
     private array $attributes;
 
     public function __construct(array $attributes)
@@ -20,7 +25,7 @@ class Relation
 
     public function type(): string
     {
-        return $this->attributes['type'];
+        return self::$relationMap[$this->attributes['type']] ?? $this->attributes['type'];
     }
 
     public function related(): string
@@ -33,34 +38,38 @@ class Relation
         return $this->attributes['parent'];
     }
 
-    public function localKey(): string
+    public function localKeys(): array
     {
-        return $this->attributes['local_key'];
+        return (array) $this->attributes['local_key'];
     }
 
     public function localTable(): string
     {
-        return Helpers::getTableName($this->localKey());
+        return Helpers::getTableName($this->localKeys()[0]);
     }
 
-    public function localColumn(): string
+    public function localColumns(): array
     {
-        return Helpers::getColumnName($this->localKey());
+        return array_map(static function (string $column) {
+            return Helpers::getColumnName($column);
+        }, $this->localKeys());
     }
 
-    public function foreignKey(): string
+    public function foreignKeys(): array
     {
-        return $this->attributes['foreign_key'];
+        return (array) $this->attributes['foreign_key'];
     }
 
     public function foreignTable(): string
     {
-        return Helpers::getTableName($this->foreignKey());
+        return Helpers::getTableName($this->foreignKeys()[0]);
     }
 
-    public function foreignColumn(): string
+    public function foreignColumns(): array
     {
-        return Helpers::getColumnName($this->foreignKey());
+        return array_map(static function (string $column) {
+            return Helpers::getColumnName($column);
+        }, $this->foreignKeys());
     }
 
     public function morphClass(): ?string
@@ -119,8 +128,8 @@ class Relation
             'type' => $reverseLookup[$type] ?? $type,
             'related' => $this->parent(),
             'parent' => $this->related(),
-            'local_key' => $this->foreignKey(),
-            'foreign_key' => $this->localKey(),
+            'local_key' => $this->foreignKeys(),
+            'foreign_key' => $this->localKeys(),
             'pivot' => $this->attributes['pivot'] ?? null,
             'morph_class' => $this->morphClass(),
             'morph_type' => $this->morphType(),
@@ -149,15 +158,19 @@ class Relation
      */
     public function sortByKeys(): array
     {
-        return [$this->type(), $this->localKey(), $this->foreignKey()];
+        return [$this->type(), $this->localKeys(), $this->foreignKeys()];
     }
 
     public function uniqueId(): string
     {
-        $localKey = Helpers::getTableName($this->localKey());
-        $foreignKey = Helpers::getTableName($this->foreignKey());
+        $sortBy = [];
+        foreach ($this->localKeys() as $localKey) {
+            $sortBy[] = Helpers::getTableName($localKey);
+        }
+        foreach ($this->foreignKeys() as $foreignKey) {
+            $sortBy[] = Helpers::getTableName($foreignKey);
+        }
 
-        $sortBy = [$localKey, $foreignKey];
         sort($sortBy);
 
         return implode('::', $sortBy);

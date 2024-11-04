@@ -77,8 +77,9 @@ class Er implements Template
         $primaryKeys = $table->getPrimaryKeys();
         $indexes = $table
             ->getRelations()
-            ->flatMap(fn (Relation $relation) => [$relation->localColumn(), $relation->morphColumn()])
-            ->filter();
+            ->flatMap(fn (Relation $relation) => [...$relation->localColumns(), $relation->morphColumn()])
+            ->filter()
+            ->unique();
 
         return $table->getColumns()
                 ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))

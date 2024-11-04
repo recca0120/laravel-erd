@@ -79,6 +79,14 @@ CREATE TABLE roles (
     updated_at datetime,
     PRIMARY KEY(id)
 )
+CREATE TABLE tasks (
+    id integer(11) NOT NULL AUTO_INCREMENT,
+    team_id integer(11) NOT NULL,
+    category_id integer(11) NOT NULL,
+    created_at datetime,
+    updated_at datetime,
+    PRIMARY KEY(id)
+)
 CREATE TABLE users (
     id integer(11) NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
@@ -88,6 +96,7 @@ CREATE TABLE users (
     remember_token varchar(255),
     created_at datetime,
     updated_at datetime,
+    category_id integer(11) NOT NULL,
     PRIMARY KEY(id)
 )
 ALTER TABLE cars ADD FOREIGN KEY (id) REFERENCES owners (car_id)
@@ -103,3 +112,4 @@ ALTER TABLE permissions ADD FOREIGN KEY (id) REFERENCES role_has_permissions (pe
 ALTER TABLE phones ADD FOREIGN KEY (user_id) REFERENCES users (id)
 ALTER TABLE posts ADD FOREIGN KEY (user_id) REFERENCES users (id)
 ALTER TABLE role_has_permissions ADD FOREIGN KEY (role_id) REFERENCES roles (id)
+ALTER TABLE tasks ADD FOREIGN KEY (team_id, category_id) REFERENCES users (team_id, category_id)

@@ -67,6 +67,13 @@ guard_name {label: "string, not null"}
 created_at {label: "datetime, null"}
 updated_at {label: "datetime, null"}
 
+[tasks] {}
+*id {label: "integer, not null"}
++team_id {label: "integer, not null"}
++category_id {label: "integer, not null"}
+created_at {label: "datetime, null"}
+updated_at {label: "datetime, null"}
+
 [users] {}
 *+id {label: "integer, not null"}
 name {label: "string, not null"}
@@ -76,6 +83,7 @@ password {label: "string, not null"}
 remember_token {label: "string, null"}
 created_at {label: "datetime, null"}
 updated_at {label: "datetime, null"}
++category_id {label: "integer, not null"}
 
 cars 1--* mechanics
 cars 1--* owners
@@ -90,3 +98,4 @@ permissions 1--* role_has_permissions
 phones 1--* users
 posts 1--* users
 role_has_permissions 1--* roles
+tasks 1--* users

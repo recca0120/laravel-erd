@@ -28,6 +28,7 @@
     "php-http/client-common": "^2.7"
   },
   "require-dev": {
+    "awobaz/compoships": "^2.3",
     "doctrine/dbal": "^3.5",
     "guzzlehttp/guzzle": "^7.5",
     "mockery/mockery": "^1.5",
