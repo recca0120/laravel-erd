@@ -79,9 +79,9 @@ class DDL implements Template
         return sprintf(
             'ALTER TABLE %s ADD FOREIGN KEY (%s) REFERENCES %s (%s)',
             $relation->localTable(),
-            $relation->localColumn(),
+            implode(', ', $relation->localColumns()),
             $relation->foreignTable(),
-            $relation->foreignColumn()
+            implode(', ', $relation->foreignColumns())
         );
     }
 }

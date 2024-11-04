@@ -2,6 +2,7 @@
 
 namespace Recca0120\LaravelErd\Tests\Fixtures\Models;
 
+use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,6 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Model
 {
     use HasRoles;
+    use Compoships;
 
     protected $fillable = ['name', 'email', 'password'];
 
@@ -58,5 +60,10 @@ class User extends Model
     public function devices(): BelongsToMany
     {
         return $this->belongsToMany(Device::class, 'user_device');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, ['team_id', 'category_id'], ['team_id', 'category_id']);
     }
 }
