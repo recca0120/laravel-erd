@@ -10,8 +10,6 @@ class GenerateErdTest extends TestCase
 {
     private string $storagePath;
 
-    private string $file = 'actual_artisan.svg';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,6 +25,7 @@ class GenerateErdTest extends TestCase
             'telescope.storage.database.connection' => 'testbench',
         ]);
 
+        $this->app['config']->set('database.default', 'testbench');
         $this->app['config']->set('database.connections.testbench', [
             'driver' => 'mysql',
             'url' => '',
@@ -74,9 +73,38 @@ class GenerateErdTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_generate_default_svg(): void
+    public function test_generate_testbench_svg(): void
     {
         $file = 'testbench.svg';
+
+        $parameters = $this->givenParameters(['--file' => $file]);
+        $this->artisan('erd:generate', $parameters)->execute();
+
+        $contents = file_get_contents($this->storagePath.'/'.$file);
+        self::assertStringContainsString('<!-- cars -->', $contents);
+        self::assertStringContainsString('<!-- phones&#45;&#45;users -->', $contents);
+    }
+
+    public function test_customize_fake_database(): void
+    {
+        $file = 'testbench.svg';
+
+        $this->app['config']->set('laravel-erd.connections.testbench', [
+            'driver' => 'mysql',
+            'host' => '127.0.0.1',
+            'port' => '3306',
+            'database' => 'test',
+            'username' => 'root',
+            'password' => '',
+            'unix_socket' => '',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' => [],
+        ]);
 
         $parameters = $this->givenParameters(['--file' => $file]);
         $this->artisan('erd:generate', $parameters)->execute();
