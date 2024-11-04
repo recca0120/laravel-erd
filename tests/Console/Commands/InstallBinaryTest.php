@@ -97,7 +97,7 @@ class InstallBinaryTest extends TestCase
 
     private function givenClient(): Client
     {
-        $client = new Client();
+        $client = new Client;
         $client->addResponse(new Response(200, [], 'ok'));
         $this->app->addContextualBinding(InstallBinary::class, ClientInterface::class, fn () => $client);
 

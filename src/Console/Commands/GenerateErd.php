@@ -72,7 +72,7 @@ class GenerateErd extends Command
             '--path' => $this->option('path'),
         ]);
 
-        $output = new BufferedOutput();
+        $output = new BufferedOutput;
         if ($this->runCommand('migrate', $arguments, $output) === self::FAILURE) {
             $this->error($output->fetch());
 

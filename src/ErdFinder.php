@@ -92,7 +92,7 @@ class ErdFinder
             });
 
         return $models
-            ->map(fn (string $model) => new $model())
+            ->map(fn (string $model) => new $model)
             ->map(fn (Model $model) => [
                 'connection' => $model->getConnectionName(),
                 'table' => $model->getTable(),

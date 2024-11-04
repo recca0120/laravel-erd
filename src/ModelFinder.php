@@ -26,7 +26,7 @@ class ModelFinder
     public function __construct(?string $connection = null)
     {
         $this->connection = $connection;
-        $parserFactory = new ParserFactory();
+        $parserFactory = new ParserFactory;
         $this->parser = $parserFactory->createForNewestSupportedVersion();
     }
 
@@ -40,7 +40,7 @@ class ModelFinder
         return collect($files)
             ->map(fn (SplFileInfo $file) => $this->getFullyQualifiedClassName($file))
             ->filter(fn (?string $className) => $className && self::isEloquentModel($className))
-            ->filter(fn (string $className) => (new $className())->getConnectionName() === $this->connection)
+            ->filter(fn (string $className) => (new $className)->getConnectionName() === $this->connection)
             ->values();
     }
 
@@ -57,8 +57,8 @@ class ModelFinder
 
     private function getFullyQualifiedClassName(SplFileInfo $file): ?string
     {
-        $nodeTraverser = new NodeTraverser();
-        $nodeTraverser->addVisitor(new NameResolver());
+        $nodeTraverser = new NodeTraverser;
+        $nodeTraverser->addVisitor(new NameResolver);
         $nodes = $nodeTraverser->traverse($this->parser->parse($file->getContents()));
 
         /** @var ?Namespace_ $rootNode */

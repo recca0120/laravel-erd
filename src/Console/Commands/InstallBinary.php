@@ -89,7 +89,7 @@ class InstallBinary extends Command
         File::ensureDirectoryExists(dirname($path));
 
         $request = new Request('GET', $url);
-        $plugins = [new ErrorPlugin(), new RedirectPlugin()];
+        $plugins = [new ErrorPlugin, new RedirectPlugin];
         $response = (new PluginClient($this->client, $plugins))->sendRequest($request);
 
         File::put($path, (string) $response->getBody());

@@ -16,6 +16,7 @@ class Relation
         \Awobaz\Compoships\Database\Eloquent\Relations\HasOne::class => HasOne::class,
         \Awobaz\Compoships\Database\Eloquent\Relations\HasMany::class => HasMany::class,
     ];
+
     private array $attributes;
 
     public function __construct(array $attributes)
@@ -91,7 +92,7 @@ class Relation
     {
         $model = $this->related();
 
-        return (new $model())->getConnectionName();
+        return (new $model)->getConnectionName();
     }
 
     public function pivot(): ?Pivot

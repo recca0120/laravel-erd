@@ -36,7 +36,7 @@ class Er implements Template
 
     public function __construct()
     {
-        $this->finder = new ExecutableFinder();
+        $this->finder = new ExecutableFinder;
     }
 
     public function render(Collection $tables): string
@@ -82,9 +82,9 @@ class Er implements Template
             ->unique();
 
         return $table->getColumns()
-                ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))
-                ->prepend(sprintf('[%s] {}', $table->getName()))
-                ->implode("\n")."\n";
+            ->map(fn (ColumnSchema $column) => $this->renderColumn($column, $primaryKeys, $indexes))
+            ->prepend(sprintf('[%s] {}', $table->getName()))
+            ->implode("\n")."\n";
     }
 
     private function renderColumn(ColumnSchema $column, Collection $primaryKeys, Collection $indexes): string

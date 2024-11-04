@@ -22,7 +22,7 @@ class ErdFinderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->template = new Er();
+        $this->template = new Er;
     }
 
     /**

@@ -22,7 +22,7 @@ class DDLTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->template = new DDL();
+        $this->template = new DDL;
     }
 
     /**

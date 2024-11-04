@@ -13,8 +13,8 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Model
 {
-    use HasRoles;
     use Compoships;
+    use HasRoles;
 
     protected $fillable = ['name', 'email', 'password'];
 

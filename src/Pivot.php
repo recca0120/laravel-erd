@@ -66,7 +66,7 @@ class Pivot
     {
         $model = $this->related();
 
-        return (new $model())->getConnectionName();
+        return (new $model)->getConnectionName();
     }
 
     /**
