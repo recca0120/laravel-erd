@@ -28,7 +28,7 @@ class TableSchema implements TableSchemaContract
         return collect($this->builder->getColumns($this->name))->map(fn (array $column) => new ColumnSchema($column));
     }
 
-    public function getPrimaryKey(): Collection
+    public function getPrimaryKeys(): Collection
     {
         return collect($this->builder->getIndexes($this->name))
             ->filter(fn (array $column) => $column['primary'] === true)

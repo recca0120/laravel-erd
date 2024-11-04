@@ -460,7 +460,7 @@ class RelationFinderTest extends TestCase
     {
         return $relations
             ->get($method)
-            ->sortBy(fn (Relation $relation) => $relation->order())
+            ->sortBy(fn (Relation $relation) => $relation->sortByRelation())
             ->map(fn (Relation $relation) => $this->renderRelationship($relation))
             ->toArray();
     }

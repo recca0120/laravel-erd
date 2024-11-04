@@ -85,8 +85,8 @@ class ErdFinder
             ->map(function (Collection $relations) use ($excludes) {
                 return $relations
                     ->reject(fn (Relation $relation) => $relation->excludes($excludes))
-                    ->sortBy(fn (Relation $relation) => $relation->unique())
-                    ->unique(fn (Relation $relation) => $relation->unique())
+                    ->sortBy(fn (Relation $relation) => $relation->sortByKeys())
+                    ->unique(fn (Relation $relation) => $relation->sortByKeys())
                     ->groupBy(fn (Relation $relation) => $relation->localTable());
             });
 

@@ -16,5 +16,5 @@ interface TableSchema
     /**
      * @return Collection<int, string>
      */
-    public function getPrimaryKey(): Collection;
+    public function getPrimaryKeys(): Collection;
 }

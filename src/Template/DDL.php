@@ -55,7 +55,7 @@ class DDL implements Template
      */
     private function renderPrimaryKeys(Table $table): array
     {
-        $primaryKeys = $table->getPrimaryKey()->implode(', ');
+        $primaryKeys = $table->getPrimaryKeys()->implode(', ');
 
         return $primaryKeys ? ["PRIMARY KEY({$primaryKeys})"] : [];
     }

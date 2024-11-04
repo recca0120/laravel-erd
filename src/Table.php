@@ -34,9 +34,9 @@ class Table
         return $this->schema->getColumns();
     }
 
-    public function getPrimaryKey(): Collection
+    public function getPrimaryKeys(): Collection
     {
-        return $this->schema->getPrimaryKey();
+        return $this->schema->getPrimaryKeys();
     }
 
     /**

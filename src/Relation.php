@@ -127,21 +127,29 @@ class Relation
         ]));
     }
 
-    public function order(): int
+    public function sortByRelation(): int
     {
-        $orders = [
+        $relationGroups = [
             [BelongsTo::class, HasOne::class, MorphOne::class],
             [HasMany::class, MorphMany::class],
         ];
 
         $type = $this->type();
-        foreach ($orders as $index => $order) {
-            if (in_array($type, $order, true)) {
+        foreach ($relationGroups as $index => $relations) {
+            if (in_array($type, $relations, true)) {
                 return $index + 1;
             }
         }
 
-        return count($orders);
+        return count($relationGroups);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function sortByKeys(): array
+    {
+        return [$this->type(), $this->localKey(), $this->foreignKey()];
     }
 
     public function uniqueId(): string
@@ -153,13 +161,5 @@ class Relation
         sort($sortBy);
 
         return implode('::', $sortBy);
-    }
-
-    /**
-     * @return string[]
-     */
-    public function unique(): array
-    {
-        return [$this->type(), $this->localKey(), $this->foreignKey()];
     }
 }

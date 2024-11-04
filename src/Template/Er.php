@@ -21,7 +21,7 @@ use Symfony\Component\Process\Process;
 class Er implements Template
 {
     /** @var string[] */
-    private static array $relations = [
+    private static array $relationships = [
         BelongsTo::class => '1--*',
         MorphTo::class => '1--*',
         HasOne::class => '1--1',
@@ -74,7 +74,7 @@ class Er implements Template
 
     private function renderTable(Table $table): string
     {
-        $primaryKeys = $table->getPrimaryKey();
+        $primaryKeys = $table->getPrimaryKeys();
         $indexes = $table
             ->getRelations()
             ->flatMap(fn (Relation $relation) => [$relation->localColumn(), $relation->morphColumn()])
@@ -105,7 +105,7 @@ class Er implements Template
         return sprintf(
             '%s %s %s',
             $relation->localTable(),
-            self::$relations[$relation->type()],
+            self::$relationships[$relation->type()],
             $relation->foreignTable()
         );
     }

@@ -30,7 +30,7 @@ class TableSchema implements TableSchemaContract
         return collect($this->table->getColumns())->map(fn (DBALColumn $column) => new ColumnSchema($column));
     }
 
-    public function getPrimaryKey(): Collection
+    public function getPrimaryKeys(): Collection
     {
         return collect($this->table->getIndexes())
             ->filter(fn (Index $index) => $index->isPrimary())
