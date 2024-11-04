@@ -15,10 +15,11 @@ class ErdFinder
 
     private string $directory;
 
-    public function __construct(SchemaBuilder $schemaBuilder, ModelFinder $modelFinder)
+    public function __construct(SchemaBuilder $schemaBuilder, ModelFinder $modelFinder, RelationFinder $relationFinder)
     {
         $this->schemaBuilder = $schemaBuilder;
         $this->modelFinder = $modelFinder;
+        $this->relationFinder = $relationFinder;
     }
 
     public function in(string $directory): ErdFinder
@@ -77,7 +78,7 @@ class ErdFinder
     {
         $models = $this->mergeMissing($models);
         $relations = $models
-            ->flatMap(fn (string $model) => RelationFinder::generate($model)->collapse())
+            ->flatMap(fn (string $model) => $this->relationFinder->generate($model)->collapse())
             ->flatMap(fn (Relation $relation) => [$relation, $relation->relatedRelation()]);
 
         $relationGroupByConnection = $relations
@@ -123,7 +124,7 @@ class ErdFinder
     private function mergeMissing(Collection $models): Collection
     {
         return $models->merge($models
-            ->flatMap(fn (string $model) => RelationFinder::generate($model)->collapse())
+            ->flatMap(fn (string $model) => $this->relationFinder->generate($model)->collapse())
             ->map(fn (Relation $relation) => $relation->related())
             ->filter()
             ->diff($models));

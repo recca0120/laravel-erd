@@ -26,7 +26,7 @@ class RelationFinder
      *
      * @throws ReflectionException
      */
-    public static function generate(string $className): Collection
+    public function generate(string $className): Collection
     {
         $class = new ReflectionClass($className);
         $model = new $className;

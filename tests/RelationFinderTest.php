@@ -453,7 +453,7 @@ class RelationFinderTest extends TestCase
      */
     private function givenRelations(string $model): Collection
     {
-        return RelationFinder::generate($model);
+        return (new RelationFinder)->generate($model);
     }
 
     private function draw(Collection $relations, $method): array

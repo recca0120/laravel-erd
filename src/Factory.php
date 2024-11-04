@@ -26,7 +26,9 @@ class Factory
         }
 
         return $this->cache[$key] = new ErdFinder(
-            $this->getSchemaBuilder($name), new ModelFinder($name)
+            $this->getSchemaBuilder($name),
+            new ModelFinder($name),
+            new RelationFinder()
         );
     }
 
