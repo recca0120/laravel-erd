@@ -67,8 +67,9 @@ class GenerateErd extends Command
 
     private function runMigrate(?string $database): int
     {
+        $default = config('database.default');
         $arguments = array_filter([
-            '--database' => $database,
+            '--database' => $default === $database ? null : $database,
             '--path' => $this->option('path'),
         ]);
 
@@ -84,11 +85,15 @@ class GenerateErd extends Command
 
     private function setupFakeDatabase(?string $database): void
     {
+        $default = config('database.default');
+        $database = $database ?? $default;
+        $connections = config('laravel-erd.connections');
+
         $this->backup['cache.default'] = config('cache.default');
         $this->backup['database.connections'] = config('database.connections');
 
         config(['cache.default' => 'array']);
-        config(Arr::dot(array_map(static fn (array $config) => [
+        config(Arr::dot(array_map(static fn (array $config) => $connections[$database] ?? [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => $config['prefix'] ?? '',
@@ -98,12 +103,21 @@ class GenerateErd extends Command
             'synchronous' => null,
         ], $this->backup['database.connections']), 'database.connections.'));
 
-        DB::purge($database ?? config('database.default'));
+        DB::purge($database);
     }
 
     private function restoreDatabase(?string $database): void
     {
-        DB::purge($database ?? config('database.default'));
+        $default = config('database.default');
+        $arguments = array_filter([
+            '--database' => $default === $database ? null : $database,
+            '--path' => $this->option('path'),
+        ]);
+
+        $output = new BufferedOutput;
+        $this->runCommand('migrate:rollback', $arguments, $output);
+
+        DB::purge($database);
 
         config(['cache.default' => $this->backup['cache.default']]);
         config(['database.connections' => $this->backup['database.connections']]);

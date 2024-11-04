@@ -25,6 +25,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup MySQL
+        uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: ${{ matrix.mysql }}
+          root-password: ''
+          my-cnf: |
+            innodb_log_file_size=256MB
+            innodb_buffer_pool_size=512MB
+            max_allowed_packet=16MB
+            max_connections=50
+            local_infile=1
+            log-output=NONE
+            slow-query-log=0
+            innodb_flush_log_at_trx_commit=0
+            innodb_log_buffer_size=3M
+            innodb_buffer_pool_size=180M
+            innodb_doublewrite=0
+            datadir=/dev/shm/mysql
+
+      - name: Show MySQL Variables
+        run: mysql -uroot -h127.0.0.1 -e 'show variables'
+
+      - name: Create Database
+        run: |
+          mysql -uroot -h127.0.0.1 -e 'create database testbench;'
+          mysql -uroot -h127.0.0.1 -e 'create database test;'
+
       - name: Setup cache environment
         id: extcache
         uses: shivammathur/cache-extensions@v1
