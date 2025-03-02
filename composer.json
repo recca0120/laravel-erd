@@ -21,9 +21,9 @@
   },
   "require": {
     "ext-sqlite3": "*",
-    "illuminate/collections": "^8.0|^9.0|^10.0|^11.0",
-    "illuminate/database": "^8.0|^9.0|^10.0|^11.0",
-    "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0",
+    "illuminate/collections": "^8.0|^9.0|^10.0|^11.0|^12.0",
+    "illuminate/database": "^8.0|^9.0|^10.0|^11.0|^12.0",
+    "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0|^12.0",
     "nikic/php-parser": "^5.1.0",
     "php-http/client-common": "^2.7"
   },
