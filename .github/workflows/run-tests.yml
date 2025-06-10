@@ -11,6 +11,20 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testbench
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     strategy:
       fail-fast: true
       matrix:
@@ -20,37 +34,33 @@ jobs:
     env:
       extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, grpc
       key: cache-v1 # can be any string, change to clear the extension cache.
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: testbench
+      DB_USERNAME: root
+      DB_PASSWORD: root
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup MySQL
-        uses: shogo82148/actions-setup-mysql@v1
-        with:
-          mysql-version: ${{ matrix.mysql }}
-          root-password: ''
-          my-cnf: |
-            innodb_log_file_size=256MB
-            innodb_buffer_pool_size=512MB
-            max_allowed_packet=16MB
-            max_connections=50
-            local_infile=1
-            log-output=NONE
-            slow-query-log=0
-            innodb_flush_log_at_trx_commit=0
-            innodb_log_buffer_size=3M
-            innodb_buffer_pool_size=180M
-            innodb_doublewrite=0
-            datadir=/dev/shm/mysql
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -proot; then
+              break
+            fi
+            sleep 2
+          done
 
       - name: Show MySQL Variables
-        run: mysql -uroot -h127.0.0.1 -e 'show variables'
+        run: mysql -uroot -proot -h127.0.0.1 -e 'show variables'
 
       - name: Create Database
         run: |
-          mysql -uroot -h127.0.0.1 -e 'create database testbench;'
-          mysql -uroot -h127.0.0.1 -e 'create database test;'
+          mysql -uroot -proot -h127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS testbench;'
+          mysql -uroot -proot -h127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS test;'
 
       - name: Setup cache environment
         id: extcache
