@@ -21,14 +21,14 @@ and [models](tests/Fixtures/Models):
 | Lang    | Version                 |
 |:--------|:------------------------|
 | PHP     | 7.4, 8.0, 8.1, 8.2, 8.3 |
-| Laravel | 8, 9, 10, 11            |
+| Laravel | 8, 9, 10, 11, 12        |
 
 ## Installation
 
 Install the package via Composer:
 
 ```bash
-composer require recca0120/laravel-erd:^0.1 --dev
+composer require recca0120/laravel-erd:^0.4 --dev
 ```
 
 ## Usage
