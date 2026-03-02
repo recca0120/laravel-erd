@@ -127,12 +127,18 @@ class GenerateErdTest extends TestCase
 
     public function test_command_not_exists(): void
     {
+        $originalPath = getenv('PATH');
+        putenv('PATH=/nonexistent');
         $this->app['config']->set('laravel-erd.binary.erd-go', '/bin/erd-go');
 
-        $this->artisan(
-            'erd:generate',
-            $this->givenParameters(['--graceful' => true])
-        )->assertFailed();
+        try {
+            $this->artisan(
+                'erd:generate',
+                $this->givenParameters(['--graceful' => true])
+            )->assertFailed();
+        } finally {
+            putenv("PATH=$originalPath");
+        }
     }
 
     private function givenParameters(array $attributes = []): array
