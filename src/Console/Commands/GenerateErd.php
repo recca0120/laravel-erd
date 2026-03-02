@@ -3,7 +3,6 @@
 namespace Recca0120\LaravelErd\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Recca0120\LaravelErd\Factory;
@@ -85,37 +84,32 @@ class GenerateErd extends Command
 
     private function setupFakeDatabase(?string $database): void
     {
-        $default = config('database.default');
-        $database = $database ?? $default;
-        $connections = config('laravel-erd.connections');
+        $database = $database ?? config('database.default');
+        $overrides = config('laravel-erd.connections', []);
 
         $this->backup['cache.default'] = config('cache.default');
         $this->backup['database.connections'] = config('database.connections');
 
         config(['cache.default' => 'array']);
-        config(Arr::dot(array_map(static fn (array $config) => $connections[$database] ?? [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => $config['prefix'] ?? '',
-            'foreign_key_constraints' => true,
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-        ], $this->backup['database.connections']), 'database.connections.'));
+
+        foreach ($this->backup['database.connections'] as $name => $config) {
+            config(["database.connections.{$name}" => $overrides[$name] ?? [
+                'driver' => 'sqlite',
+                'database' => ':memory:',
+                'prefix' => $config['prefix'] ?? '',
+                'foreign_key_constraints' => true,
+                'busy_timeout' => null,
+                'journal_mode' => null,
+                'synchronous' => null,
+            ]]);
+        }
 
         DB::purge($database);
     }
 
     private function restoreDatabase(?string $database): void
     {
-        $default = config('database.default');
-        $arguments = array_filter([
-            '--database' => $default === $database ? null : $database,
-            '--path' => $this->option('path'),
-        ]);
-
-        $output = new BufferedOutput;
-        $this->runCommand('migrate:rollback', $arguments, $output);
+        $database = $database ?? config('database.default');
 
         DB::purge($database);
 
