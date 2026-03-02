@@ -54,22 +54,27 @@ class Er implements Template
 
     public function save(Collection $tables, string $path, array $options = []): int
     {
-        $fp = fopen(str_replace('.svg', '.er', $path), 'wb');
+        $erFile = str_replace('.svg', '.er', $path);
+        $fp = fopen($erFile, 'wb');
         fwrite($fp, $this->render($tables));
         $meta = stream_get_meta_data($fp);
         fclose($fp);
 
-        $process = Process::fromShellCommandline($this->getCommand($options, $meta['uri'], $path));
+        try {
+            $process = Process::fromShellCommandline($this->getCommand($options, $meta['uri'], $path));
 
-        $process->run();
-        $exitCode = $process->wait();
+            $process->run();
+            $exitCode = $process->wait();
 
-        $errorOutput = $process->getErrorOutput();
-        if (! empty($errorOutput)) {
-            throw new RuntimeException($errorOutput);
+            $errorOutput = $process->getErrorOutput();
+            if (! empty($errorOutput)) {
+                throw new RuntimeException($errorOutput);
+            }
+
+            return $exitCode;
+        } finally {
+            @unlink($erFile);
         }
-
-        return $exitCode;
     }
 
     private function renderTable(Table $table): string

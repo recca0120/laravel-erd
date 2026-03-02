@@ -93,6 +93,6 @@ class InstallBinary extends Command
         $response = (new PluginClient($this->client, $plugins))->sendRequest($request);
 
         File::put($path, (string) $response->getBody());
-        File::chmod($path, 0777);
+        File::chmod($path, 0755);
     }
 }

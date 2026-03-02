@@ -85,25 +85,9 @@ class RelationFinder
 
     private static function belongsToMany(BelongsToMany $return, string $type, string $related): array
     {
-        // dump([
-        //     'getExistenceCompareKey' => $return->getExistenceCompareKey(),
-        //     'getForeignPivotKeyName' => $return->getForeignPivotKeyName(),
-        //     'getQualifiedForeignPivotKeyName' => $return->getQualifiedForeignPivotKeyName(),
-        //     'getRelatedPivotKeyName' => $return->getRelatedPivotKeyName(),
-        //     'getQualifiedRelatedPivotKeyName' => $return->getQualifiedRelatedPivotKeyName(),
-        //     'getParentKeyName' => $return->getParentKeyName(),
-        //     'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
-        //     'getRelatedKeyName' => $return->getRelatedKeyName(),
-        //     'getQualifiedRelatedKeyName' => $return->getQualifiedRelatedKeyName(),
-        //     'getRelationName' => $return->getRelationName(),
-        //     'getPivotAccessor' => $return->getPivotAccessor(),
-        //     'getPivotColumns' => $return->getPivotColumns(),
-        // ]);
-
         $parent = get_class($return->getParent());
         $pivot = [
             'type' => BelongsTo::class,
-            // 'type' => $type,
             'related' => $related,
             'parent' => $parent,
             'local_key' => $return->getQualifiedRelatedPivotKeyName(),
@@ -111,11 +95,6 @@ class RelationFinder
         ];
 
         if ($return instanceof MorphToMany) {
-            // dump([
-            //     'getMorphType' => $return->getMorphType(),
-            //     'getMorphClass' => $return->getMorphClass(),
-            // ]);
-
             $pivot = array_merge($pivot, [
                 'type' => MorphTo::class,
                 'morph_class' => $return->getMorphClass(),
@@ -135,20 +114,7 @@ class RelationFinder
 
     private static function belongsTo(BelongsTo $return, string $type, string $related): ?array
     {
-        // dump([
-        //     'getForeignKeyName' => $return->getForeignKeyName(),
-        //     'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
-        //     'getParentKey' => $return->getParentKey(),
-        //     'getOwnerKeyName' => $return->getOwnerKeyName(),
-        //     'getQualifiedOwnerKeyName' => $return->getQualifiedOwnerKeyName(),
-        //     'getRelationName' => $return->getRelationName(),
-        // ]);
-
         if ($return instanceof MorphTo) {
-            // dump([
-            //     'getMorphType' => $return->getMorphType(),
-            //     'getDictionary' => $return->getDictionary(),
-            // ]);
             return null;
         }
 
@@ -167,11 +133,6 @@ class RelationFinder
             return null;
         }
 
-        // dump([
-        //     'getQualifiedParentKeyName' => $return->getQualifiedParentKeyName(),
-        //     'getQualifiedForeignKeyName' => $return->getQualifiedForeignKeyName(),
-        // ]);
-
         $attributes = [
             'type' => $type,
             'related' => $related,
@@ -181,10 +142,6 @@ class RelationFinder
         ];
 
         if ($return instanceof MorphOneOrMany) {
-            // dump([
-            //     'getQualifiedMorphType' => $return->getQualifiedMorphType(),
-            //     'getMorphClass' => $return->getMorphClass(),
-            // ]);
             $attributes = array_merge($attributes, [
                 'morph_type' => $return->getQualifiedMorphType(),
                 'morph_class' => $return->getMorphClass(),

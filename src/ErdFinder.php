@@ -13,6 +13,8 @@ class ErdFinder
 
     private ModelFinder $modelFinder;
 
+    private RelationFinder $relationFinder;
+
     private string $directory;
 
     public function __construct(SchemaBuilder $schemaBuilder, ModelFinder $modelFinder, RelationFinder $relationFinder)
