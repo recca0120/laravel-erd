@@ -90,7 +90,7 @@ php artisan erd:generate {database?} {--directory=} {--file=} {--path=} {--regex
 | `--path`        | Migration 路徑（傳遞給 `artisan migrate`）            | —                 |
 | `--regex`       | 檔案比對模式                                         | `*.php`           |
 | `--excludes`    | 以逗號分隔的排除資料表名稱                              | —                 |
-| `--graceful`    | 發生錯誤時仍回傳結束碼 0                               | `false`           |
+| `--graceful`    | 發生錯誤時印出錯誤訊息而非拋出例外                        | `false`           |
 
 ### 範例
 
@@ -110,7 +110,7 @@ php artisan erd:generate --file=diagram.svg
 # 使用不同的資料庫連線
 php artisan erd:generate mysql
 
-# CI/CD 友善模式（不會導致 Pipeline 失敗）
+# 印出錯誤訊息而非拋出例外
 php artisan erd:generate --graceful
 ```
 

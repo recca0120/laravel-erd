@@ -90,7 +90,7 @@ php artisan erd:generate {database?} {--directory=} {--file=} {--path=} {--regex
 | `--path`        | Migration path (passed to `artisan migrate`)          | —              |
 | `--regex`       | File pattern to match models                          | `*.php`        |
 | `--excludes`    | Comma-separated table names to exclude                | —              |
-| `--graceful`    | Return exit code 0 even on errors                     | `false`        |
+| `--graceful`    | Print error message instead of throwing an exception   | `false`        |
 
 ### Examples
 
@@ -110,7 +110,7 @@ php artisan erd:generate --file=diagram.svg
 # Use a different database connection
 php artisan erd:generate mysql
 
-# CI/CD friendly (won't fail the pipeline)
+# Print error instead of throwing exception
 php artisan erd:generate --graceful
 ```
 
