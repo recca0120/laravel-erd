@@ -2,5 +2,5 @@ pre-commit:
   commands:
     pint:
       glob: "*.php"
-      run: vendor/bin/pint {staged_files}
+      run: pint {staged_files}
       stage_fixed: true

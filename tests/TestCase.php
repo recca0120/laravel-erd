@@ -37,12 +37,15 @@ abstract class TestCase extends BaseTestCase
 
     protected function defineDatabaseMigrations(): void
     {
-        // foreach ([5 => 'add_teams_fields', 6 => 'create_permission_tables'] as $index => $migrationFile) {
-        //     copy(
-        //         __DIR__.'/../vendor/spatie/laravel-permission/database/migrations/'.$migrationFile.'.php.stub',
-        //         __DIR__.'/../database/migrations/2022_12_07_00000'.$index.'_'.$migrationFile.'.php'
-        //     );
-        // }
+        foreach ([5 => 'add_teams_fields', 6 => 'create_permission_tables'] as $index => $migrationFile) {
+            $target = __DIR__.'/../database/migrations/2022_12_07_00000'.$index.'_'.$migrationFile.'.php';
+            if (! file_exists($target)) {
+                copy(
+                    __DIR__.'/../vendor/spatie/laravel-permission/database/migrations/'.$migrationFile.'.php.stub',
+                    $target
+                );
+            }
+        }
 
         $this->loadLaravelMigrations();
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
