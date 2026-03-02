@@ -56,6 +56,7 @@ The output format is determined by the `--file` extension:
 | Extension | Format            | Description                                              | Requires Binary |
 |:----------|:------------------|:---------------------------------------------------------|:----------------|
 | `.sql`    | SQL DDL           | CREATE TABLE and ALTER TABLE statements (default)        | No              |
+| `.er`     | ER Notation       | Entity-relationship notation viewable in erd-editor      | No              |
 | `.svg`    | SVG Diagram       | Visual diagram with zoom/pan support                     | Yes             |
 
 ### Generating SVG
