@@ -114,6 +114,72 @@ class GenerateErdTest extends TestCase
         self::assertStringContainsString('<!-- phones&#45;&#45;users -->', $contents);
     }
 
+    public function test_pgsql_connection_is_replaced_with_sqlite(): void
+    {
+        $this->app['config']->set('database.default', 'pgsql_test');
+        $this->app['config']->set('database.connections.pgsql_test', [
+            'driver' => 'pgsql',
+            'host' => '127.0.0.1',
+            'port' => '59999',
+            'database' => 'nonexistent',
+            'username' => 'nonexistent',
+            'password' => 'nonexistent',
+            'charset' => 'utf8',
+            'prefix' => '',
+            'schema' => 'public',
+        ]);
+
+        $file = 'pgsql_test.svg';
+        $parameters = $this->givenParameters(['--file' => $file]);
+        $this->artisan('erd:generate', $parameters)->execute();
+
+        $contents = file_get_contents($this->storagePath.'/'.$file);
+        self::assertStringContainsString('<!-- cars -->', $contents);
+
+        // Verify pgsql config is restored after generation
+        self::assertEquals('pgsql', config('database.connections.pgsql_test.driver'));
+    }
+
+    public function test_customize_fake_database_with_pgsql(): void
+    {
+        if (! env('PGSQL_HOST')) {
+            self::markTestSkipped('PostgreSQL is not available');
+        }
+
+        $file = 'pgsql_custom.svg';
+
+        $this->app['config']->set('database.default', 'pgsql_test');
+        $this->app['config']->set('database.connections.pgsql_test', [
+            'driver' => 'pgsql',
+            'host' => env('PGSQL_HOST', '127.0.0.1'),
+            'port' => env('PGSQL_PORT', '5432'),
+            'database' => 'nonexistent',
+            'username' => 'nonexistent',
+            'password' => 'nonexistent',
+            'charset' => 'utf8',
+            'prefix' => '',
+            'schema' => 'public',
+        ]);
+
+        $this->app['config']->set('laravel-erd.connections.pgsql_test', [
+            'driver' => 'pgsql',
+            'host' => env('PGSQL_HOST', '127.0.0.1'),
+            'port' => env('PGSQL_PORT', '5432'),
+            'database' => env('PGSQL_DATABASE', 'testbench'),
+            'username' => env('PGSQL_USERNAME', 'root'),
+            'password' => env('PGSQL_PASSWORD', 'root'),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'schema' => 'public',
+        ]);
+
+        $parameters = $this->givenParameters(['--file' => $file]);
+        $this->artisan('erd:generate', $parameters)->execute();
+
+        $contents = file_get_contents($this->storagePath.'/'.$file);
+        self::assertStringContainsString('<!-- cars -->', $contents);
+    }
+
     public function test_generate_other_svg(): void
     {
         $file = 'other.svg';
