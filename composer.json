@@ -1,61 +1,61 @@
 {
-  "name": "recca0120/laravel-erd",
-  "description": "Laravel ERD automatically generates Entity-Relationship Diagrams from your Laravel models and displays them using Vuerd.",
-  "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "recca0120",
-      "email": "recca0120@gmail.com"
+    "name": "recca0120/laravel-erd",
+    "description": "Laravel ERD automatically generates Entity-Relationship Diagrams from your Laravel models and displays them using Vuerd.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "recca0120",
+            "email": "recca0120@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Recca0120\\LaravelErd\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Recca0120\\LaravelErd\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "ext-sqlite3": "*",
+        "illuminate/collections": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0|dev-master",
+        "illuminate/database": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
+        "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
+        "nikic/php-parser": "^5.1.0",
+        "php-http/client-common": "^2.7"
+    },
+    "require-dev": {
+        "awobaz/compoships": "^2.3",
+        "doctrine/dbal": "^3.5|^4.4",
+        "guzzlehttp/guzzle": "^7.5",
+        "mockery/mockery": "^1.5",
+        "orchestra/testbench": "^6.25|^7.13|^8.0|^9.0|^10.0|^11.0",
+        "php-http/mock-client": "^1.6",
+        "phpunit/phpunit": "^9.5|^10.0|^11.0|^12.0",
+        "spatie/laravel-permission": "^5.7|^6.0|^7.2",
+        "spatie/phpunit-snapshot-assertions": "^4.2|^5.1.6"
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Recca0120\\LaravelErd\\LaravelErdServiceProvider"
+            ]
+        }
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Recca0120\\LaravelErd\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Recca0120\\LaravelErd\\Tests\\": "tests/"
-    }
-  },
-  "require": {
-    "ext-sqlite3": "*",
-    "illuminate/collections": "^8.0|^9.0|^10.0|^11.0|^12.0",
-    "illuminate/database": "^8.0|^9.0|^10.0|^11.0|^12.0",
-    "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0|^12.0",
-    "nikic/php-parser": "^5.1.0",
-    "php-http/client-common": "^2.7"
-  },
-  "require-dev": {
-    "awobaz/compoships": "^2.3",
-    "doctrine/dbal": "^3.5",
-    "guzzlehttp/guzzle": "^7.5",
-    "mockery/mockery": "^1.5",
-    "orchestra/testbench": "^6.25|^7.13|^8.0|^9.0|^10.0",
-    "php-http/mock-client": "^1.6",
-    "phpunit/phpunit": "^9.5|^10.0|^11.0|^12.0",
-    "spatie/laravel-permission": "^5.7|^6.0",
-    "spatie/phpunit-snapshot-assertions": "^4.2|^5.1.6"
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "@php vendor/bin/testbench package:discover --ansi"
-    ]
-  },
-  "config": {
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "optimize-autoloader": true,
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Recca0120\\LaravelErd\\LaravelErdServiceProvider"
-      ]
-    }
-  }
 }
